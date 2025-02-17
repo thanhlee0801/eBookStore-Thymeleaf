@@ -2,9 +2,22 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Home Page</title>
+    <title>Hanoi Aptech Bookstore</title>
+    <th:block th:replace="includes/frame :: frame"></th:block>
 </head>
 <body>
-hahahahaahahahah
+<!-- Trang header -->
+<th:block th:replace="partials/header :: header"></th:block>
+
+<!-- Carousel (nếu có) -->
+<th:block th:replace="partials/carousel :: carousel"></th:block>
+
+<!-- Thân trang -->
+<br>
+<th:block th:replace="partials/body :: body"></th:block>
+<br>
+
+<!-- Trang footer -->
+<th:block th:replace="partials/footer :: footer"></th:block>
 </body>
 </html>

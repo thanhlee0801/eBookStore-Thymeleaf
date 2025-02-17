@@ -5,42 +5,44 @@
     <title>Footer</title>
 </head>
 <body>
-<div class="bg-dark text-light py-4">
-    <div class="container">
-        <div class="row">
-            <!-- Thông tin cửa hàng -->
-            <div class="col-md-4">
-                <h5>Cửa Hàng Sách</h5>
-                <p>Địa chỉ: 175 Tây Sơn, Đống Đa, Hà Nội</p>
-                <p>Điện thoại: (0123) 456-789</p>
-                <p>Email: aptechbookstore@meomeo.com</p>
+<div th:fragment="carousel">
+    <div id="carouselExampleCaptions" class="carousel carousel-dark slide">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img th:src="@{/image/carousel/banner1.jpg}" class="d-block w-100" alt="...">
+                <div class="carousel-caption d-none d-md-block">
+                    <h5>First slide label</h5>
+                    <p>Some representative placeholder content for the first slide.</p>
+                </div>
             </div>
-
-            <!-- Liên kết nhanh -->
-            <div class="col-md-4">
-                <h5>Liên Kết Nhanh</h5>
-                <ul class="list-unstyled">
-                    <li><a th:href="@{/}" class="text-light text-decoration-none">Trang Chủ</a></li>
-                    <li><a th:href="@{/about}" class="text-light text-decoration-none">Giới Thiệu</a></li>
-                    <li><a th:href="@{/products}" class="text-light text-decoration-none">Sản Phẩm</a></li>
-                    <li><a th:href="@{/contact}" class="text-light text-decoration-none">Liên Hệ</a></li>
-                </ul>
+            <div class="carousel-item">
+                <img th:src="@{/image/carousel/banner2.jpg}" class="d-block w-100" alt="...">
+                <div class="carousel-caption d-none d-md-block">
+                    <h5>Second slide label</h5>
+                    <p>Some representative placeholder content for the second slide.</p>
+                </div>
             </div>
-
-            <!-- Theo dõi chúng tôi -->
-            <div class="col-md-4">
-                <h5>Theo Dõi Chúng Tôi</h5>
-                <div>
-                    <a href="#" class="text-light me-3"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" class="text-light me-3"><i class="fab fa-twitter"></i></a>
-                    <a href="#" class="text-light me-3"><i class="fab fa-instagram"></i></a>
-                    <a href="#" class="text-light"><i class="fab fa-youtube"></i></a>
+            <div class="carousel-item">
+                <img th:src="@{/image/carousel/banner3.jpg}" class="d-block w-100" alt="...">
+                <div class="carousel-caption d-none d-md-block">
+                    <h5>Third slide label</h5>
+                    <p>Some representative placeholder content for the third slide.</p>
                 </div>
             </div>
         </div>
-        <div class="text-center mt-4">
-            <p class="mb-0">© 2025 Cửa Hàng Sách. All Rights Reserved.</p>
-        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
     </div>
 </div>
 </body>

@@ -5,21 +5,23 @@
     <title>Hanoi Aptech Bookstore</title>
     <!-- Include phần head từ frame.html -->
     <th:block th:replace="~{includes/frame :: head}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+
 </head>
 <body>
 <!-- Trang header -->
 <th:block th:replace="~{partials/header :: header}"></th:block>
 
 <!-- Carousel (nếu có) -->
-<th:block th:replace="~{partials/carousel :: carousel}"></th:block>
+<!--<th:block th:replace="~{partials/carousel :: carousel}"></th:block>-->
 
-<!-- Thân trang -->
-<br>
-<th:block th:replace="~{partials/body :: body}"></th:block>
-<br>
+<!--&lt;!&ndash; Thân trang &ndash;&gt;-->
+<!--<br>-->
+<!--<th:block th:replace="~{partials/body :: body}"></th:block>-->
+<!--<br>-->
 
-<!-- Trang footer -->
-<th:block th:replace="~{partials/footer :: footer}"></th:block>
+<!--&lt;!&ndash; Trang footer &ndash;&gt;-->
+<!--<th:block th:replace="~{partials/footer :: footer}"></th:block>-->
 
 <!-- Include các script từ frame.html -->
 <th:block th:replace="~{includes/frame :: scripts}"></th:block>

@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-    <!-- Include phần head từ frame.html -->
-    <th:block th:replace="~{includes/frame :: head}"></th:block>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+  <!-- Include phần head từ frame.html -->
+  <th:block th:replace="~{includes/frame :: head}"></th:block>
 </head>
 <body>
 

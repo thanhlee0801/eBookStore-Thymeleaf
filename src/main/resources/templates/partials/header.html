@@ -5,14 +5,14 @@
     <title>Header</title>
 </head>
 <body>
-<!-- Navbar tren -->
 <div th:fragment="header">
+    <!-- Navbar tren -->
     <div>
         <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
             <div class="container d-flex justify-content-between align-items-center">
                 <!-- Logo -->
                 <a class="navbar-brand" th:href="@{/}">
-                    <img th:src="@{/static/image/logo.png}" alt="Logo" width="30" height="30" class="d-inline-block align-text-top">
+                    <img th:src="@{/image/logo.png}" alt="Logo" width="30" height="30" class="d-inline-block align-text-top">
                     Hanoi Aptech BookStore
                 </a>
 
@@ -194,7 +194,6 @@
                                 Hỗ Trợ Khách Hàng
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="hoTroDropdown">
-                                <li><a class="dropdown-item" th:href="@{/contact}">Liên Hệ</a></li>
                                 <li><a class="dropdown-item" th:href="@{/faq}">Câu Hỏi Thường Gặp</a></li>
                                 <li><a class="dropdown-item" th:href="@{/order-tracking}">Theo dõi đơn hàng</a></li>
                             </ul>

@@ -25,14 +25,19 @@
                     <div class="input-group">
                         <select class="form-select" aria-label="Default select example" style="width: auto; min-width: 100px;">
                             <option selected>Tất cả danh mục</option>
+                            <!-- Duyệt danh mục cha -->
                             <th:block th:each="category : ${categories}">
-                                <optgroup th:label="${category.name}">
-                                    <th:block th:each="subCategory : ${category.subCategories}">
-                                        <option th:value="${subCategory.id}" th:text="${subCategory.name}"></option>
-                                    </th:block>
-                                </optgroup>
+                                <!-- Danh mục cha -->
+                                <option th:value="${category.id}" th:text="${category.name}" class="fw-bold"></option>
+                                <!-- Duyệt danh mục con -->
+                                <th:block th:each="subCategory : ${category.subCategories}">
+                                    <option th:value="${subCategory.id}">
+                                        <span th:utext="'&nbsp;&nbsp;' + ${subCategory.name}"></span>
+                                    </option>
+                                </th:block>
                             </th:block>
                         </select>
+
                         <input class="form-control" type="search" placeholder="Tìm kiếm sách..." aria-label="Search" style="width: 60%;">
                         <button class="btn btn-outline-primary" type="submit">
                             <i class="fas fa-search"></i>
@@ -155,16 +160,29 @@
         <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
             <div class="container">
                 <div class="dropdown">
-                    <a class="btn dropdown-toggle " href="#" role="button" data-bs-toggle="dropdown"
+                    <a class="btn dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                        aria-expanded="false" style="background-color: #EA6C80; color: snow; border: none">
                         Danh mục sản phẩm
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">Sách lập trình</a></li>
-                        <li><a class="dropdown-item" href="#">Another action</a></li>
-                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        <!-- Duyệt danh mục cha -->
+                        <th:block th:each="category : ${categories}">
+                            <!-- Danh mục cha có thể chọn -->
+                            <li>
+                                <a class="dropdown-item fw-bold" th:href="@{/category/{id}(id=${category.id})}"
+                                   th:text="${category.name}" style="color: #EA6C80;"></a>
+                            </li>
+                            <!-- Duyệt danh mục con -->
+                            <th:block th:each="subCategory : ${category.subCategories}">
+                                <li>
+                                    <a class="dropdown-item" th:href="@{/category/{id}(id=${subCategory.id})}"
+                                       th:text="${subCategory.name}" style="padding-left: 20px;"></a>
+                                </li>
+                            </th:block>
+                        </th:block>
                     </ul>
                 </div>
+
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                         data-bs-target="#navbarMenu" aria-controls="navbarMenu" aria-expanded="false"
                         aria-label="Toggle navigation">

@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Footer</title>
+
+    <th:block th:replace="~{includes/frame :: head}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/index_style.css}">
 </head>
 <body th:fragment="footer">
 <div class="bg-dark text-light py-4">
@@ -43,5 +46,7 @@
         </div>
     </div>
 </div>
+
+<th:block th:replace="~{includes/frame :: scripts}"></th:block>
 </body>
 </html>

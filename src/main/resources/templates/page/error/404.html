@@ -3,8 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+
+    <th:block th:replace="~{includes/frame :: head}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/index_style.css}">
 </head>
 <body>
-
+<div>
+    <p>Lỗi 404</p>
+</div>
+<th:block th:replace="~{includes/frame :: scripts}"></th:block>
 </body>
 </html>

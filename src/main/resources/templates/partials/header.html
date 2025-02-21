@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Header</title>
+
+    <th:block th:replace="~{includes/frame :: head}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/index_style.css}">
 </head>
 <body>
 <div th:fragment="header">
@@ -205,5 +208,7 @@
         </nav>
     </div>
 </div>
+
+<th:block th:replace="~{includes/frame :: scripts}"></th:block>
 </body>
 </html>

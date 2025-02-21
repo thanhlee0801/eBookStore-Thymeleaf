@@ -7,13 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
-public class CategoryService {
+public interface CategoryService {
 
-    @Autowired
-    private CategoryRepository categoryRepository;
-
-    public List<Category> getAllCategories() {
-        return categoryRepository.findAll();
-    }
+    public List<Category> getAllCategories();
 }

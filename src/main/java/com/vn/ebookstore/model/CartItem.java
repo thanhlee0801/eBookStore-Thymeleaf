@@ -16,6 +16,14 @@ public class CartItem {
     private Date createdAt;
     private Date updatedAt;
 
+    @ManyToOne
+    @JoinColumn(name = "cart_id", insertable = false, updatable = false)
+    private Cart cart;
+
+    @ManyToOne
+    @JoinColumn(name = "book_id", insertable = false, updatable = false)
+    private Book book;
+
     // Getters and Setters
 
     public int getId() {
@@ -64,5 +72,21 @@ public class CartItem {
 
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Cart getCart() {
+        return cart;
+    }
+
+    public void setCart(Cart cart) {
+        this.cart = cart;
+    }
+
+    public Book getBook() {
+        return book;
+    }
+
+    public void setBook(Book book) {
+        this.book = book;
     }
 }

@@ -9,7 +9,6 @@ public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private int userId;
     private String title;
     private String addressLine1;
     private String addressLine2;
@@ -22,6 +21,10 @@ public class Address {
     private Date createdAt;
     private Date deletedAt;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     // Getters and Setters
 
     public int getId() {
@@ -30,14 +33,6 @@ public class Address {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
     }
 
     public String getTitle() {
@@ -118,5 +113,13 @@ public class Address {
 
     public void setDeletedAt(Date deletedAt) {
         this.deletedAt = deletedAt;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

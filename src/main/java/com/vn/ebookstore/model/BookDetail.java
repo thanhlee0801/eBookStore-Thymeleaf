@@ -2,6 +2,7 @@ package com.vn.ebookstore.model;
 
 import jakarta.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "book_detail")
@@ -20,6 +21,13 @@ public class BookDetail {
     @Column(updatable = false)
     private Date createdAt;
     private Date deletedAt;
+
+    @ManyToOne
+    @JoinColumn(name = "book_id", insertable = false, updatable = false)
+    private Book book;
+
+    @OneToMany(mappedBy = "bookDetail")
+    private List<BookDetailImage> bookDetailImages;
 
     // Getters and Setters
 
@@ -101,5 +109,21 @@ public class BookDetail {
 
     public void setDeletedAt(Date deletedAt) {
         this.deletedAt = deletedAt;
+    }
+
+    public Book getBook() {
+        return book;
+    }
+
+    public void setBook(Book book) {
+        this.book = book;
+    }
+
+    public List<BookDetailImage> getBookDetailImages() {
+        return bookDetailImages;
+    }
+
+    public void setBookDetailImages(List<BookDetailImage> bookDetailImages) {
+        this.bookDetailImages = bookDetailImages;
     }
 }

@@ -16,6 +16,10 @@ public class BookDetailImage {
     private Date createdAt;
     private Date deletedAt;
 
+    @ManyToOne
+    @JoinColumn(name = "book_detail_id", insertable = false, updatable = false)
+    private BookDetail bookDetail;
+
     // Getters and Setters
 
     public int getId() {
@@ -64,5 +68,13 @@ public class BookDetailImage {
 
     public void setDeletedAt(Date deletedAt) {
         this.deletedAt = deletedAt;
+    }
+
+    public BookDetail getBookDetail() {
+        return bookDetail;
+    }
+
+    public void setBookDetail(BookDetail bookDetail) {
+        this.bookDetail = bookDetail;
     }
 }

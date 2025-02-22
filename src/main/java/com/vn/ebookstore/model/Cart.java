@@ -2,6 +2,7 @@ package com.vn.ebookstore.model;
 
 import jakarta.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "cart")
@@ -14,6 +15,13 @@ public class Cart {
     @Column(updatable = false)
     private Date createdAt;
     private Date updatedAt;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    private User user;
+
+    @OneToMany(mappedBy = "cart")
+    private List<CartItem> cartItems;
 
     // Getters and Setters
 
@@ -55,5 +63,21 @@ public class Cart {
 
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public List<CartItem> getCartItems() {
+        return cartItems;
+    }
+
+    public void setCartItems(List<CartItem> cartItems) {
+        this.cartItems = cartItems;
     }
 }

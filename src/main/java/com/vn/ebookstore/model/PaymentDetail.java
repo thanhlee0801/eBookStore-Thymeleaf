@@ -17,6 +17,9 @@ public class PaymentDetail {
     private Date createdAt;
     private Date updatedAt;
 
+    @OneToOne(mappedBy = "paymentDetail")
+    private OrderDetail orderDetail;
+
     // Getters and Setters
 
     public int getId() {
@@ -73,5 +76,13 @@ public class PaymentDetail {
 
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public OrderDetail getOrderDetail() {
+        return orderDetail;
+    }
+
+    public void setOrderDetail(OrderDetail orderDetail) {
+        this.orderDetail = orderDetail;
     }
 }

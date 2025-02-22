@@ -1,8 +1,8 @@
 package com.vn.ebookstore.model;
 
 import jakarta.persistence.*;
-
-import java.util.Set;
+import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "categories")
@@ -12,11 +12,15 @@ public class Category {
     private int id;
     private String name;
     private String description;
+    @Column(updatable = false)
+    private Date createdAt;
+    private Date deletedAt;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
-    private Set<SubCategory> subCategories;
+    @OneToMany(mappedBy = "category")
+    private List<SubCategory> subCategories;
 
     // Getters and Setters
+
     public int getId() {
         return id;
     }
@@ -41,11 +45,27 @@ public class Category {
         this.description = description;
     }
 
-    public Set<SubCategory> getSubCategories() {
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getDeletedAt() {
+        return deletedAt;
+    }
+
+    public void setDeletedAt(Date deletedAt) {
+        this.deletedAt = deletedAt;
+    }
+
+    public List<SubCategory> getSubCategories() {
         return subCategories;
     }
 
-    public void setSubCategories(Set<SubCategory> subCategories) {
+    public void setSubCategories(List<SubCategory> subCategories) {
         this.subCategories = subCategories;
     }
 }

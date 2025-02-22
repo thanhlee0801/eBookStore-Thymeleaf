@@ -2,6 +2,7 @@ package com.vn.ebookstore.model;
 
 import jakarta.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -12,9 +13,7 @@ public class User {
     private String avatar;
     private String firstName;
     private String lastName;
-    @Column(nullable = false, unique = true)
     private String username;
-    @Column(nullable = false, unique = true)
     private String email;
     private String password;
     private Date birthOfDate;
@@ -22,6 +21,26 @@ public class User {
     @Column(updatable = false)
     private Date createdAt;
     private Date deletedAt;
+
+    @OneToMany(mappedBy = "user")
+    private List<Address> addresses;
+
+    @OneToMany(mappedBy = "user")
+    private List<Cart> carts;
+
+    @OneToMany(mappedBy = "user")
+    private List<OrderDetail> orderDetails;
+
+    @OneToMany(mappedBy = "user")
+    private List<Wishlist> wishlists;
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private List<Role> roles;
 
     // Getters and Setters
 
@@ -111,5 +130,45 @@ public class User {
 
     public void setDeletedAt(Date deletedAt) {
         this.deletedAt = deletedAt;
+    }
+
+    public List<Address> getAddresses() {
+        return addresses;
+    }
+
+    public void setAddresses(List<Address> addresses) {
+        this.addresses = addresses;
+    }
+
+    public List<Cart> getCarts() {
+        return carts;
+    }
+
+    public void setCarts(List<Cart> carts) {
+        this.carts = carts;
+    }
+
+    public List<OrderDetail> getOrderDetails() {
+        return orderDetails;
+    }
+
+    public void setOrderDetails(List<OrderDetail> orderDetails) {
+        this.orderDetails = orderDetails;
+    }
+
+    public List<Wishlist> getWishlists() {
+        return wishlists;
+    }
+
+    public void setWishlists(List<Wishlist> wishlists) {
+        this.wishlists = wishlists;
+    }
+
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
     }
 }

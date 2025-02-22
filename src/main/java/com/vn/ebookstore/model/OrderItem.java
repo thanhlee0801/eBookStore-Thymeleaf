@@ -16,6 +16,14 @@ public class OrderItem {
     private Date createdAt;
     private Date updatedAt;
 
+    @ManyToOne
+    @JoinColumn(name = "order_id", insertable = false, updatable = false)
+    private OrderDetail orderDetail;
+
+    @ManyToOne
+    @JoinColumn(name = "book_id", insertable = false, updatable = false)
+    private Book book;
+
     // Getters and Setters
 
     public int getId() {
@@ -64,5 +72,21 @@ public class OrderItem {
 
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public OrderDetail getOrderDetail() {
+        return orderDetail;
+    }
+
+    public void setOrderDetail(OrderDetail orderDetail) {
+        this.orderDetail = orderDetail;
+    }
+
+    public Book getBook() {
+        return book;
+    }
+
+    public void setBook(Book book) {
+        this.book = book;
     }
 }

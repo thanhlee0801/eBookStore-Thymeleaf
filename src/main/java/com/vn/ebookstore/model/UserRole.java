@@ -4,28 +4,45 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "user_roles")
-@IdClass(UserRoleId.class)
 public class UserRole {
-    @Id
-    private int userId;
+    @EmbeddedId
+    private UserRoleId id;
 
-    @Id
-    private int roleId;
+    @ManyToOne
+    @MapsId("userId")
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @ManyToOne
+    @MapsId("roleId")
+    @JoinColumn(name = "role_id")
+    private Role role;
+
+    // Default constructor
+    public UserRole() {}
 
     // Getters and Setters
-    public int getUserId() {
-        return userId;
+    public UserRoleId getId() {
+        return id;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setId(UserRoleId id) {
+        this.id = id;
     }
 
-    public int getRoleId() {
-        return roleId;
+    public User getUser() {
+        return user;
     }
 
-    public void setRoleId(int roleId) {
-        this.roleId = roleId;
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 }

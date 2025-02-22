@@ -2,6 +2,7 @@ package com.vn.ebookstore.model;
 
 import jakarta.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "roles")
@@ -9,11 +10,13 @@ public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Column(nullable = false, unique = true)
     private String name;
     private String description;
     @Column(updatable = false)
     private Date createdAt;
+
+    @ManyToMany(mappedBy = "roles")
+    private List<User> users;
 
     // Getters and Setters
 
@@ -47,5 +50,13 @@ public class Role {
 
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public List<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<User> users) {
+        this.users = users;
     }
 }

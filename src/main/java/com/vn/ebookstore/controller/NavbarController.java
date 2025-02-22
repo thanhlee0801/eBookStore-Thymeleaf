@@ -1,7 +1,10 @@
 package com.vn.ebookstore.controller;
 
+import com.vn.ebookstore.model.Book;
 import com.vn.ebookstore.model.Category;
 import com.vn.ebookstore.service.CategoryService;
+import com.vn.ebookstore.service.BookService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,11 +17,15 @@ public class NavbarController {
 
     @Autowired
     private CategoryService categoryService;
+    @Autowired
+    private BookService bookService;
 
     @GetMapping("/")
     public String home(Model model) {
         List<Category> categories = categoryService.getAllCategories();
+        List<Book> books = bookService.getAllBooks();
         model.addAttribute("categories", categories);
+        model.addAttribute("books", books);
         return "index"; // Tương ứng với src/main/resources/templates/index.html
     }
 

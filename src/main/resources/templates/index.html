@@ -275,14 +275,22 @@
         <div class="row row-cols-1 row-cols-md-4 g-4">
             <div class="col" th:each="book : ${books}">
                 <div class="card">
-                    <a th:href="@{/book/{id}(id=${book.id})}"><img th:src="" class="card-img-top" alt="Ném bừa cái ảnh"></a>
+                    <a th:href="@{/book/{id}(id=${book.id})}">
+                        <img th:src="@{${book.cover}}" class="card-img-top" th:alt="${book.title}">
+                    </a>
                     <div class="card-body">
-                        <h5 class="card-title"><a th:href="@{/book/{id}(id=${book.id})}" th:text="${book.name}">Tiếng anh cơ bản cho con nít</a></h5>
-                        <p class="card-text badge rounded-pill text-bg-light"><a th:href="@{/category/{id}(id=${book.category.id})}" th:text="${book.category.name}">Sách Tiếng Anh</a></p>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="h5 mb-0" th:text="${book.price} + ' VNĐ'">200.000 VNĐ</span>
-                            <button class="btn btn-outline-primary"><i class="fa-solid fa-cart-plus"></i></button>
-                        </div>
+                        <h5 class="card-title">
+                            <a th:href="@{/book/{id}(id=${book.id})}" th:text="${book.title}">Book Title</a>
+                        </h5>
+<!--                        <p class="card-text badge rounded-pill text-bg-light">-->
+<!--                            <a th:href="@{/category/{id}(id=${book.subCategory.category.id})}" th:text="${book.subCategory.category.name}">Category</a>-->
+<!--                        </p>-->
+<!--                        <div class="d-flex justify-content-between align-items-center">-->
+<!--                            <span class="h5 mb-0" th:text="${book.price} + ' VNĐ'">Price</span>-->
+<!--                            <button class="btn btn-outline-primary">-->
+<!--                                <i class="fa-solid fa-cart-plus"></i>-->
+<!--                            </button>-->
+<!--                        </div>-->
                     </div>
                 </div>
             </div>

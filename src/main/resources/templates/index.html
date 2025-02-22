@@ -273,14 +273,14 @@
 <div>
     <div class="container">
         <div class="row row-cols-1 row-cols-md-4 g-4">
-            <div class="col" th:each="product : ${products}">
+            <div class="col" th:each="book : ${books}">
                 <div class="card">
-                    <a th:href="@{/product/{id}(id=${product.id})}"><img th:src="@{/static/image/demo.jpg}" class="card-img-top" alt="Ném bừa cái ảnh"></a>
+                    <a th:href="@{/book/{id}(id=${book.id})}"><img th:src="" class="card-img-top" alt="Ném bừa cái ảnh"></a>
                     <div class="card-body">
-                        <h5 class="card-title"><a th:href="@{/product/{id}(id=${product.id})}" th:text="${product.name}">Tiếng anh cơ bản cho con nít</a></h5>
-                        <p class="card-text badge rounded-pill text-bg-light"><a th:href="@{/category/{id}(id=${product.category.id})}" th:text="${product.category.name}">Sách Tiếng Anh</a></p>
+                        <h5 class="card-title"><a th:href="@{/book/{id}(id=${book.id})}" th:text="${book.name}">Tiếng anh cơ bản cho con nít</a></h5>
+                        <p class="card-text badge rounded-pill text-bg-light"><a th:href="@{/category/{id}(id=${book.category.id})}" th:text="${book.category.name}">Sách Tiếng Anh</a></p>
                         <div class="d-flex justify-content-between align-items-center">
-                            <span class="h5 mb-0" th:text="${product.price} + ' VNĐ'">200.000 VNĐ</span>
+                            <span class="h5 mb-0" th:text="${book.price} + ' VNĐ'">200.000 VNĐ</span>
                             <button class="btn btn-outline-primary"><i class="fa-solid fa-cart-plus"></i></button>
                         </div>
                     </div>

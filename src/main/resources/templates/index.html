@@ -289,12 +289,12 @@
         <div class="container">
             <div class="row row-cols-1 row-cols-md-4 g-4">
                 <div class="col" th:each="book : ${books}">
-<!--                    <div class="card">-->
-<!--                        <a th:href="@{/book/{id}(id=${book.id})}">-->
+                    <div class="card border-light mb-3">
+                        <a th:href="@{/book/{id}(id=${book.id})}">
 <!--                            <img th:src="@{${#lists.first(book.bookDetail.bookDetailImages).imageUrl}}"-->
 <!--                                class="card-img-top" th:alt="${book.title}">-->
-<!--                        </a>-->
-                    <img class="card-img-top" th:src="@{/image/logo.png}" th:alt="${book.title}">
+<!--                            <img class="card-img-top" th:src="@{/image/logo.png}" th:alt="${book.title}">-->
+                        </a>
                         <div class="card-body">
                             <h5 class="card-title">
                                 <a th:href="@{/book/{id}(id=${book.id})}" th:text="${book.title}">Book Title</a>
@@ -336,7 +336,7 @@
                             <li><a th:href="@{/}" class="text-light text-decoration-none">Trang Chủ</a></li>
                             <li><a th:href="@{/about_us}" class="text-light text-decoration-none">Giới Thiệu</a></li>
                             <li><a th:href="@{/products}" class="text-light text-decoration-none">Sản Phẩm</a></li>
-                            <li><a th:href="@{/contact}" class="text-light text-decoration-none">Liên Hệ</a></li>
+<!--                            <li><a th:href="@{/contact}" class="text-light text-decoration-none">Liên Hệ</a></li>-->
                         </ul>
                     </div>
                     <!-- Theo dõi chúng tôi -->

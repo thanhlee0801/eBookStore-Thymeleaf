@@ -294,6 +294,7 @@
 <!--                            <img th:src="@{${#lists.first(book.bookDetail.bookDetailImages).imageUrl}}"-->
 <!--                                class="card-img-top" th:alt="${book.title}">-->
 <!--                        </a>-->
+                    <img class="card-img-top" th:src="@{/image/logo.png}" th:alt="${book.title}">
                         <div class="card-body">
                             <h5 class="card-title">
                                 <a th:href="@{/book/{id}(id=${book.id})}" th:text="${book.title}">Book Title</a>

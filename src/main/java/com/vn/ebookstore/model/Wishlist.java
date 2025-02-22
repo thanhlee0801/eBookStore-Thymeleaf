@@ -9,11 +9,9 @@ public class Wishlist {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private int userId;
-    private int bookId;
     @Column(updatable = false)
     private Date createdAt;
-    private Date deletedAt;
+    private Date updatedAt;
 
     @ManyToOne
     @JoinColumn(name = "user_id", insertable = false, updatable = false)
@@ -24,29 +22,12 @@ public class Wishlist {
     private Book book;
 
     // Getters and Setters
-
     public int getId() {
         return id;
     }
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-
-    public int getBookId() {
-        return bookId;
-    }
-
-    public void setBookId(int bookId) {
-        this.bookId = bookId;
     }
 
     public Date getCreatedAt() {
@@ -57,12 +38,12 @@ public class Wishlist {
         this.createdAt = createdAt;
     }
 
-    public Date getDeletedAt() {
-        return deletedAt;
+    public Date getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setDeletedAt(Date deletedAt) {
-        this.deletedAt = deletedAt;
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public User getUser() {

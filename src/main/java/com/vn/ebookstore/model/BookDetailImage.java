@@ -9,7 +9,6 @@ public class BookDetailImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private int bookDetailId;
     private String imageUrl;
     private String altText;
     @Column(updatable = false)
@@ -27,14 +26,6 @@ public class BookDetailImage {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public int getBookDetailId() {
-        return bookDetailId;
-    }
-
-    public void setBookDetailId(int bookDetailId) {
-        this.bookDetailId = bookDetailId;
     }
 
     public String getImageUrl() {

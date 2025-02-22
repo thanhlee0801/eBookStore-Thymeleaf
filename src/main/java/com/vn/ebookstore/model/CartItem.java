@@ -9,8 +9,6 @@ public class CartItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private int cartId;
-    private int bookId;
     private int quantity;
     @Column(updatable = false)
     private Date createdAt;
@@ -25,29 +23,12 @@ public class CartItem {
     private Book book;
 
     // Getters and Setters
-
     public int getId() {
         return id;
     }
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public int getCartId() {
-        return cartId;
-    }
-
-    public void setCartId(int cartId) {
-        this.cartId = cartId;
-    }
-
-    public int getBookId() {
-        return bookId;
-    }
-
-    public void setBookId(int bookId) {
-        this.bookId = bookId;
     }
 
     public int getQuantity() {

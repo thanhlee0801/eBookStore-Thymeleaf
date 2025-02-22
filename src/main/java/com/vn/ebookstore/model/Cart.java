@@ -10,7 +10,6 @@ public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private int userId;
     private double total;
     @Column(updatable = false)
     private Date createdAt;
@@ -24,21 +23,12 @@ public class Cart {
     private List<CartItem> cartItems;
 
     // Getters and Setters
-
     public int getId() {
         return id;
     }
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
     }
 
     public double getTotal() {

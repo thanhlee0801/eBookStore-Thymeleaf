@@ -9,7 +9,6 @@ public class PaymentDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private int orderId;
     private double amount;
     private String provider;
     private String status;
@@ -21,21 +20,12 @@ public class PaymentDetail {
     private OrderDetail orderDetail;
 
     // Getters and Setters
-
     public int getId() {
         return id;
     }
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public int getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(int orderId) {
-        this.orderId = orderId;
     }
 
     public double getAmount() {

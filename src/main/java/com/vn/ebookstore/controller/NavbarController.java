@@ -51,6 +51,8 @@ public class NavbarController {
 
     @GetMapping("/product")
     public String product(Model model) {
+        List<Book> books = bookService.getAllBooks();
+        model.addAttribute("books", books);
         return "page/user/product"; // Tương ứng với src/main/resources/templates/page/user/product.html
     }
 

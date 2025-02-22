@@ -21,7 +21,6 @@ public class BookDetailImage {
     private BookDetail bookDetail;
 
     // Getters and Setters
-
     public int getId() {
         return id;
     }

@@ -12,6 +12,8 @@ public class Book {
     private String title;
     private String author;
     private String cover;
+    private String price;
+    @Column(name = "sub_category_id")
     private int subCategoryId;
     @Column(updatable = false)
     private Date createdAt;
@@ -21,6 +23,10 @@ public class Book {
     @JoinColumn(name = "sub_category_id", insertable = false, updatable = false)
     private SubCategory subCategory;
 
+    @OneToOne(mappedBy = "book", cascade = CascadeType.ALL)
+    private BookDetail bookDetail;
+
+    // Getters and Setters
     public int getId() {
         return id;
     }
@@ -61,6 +67,14 @@ public class Book {
         this.subCategoryId = subCategoryId;
     }
 
+    public String getPrice() {
+        return price;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
+    }
+
     public Date getCreatedAt() {
         return createdAt;
     }
@@ -83,5 +97,13 @@ public class Book {
 
     public void setSubCategory(SubCategory subCategory) {
         this.subCategory = subCategory;
+    }
+
+    public BookDetail getBookDetail() {
+        return bookDetail;
+    }
+
+    public void setBookDetail(BookDetail bookDetail) {
+        this.bookDetail = bookDetail;
     }
 }

@@ -10,7 +10,6 @@ public class BookDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private int bookId;
     private String description;
     private String summary;
     @Column(unique = true)
@@ -22,29 +21,20 @@ public class BookDetail {
     private Date createdAt;
     private Date deletedAt;
 
-    @ManyToOne
-    @JoinColumn(name = "book_id", insertable = false, updatable = false)
+    @OneToOne
+    @JoinColumn(name = "book_id")
     private Book book;
 
     @OneToMany(mappedBy = "bookDetail")
     private List<BookDetailImage> bookDetailImages;
 
     // Getters and Setters
-
     public int getId() {
         return id;
     }
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public int getBookId() {
-        return bookId;
-    }
-
-    public void setBookId(int bookId) {
-        this.bookId = bookId;
     }
 
     public String getDescription() {

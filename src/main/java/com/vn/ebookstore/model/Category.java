@@ -20,7 +20,6 @@ public class Category {
     private List<SubCategory> subCategories;
 
     // Getters and Setters
-
     public int getId() {
         return id;
     }

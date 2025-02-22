@@ -24,7 +24,6 @@ public class SubCategory {
     private List<Book> books;
 
     // Getters and Setters
-
     public int getId() {
         return id;
     }

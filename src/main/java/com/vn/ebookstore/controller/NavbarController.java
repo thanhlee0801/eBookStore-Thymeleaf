@@ -49,9 +49,11 @@ public class NavbarController {
         return "page/user/order_tracking"; // Tương ứng với src/main/resources/templates/page/user/order_tracking.html
     }
 
-    @GetMapping("/product")
+    @GetMapping("/products")
     public String product(Model model) {
+        List<Category> categories = categoryService.getAllCategories();
         List<Book> books = bookService.getAllBooks();
+        model.addAttribute("categories", categories);
         model.addAttribute("books", books);
         return "page/user/product"; // Tương ứng với src/main/resources/templates/page/user/product.html
     }

@@ -26,7 +26,7 @@ public class NavbarController {
         List<Book> books = bookService.getAllBooks();
         model.addAttribute("categories", categories);
         model.addAttribute("books", books);
-        return "index"; // Tương ứng với src/main/resources/templates/index.html
+        return "index"; // src/main/resources/templates/index.html
     }
 
     @GetMapping("/about_us")
@@ -55,7 +55,7 @@ public class NavbarController {
         List<Book> books = bookService.getAllBooks();
         model.addAttribute("categories", categories);
         model.addAttribute("books", books);
-        return "page/user/product"; // Tương ứng với src/main/resources/templates/page/user/product.html
+        return "page/user/product"; // src/main/resources/templates/page/user/product.html
     }
 
     @GetMapping("/product_detail")

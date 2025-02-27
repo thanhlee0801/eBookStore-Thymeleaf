@@ -240,10 +240,9 @@
                     <div class="product-card shadow-sm">
                         <div class="position-relative">
                             <!-- Hình ảnh sản phẩm -->
-<!--                            <a th:href="@{/book/{id}(id=${book.id})}">-->
-<!--                                <img th:src="@{${#lists.first(book.bookDetail.bookDetailImages).imageUrl}}" class="product-image w-100" th:alt="${book.title}">-->
-<!--                            </a>-->
-                            <img class="card-img-top" th:src="@{/image/logo.png}" alt="Card image cap">
+                            <a th:href="@{/book/{id}(id=${book.id})}">
+                                <img th:src="${book.cover}" class="product-image w-100" th:alt="${book.title}">
+                            </a>
                             <!-- Badge giảm giá -->
                             <span class="discount-badge">-10%</span>
                             <!-- Nút yêu thích -->

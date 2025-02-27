@@ -257,7 +257,7 @@
             <div class="col">
                 <div class="card border-light mb-3">
                     <a th:href="@{/book/{id}(id=${book.id})}">
-                        <img th:src="@{/image/book_cover.jpg}" class="card-img-top" th:alt="${book.title}">
+                        <img th:src="${book.cover}" class="card-img-top" th:alt="${book.title}">
                     </a>
                     <div class="card-body">
                         <h5 class="card-title">

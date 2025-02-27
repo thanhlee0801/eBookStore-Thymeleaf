@@ -45,7 +45,7 @@
                     </button>
                 </div>
             </form>
-            <!-- Nút tài khoản và giỏ hàng -->
+            <!-- Nút wishlist, tài khoản và giỏ hàng -->
             <div class="d-flex align-items-center">
                 <!-- Sản phẩm yêu thích -->
                 <div class="dropdown">
@@ -110,21 +110,29 @@
                     </div>
                 </div>
                 <!-- Tài khoản người dùng -->
+<!--                <div class="dropdown">-->
+<!--                    <a href="#" class="btn position-relative dropdown-toggle" id="userDropdown" role="button"-->
+<!--                       data-bs-toggle="dropdown" aria-expanded="false">-->
+<!--                        <img th:src="@{/image/}" alt="Avatar" width="30" height="30" class="rounded-circle">-->
+<!--                        <span th:text="'Xin chào ' + "></span>-->
+<!--                    </a>-->
+<!--                    <ul class="dropdown-menu dropdown-menu-end">-->
+<!--                        <li><a class="dropdown-item" th:href="@{/logout}">Logout</a></li>-->
+<!--                    </ul>-->
+<!--                </div>-->
                 <div class="dropdown">
                     <a href="#" class="btn position-relative dropdown-toggle" id="userDropdown" role="button"
                        data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fa-regular fa-user"></i>
                     </a>
-                    <form class="dropdown-menu dropdown-menu-end p-3" style="width: 300px;">
+                    <form class="dropdown-menu dropdown-menu-end p-3" style="width: 300px;" action="/login" method="post">
                         <div class="mb-3">
                             <label for="exampleDropdownFormEmail2" class="form-label">Email address</label>
-                            <input type="email" class="form-control" id="exampleDropdownFormEmail2"
-                                   placeholder="email@example.com">
+                            <input type="email" class="form-control" id="exampleDropdownFormEmail2" name="email" placeholder="email@example.com">
                         </div>
                         <div class="mb-3">
                             <label for="exampleDropdownFormPassword2" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="exampleDropdownFormPassword2"
-                                   placeholder="Password">
+                            <input type="password" class="form-control" id="exampleDropdownFormPassword2" name="password" placeholder="Password">
                         </div>
                         <div class="mb-3">
                             <div class="form-check">
@@ -133,8 +141,8 @@
                             </div>
                         </div>
                         <div class="text-center">
-                            <button type="submit" class="btn">Sign in</button>
-                            <button type="submit" class="btn">Chưa có tài khoản? Đăng ký</button>
+                            <button type="submit" class="btn">Log in</button>
+                            <button type="button" class="btn">Chưa có tài khoản? Đăng ký</button>
                         </div>
                     </form>
                 </div>

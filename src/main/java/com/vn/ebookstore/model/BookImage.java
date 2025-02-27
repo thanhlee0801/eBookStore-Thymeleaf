@@ -4,8 +4,8 @@ import jakarta.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "book_detail_images")
-public class BookDetailImage {
+@Table(name = "book_images")
+public class BookImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -16,10 +16,9 @@ public class BookDetailImage {
     private Date deletedAt;
 
     @ManyToOne
-    @JoinColumn(name = "book_detail_id", insertable = false, updatable = false)
-    private BookDetail bookDetail;
+    @JoinColumn(name = "book_id")
+    private Book book;
 
-    // Getters and Setters
     public int getId() {
         return id;
     }
@@ -60,11 +59,11 @@ public class BookDetailImage {
         this.deletedAt = deletedAt;
     }
 
-    public BookDetail getBookDetail() {
-        return bookDetail;
+    public Book getBook() {
+        return book;
     }
 
-    public void setBookDetail(BookDetail bookDetail) {
-        this.bookDetail = bookDetail;
+    public void setBook(Book book) {
+        this.book = book;
     }
 }

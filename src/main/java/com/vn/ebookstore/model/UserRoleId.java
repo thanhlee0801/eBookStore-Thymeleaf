@@ -1,23 +1,21 @@
 package com.vn.ebookstore.model;
 
+import jakarta.persistence.Embeddable;
 import java.io.Serializable;
 import java.util.Objects;
 
+@Embeddable
 public class UserRoleId implements Serializable {
     private int userId;
     private int roleId;
 
-    // Default constructor
-    public UserRoleId() {
-    }
+    public UserRoleId() {}
 
-    // Parameterized constructor
     public UserRoleId(int userId, int roleId) {
         this.userId = userId;
         this.roleId = roleId;
     }
 
-    // Getters, Setters, hashCode, and equals methods
     public int getUserId() {
         return userId;
     }

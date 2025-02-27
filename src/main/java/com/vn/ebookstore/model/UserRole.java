@@ -18,10 +18,14 @@ public class UserRole {
     @JoinColumn(name = "role_id")
     private Role role;
 
-    // Default constructor
     public UserRole() {}
 
-    // Getters and Setters
+    public UserRole(User user, Role role) {
+        this.user = user;
+        this.role = role;
+        this.id = new UserRoleId(user.getId(), role.getId());
+    }
+
     public UserRoleId getId() {
         return id;
     }

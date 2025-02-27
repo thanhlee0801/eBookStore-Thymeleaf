@@ -2,7 +2,6 @@ package com.vn.ebookstore.model;
 
 import jakarta.persistence.*;
 import java.util.Date;
-import java.util.List;
 
 @Entity
 @Table(name = "book_detail")
@@ -12,11 +11,11 @@ public class BookDetail {
     private int id;
     private String description;
     private String summary;
-    @Column(unique = true)
     private String isbn;
     private String publisher;
     private Date publicationDate;
     private int pages;
+    private String fileUrl;
     @Column(updatable = false)
     private Date createdAt;
     private Date deletedAt;
@@ -25,10 +24,6 @@ public class BookDetail {
     @JoinColumn(name = "book_id")
     private Book book;
 
-    @OneToMany(mappedBy = "bookDetail")
-    private List<BookDetailImage> bookDetailImages;
-
-    // Getters and Setters
     public int getId() {
         return id;
     }
@@ -85,6 +80,14 @@ public class BookDetail {
         this.pages = pages;
     }
 
+    public String getFileUrl() {
+        return fileUrl;
+    }
+
+    public void setFileUrl(String fileUrl) {
+        this.fileUrl = fileUrl;
+    }
+
     public Date getCreatedAt() {
         return createdAt;
     }
@@ -107,13 +110,5 @@ public class BookDetail {
 
     public void setBook(Book book) {
         this.book = book;
-    }
-
-    public List<BookDetailImage> getBookDetailImages() {
-        return bookDetailImages;
-    }
-
-    public void setBookDetailImages(List<BookDetailImage> bookDetailImages) {
-        this.bookDetailImages = bookDetailImages;
     }
 }

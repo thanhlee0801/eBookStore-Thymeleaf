@@ -10,19 +10,18 @@ public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private double total;
+    private long total;
     @Column(updatable = false)
     private Date createdAt;
     private Date updatedAt;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
     @OneToMany(mappedBy = "cart")
     private List<CartItem> cartItems;
 
-    // Getters and Setters
     public int getId() {
         return id;
     }
@@ -31,11 +30,11 @@ public class Cart {
         this.id = id;
     }
 
-    public double getTotal() {
+    public long getTotal() {
         return total;
     }
 
-    public void setTotal(double total) {
+    public void setTotal(long total) {
         this.total = total;
     }
 

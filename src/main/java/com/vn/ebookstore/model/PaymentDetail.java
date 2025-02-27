@@ -9,17 +9,17 @@ public class PaymentDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private double amount;
+    private long amount;
     private String provider;
     private String status;
     @Column(updatable = false)
     private Date createdAt;
     private Date updatedAt;
 
-    @OneToOne(mappedBy = "paymentDetail")
-    private OrderDetail orderDetail;
+    @OneToOne
+    @JoinColumn(name = "order_id")
+    private OrderDetail order;
 
-    // Getters and Setters
     public int getId() {
         return id;
     }
@@ -28,11 +28,11 @@ public class PaymentDetail {
         this.id = id;
     }
 
-    public double getAmount() {
+    public long getAmount() {
         return amount;
     }
 
-    public void setAmount(double amount) {
+    public void setAmount(long amount) {
         this.amount = amount;
     }
 
@@ -68,11 +68,11 @@ public class PaymentDetail {
         this.updatedAt = updatedAt;
     }
 
-    public OrderDetail getOrderDetail() {
-        return orderDetail;
+    public OrderDetail getOrder() {
+        return order;
     }
 
-    public void setOrderDetail(OrderDetail orderDetail) {
-        this.orderDetail = orderDetail;
+    public void setOrder(OrderDetail order) {
+        this.order = order;
     }
 }

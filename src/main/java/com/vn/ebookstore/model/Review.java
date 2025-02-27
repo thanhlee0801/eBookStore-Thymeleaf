@@ -4,14 +4,16 @@ import jakarta.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "wishlist")
-public class Wishlist {
+@Table(name = "reviews")
+public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    private int rating;
+    private String comment;
     @Column(updatable = false)
     private Date createdAt;
-    private Date deletedAt;
+    private Date updatedAt;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -29,6 +31,22 @@ public class Wishlist {
         this.id = id;
     }
 
+    public int getRating() {
+        return rating;
+    }
+
+    public void setRating(int rating) {
+        this.rating = rating;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
     public Date getCreatedAt() {
         return createdAt;
     }
@@ -37,12 +55,12 @@ public class Wishlist {
         this.createdAt = createdAt;
     }
 
-    public Date getDeletedAt() {
-        return deletedAt;
+    public Date getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setDeletedAt(Date deletedAt) {
-        this.deletedAt = deletedAt;
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public User getUser() {

@@ -10,23 +10,22 @@ public class OrderDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private double total;
+    private long total;
+    private String status;
     @Column(updatable = false)
     private Date createdAt;
     private Date updatedAt;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "orderDetail")
+    @OneToMany(mappedBy = "order")
     private List<OrderItem> orderItems;
 
-    @OneToOne
-    @JoinColumn(name = "payment_id", insertable = false, updatable = false)
+    @OneToOne(mappedBy = "order")
     private PaymentDetail paymentDetail;
 
-    // Getters and Setters
     public int getId() {
         return id;
     }
@@ -35,12 +34,20 @@ public class OrderDetail {
         this.id = id;
     }
 
-    public double getTotal() {
+    public long getTotal() {
         return total;
     }
 
-    public void setTotal(double total) {
+    public void setTotal(long total) {
         this.total = total;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public Date getCreatedAt() {

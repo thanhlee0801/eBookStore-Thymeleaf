@@ -18,12 +18,11 @@ public class SubCategory {
 
     @ManyToOne
     @JoinColumn(name = "parent_id")
-    private Category category;
+    private Category parent;
 
     @OneToMany(mappedBy = "subCategory")
     private List<Book> books;
 
-    // Getters and Setters
     public int getId() {
         return id;
     }
@@ -64,12 +63,12 @@ public class SubCategory {
         this.deletedAt = deletedAt;
     }
 
-    public Category getCategory() {
-        return category;
+    public Category getParent() {
+        return parent;
     }
 
-    public void setCategory(Category category) {
-        this.category = category;
+    public void setParent(Category parent) {
+        this.parent = parent;
     }
 
     public List<Book> getBooks() {

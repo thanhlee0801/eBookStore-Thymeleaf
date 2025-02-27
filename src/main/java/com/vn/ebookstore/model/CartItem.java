@@ -10,19 +10,19 @@ public class CartItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private int quantity;
+    private long price;
     @Column(updatable = false)
     private Date createdAt;
     private Date updatedAt;
 
     @ManyToOne
-    @JoinColumn(name = "cart_id", insertable = false, updatable = false)
+    @JoinColumn(name = "cart_id")
     private Cart cart;
 
     @ManyToOne
-    @JoinColumn(name = "book_id", insertable = false, updatable = false)
+    @JoinColumn(name = "book_id")
     private Book book;
 
-    // Getters and Setters
     public int getId() {
         return id;
     }
@@ -37,6 +37,14 @@ public class CartItem {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public long getPrice() {
+        return price;
+    }
+
+    public void setPrice(long price) {
+        this.price = price;
     }
 
     public Date getCreatedAt() {

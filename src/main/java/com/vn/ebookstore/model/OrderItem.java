@@ -10,20 +10,19 @@ public class OrderItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private int quantity;
-    private double price;
+    private long price;
     @Column(updatable = false)
     private Date createdAt;
     private Date updatedAt;
 
     @ManyToOne
-    @JoinColumn(name = "order_detail_id", insertable = false, updatable = false)
-    private OrderDetail orderDetail;
+    @JoinColumn(name = "order_id")
+    private OrderDetail order;
 
     @ManyToOne
-    @JoinColumn(name = "book_id", insertable = false, updatable = false)
+    @JoinColumn(name = "book_id")
     private Book book;
 
-    // Getters and Setters
     public int getId() {
         return id;
     }
@@ -40,11 +39,11 @@ public class OrderItem {
         this.quantity = quantity;
     }
 
-    public double getPrice() {
+    public long getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(long price) {
         this.price = price;
     }
 
@@ -64,12 +63,12 @@ public class OrderItem {
         this.updatedAt = updatedAt;
     }
 
-    public OrderDetail getOrderDetail() {
-        return orderDetail;
+    public OrderDetail getOrder() {
+        return order;
     }
 
-    public void setOrderDetail(OrderDetail orderDetail) {
-        this.orderDetail = orderDetail;
+    public void setOrder(OrderDetail order) {
+        this.order = order;
     }
 
     public Book getBook() {

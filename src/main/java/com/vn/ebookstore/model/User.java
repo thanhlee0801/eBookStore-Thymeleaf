@@ -26,13 +26,16 @@ public class User {
     private List<Address> addresses;
 
     @OneToMany(mappedBy = "user")
+    private List<Wishlist> wishlist;
+
+    @OneToMany(mappedBy = "user")
     private List<Cart> carts;
 
     @OneToMany(mappedBy = "user")
-    private List<OrderDetail> orderDetails;
+    private List<OrderDetail> orders;
 
     @OneToMany(mappedBy = "user")
-    private List<Wishlist> wishlists;
+    private List<Review> reviews;
 
     @ManyToMany
     @JoinTable(
@@ -41,8 +44,6 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private List<Role> roles;
-
-    // Getters and Setters
 
     public int getId() {
         return id;
@@ -140,6 +141,14 @@ public class User {
         this.addresses = addresses;
     }
 
+    public List<Wishlist> getWishlist() {
+        return wishlist;
+    }
+
+    public void setWishlist(List<Wishlist> wishlist) {
+        this.wishlist = wishlist;
+    }
+
     public List<Cart> getCarts() {
         return carts;
     }
@@ -148,20 +157,20 @@ public class User {
         this.carts = carts;
     }
 
-    public List<OrderDetail> getOrderDetails() {
-        return orderDetails;
+    public List<OrderDetail> getOrders() {
+        return orders;
     }
 
-    public void setOrderDetails(List<OrderDetail> orderDetails) {
-        this.orderDetails = orderDetails;
+    public void setOrders(List<OrderDetail> orders) {
+        this.orders = orders;
     }
 
-    public List<Wishlist> getWishlists() {
-        return wishlists;
+    public List<Review> getReviews() {
+        return reviews;
     }
 
-    public void setWishlists(List<Wishlist> wishlists) {
-        this.wishlists = wishlists;
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
     }
 
     public List<Role> getRoles() {

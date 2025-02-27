@@ -16,10 +16,9 @@ public class Category {
     private Date createdAt;
     private Date deletedAt;
 
-    @OneToMany(mappedBy = "category")
+    @OneToMany(mappedBy = "parent")
     private List<SubCategory> subCategories;
 
-    // Getters and Setters
     public int getId() {
         return id;
     }

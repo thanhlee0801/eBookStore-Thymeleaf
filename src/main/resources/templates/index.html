@@ -110,42 +110,16 @@
                     </div>
                 </div>
                 <!-- Tài khoản người dùng -->
-<!--                <div class="dropdown">-->
-<!--                    <a href="#" class="btn position-relative dropdown-toggle" id="userDropdown" role="button"-->
-<!--                       data-bs-toggle="dropdown" aria-expanded="false">-->
-<!--                        <img th:src="@{/image/}" alt="Avatar" width="30" height="30" class="rounded-circle">-->
-<!--                        <span th:text="'Xin chào ' + "></span>-->
-<!--                    </a>-->
-<!--                    <ul class="dropdown-menu dropdown-menu-end">-->
-<!--                        <li><a class="dropdown-item" th:href="@{/logout}">Logout</a></li>-->
-<!--                    </ul>-->
-<!--                </div>-->
-                <div class="dropdown">
-                    <a href="#" class="btn position-relative dropdown-toggle" id="userDropdown" role="button"
-                       data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fa-regular fa-user"></i>
-                    </a>
-                    <form class="dropdown-menu dropdown-menu-end p-3" style="width: 300px;" action="/login" method="post">
-                        <div class="mb-3">
-                            <label for="exampleDropdownFormEmail2" class="form-label">Email address</label>
-                            <input type="email" class="form-control" id="exampleDropdownFormEmail2" name="email" placeholder="email@example.com">
-                        </div>
-                        <div class="mb-3">
-                            <label for="exampleDropdownFormPassword2" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="exampleDropdownFormPassword2" name="password" placeholder="Password">
-                        </div>
-                        <div class="mb-3">
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="dropdownCheck2">
-                                <label class="form-check-label" for="dropdownCheck2">Remember me</label>
-                            </div>
-                        </div>
-                        <div class="text-center">
-                            <button type="submit" class="btn">Log in</button>
-                            <button type="button" class="btn">Chưa có tài khoản? Đăng ký</button>
-                        </div>
-                    </form>
-                </div>
+                    <div class="dropdown">
+                        <a href="#" class="btn position-relative dropdown-toggle" id="userDropdown" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa-regular fa-user"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" th:href="@{/login}" data-bs-toggle="modal" data-bs-target="#loginModal">Đăng nhập</a></li>
+                            <li><a class="dropdown-item" href="@{/register}" data-bs-toggle="modal" data-bs-target="#registerModal">Đăng ký</a></li>
+                        </ul>
+                    </div>
             </div>
         </div>
     </nav>

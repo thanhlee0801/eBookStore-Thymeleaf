@@ -126,12 +126,14 @@
                         <a href="#" class="btn position-relative dropdown-toggle" id="userDropdown" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fa-regular fa-user"></i>
+                            <span th:if="${#authentication != null}" th:text="'Xin chào ' + ${#authentication.principal.firstName}"></span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                            <li><a class="dropdown-item" th:href="@{/login}" data-bs-toggle="modal"
-                                    data-bs-target="#loginModal">Đăng nhập</a></li>
-                            <li><a class="dropdown-item" href="@{/register}" data-bs-toggle="modal"
-                                    data-bs-target="#registerModal">Đăng ký</a></li>
+                            <li th:if="${#authentication != null}"><a class="dropdown-item" th:href="@{/profile}">Thông tin cá nhân</a></li>
+                            <li th:if="${#authentication != null}"><a class="dropdown-item" th:href="@{/settings}">Cài đặt</a></li>
+                            <li th:if="${#authentication != null}"><a class="dropdown-item" th:href="@{/logout}">Đăng xuất</a></li>
+                            <li th:if="${#authentication == null}"><a class="dropdown-item" th:href="@{/login}">Đăng nhập</a></li>
+                            <li th:if="${#authentication == null}"><a class="dropdown-item" th:href="@{/register}">Đăng ký</a></li>
                         </ul>
                     </div>
                 </div>

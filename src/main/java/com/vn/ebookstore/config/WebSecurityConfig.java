@@ -11,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 @Configuration
 @EnableWebSecurity
@@ -32,9 +33,7 @@ public class WebSecurityConfig {
         http
             .authorizeHttpRequests((authorize) -> 
                 authorize
-                    .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
-                    .requestMatchers("/", "/home", "/books/**", "/register/**").permitAll()
-                    .requestMatchers("/cart/**", "/checkout/**").permitAll()
+                    .requestMatchers("/**").permitAll() // Cho phép tất cả các đường dẫn
                     .requestMatchers("/admin/**").hasRole("ADMIN")
                     .requestMatchers("/user/**").hasRole("CUSTOMER")
                     .anyRequest().authenticated()
@@ -55,10 +54,11 @@ public class WebSecurityConfig {
 
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-        return http.getSharedObject(AuthenticationManagerBuilder.class)
-            .userDetailsService(userService)
-            .passwordEncoder(passwordEncoder())
-            .and()
-            .build();
+        AuthenticationManagerBuilder authenticationManagerBuilder = 
+            http.getSharedObject(AuthenticationManagerBuilder.class);
+        authenticationManagerBuilder
+            .userDetailsService((UserDetailsService) userService)
+            .passwordEncoder(passwordEncoder());
+        return authenticationManagerBuilder.build();
     }
 }

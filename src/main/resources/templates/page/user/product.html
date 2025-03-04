@@ -160,75 +160,78 @@
         <!-- Filters Sidebar -->
         <div class="col-lg-3">
             <div class="filter-sidebar p-4 shadow-sm">
+                <!-- Danh mục sản phẩm -->
                 <div class="filter-group">
-                    <h6 class="mb-3">Danh mục sản phẩm</h6>
-                   <!-- <th:block th:each="category : ${categories}">-->
-<!--                        &lt;!&ndash; Danh mục cha &ndash;&gt;-->
-<!--                        <option th:value="${category.id}" th:text="${category.name}" class="fw-bold">-->
-<!--                        </option>-->
-<!--                        &lt;!&ndash; Duyệt danh mục con &ndash;&gt;-->
-<!--                        <th:block th:each="subCategory : ${category.subCategories}">-->
-<!--                            <option th:value="${subCategory.id}">-->
-<!--                                <span th:utext="'&nbsp;&nbsp;' + ${subCategory.name}"></span>-->
-<!--                            </option>-->
-<!--                        </th:block>-->
-<!--                    </th:block> -->
-                    <th:block th:each="category : ${categories}">
+                    <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#categoryCollapse" aria-expanded="true" aria-controls="categoryCollapse">
+                        Danh mục sản phẩm
+                    </button>
+                    <div id="categoryCollapse" class="collapse show">
+                        <th:block th:each="category : ${categories}">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" th:id="${category.id}">
+                                <label class="form-check-label" th:for="${category.id}" th:text="${category.name}"></label>
+                            </div>
+                            <th:block th:each="subCategory : ${category.subCategories}">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" th:id="${subCategory.id}">
+                                    <label class="form-check-label" th:for="${subCategory.id}" th:text="${subCategory.name}"></label>
+                                </div>
+                            </th:block>
+                        </th:block>
+                    </div>
+                </div>
 
+                <!-- Khoảng giá -->
+                <div class="filter-group">
+                    <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#priceCollapse" aria-expanded="true" aria-controls="priceCollapse">
+                        Khoảng giá
+                    </button>
+                    <div id="priceCollapse" class="collapse show">
+                        <input type="range" class="form-range" min="0" max="1000" value="500">
+                        <div class="d-flex justify-content-between">
+                            <span class="text-muted">$0</span>
+                            <span class="text-muted">$1000</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Màu sắc -->
+                <div class="filter-group">
+                    <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#colorCollapse" aria-expanded="true" aria-controls="colorCollapse">
+                        Màu sắc
+                    </button>
+                    <div id="colorCollapse" class="collapse show">
+                        <div class="d-flex gap-2">
+                            <div class="color-option selected" style="background: #000000;"></div>
+                            <div class="color-option" style="background: #dc2626;"></div>
+                            <div class="color-option" style="background: #2563eb;"></div>
+                            <div class="color-option" style="background: #16a34a;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Đánh giá -->
+                <div class="filter-group">
+                    <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#ratingCollapse" aria-expanded="true" aria-controls="ratingCollapse">
+                        Đánh giá
+                    </button>
+                    <div id="ratingCollapse" class="collapse show">
                         <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" th:id="${category.id}">
-                            <label class="form-check-label" th:for="${category.id}" th:text="${category.name}">
-                                Electronics
+                            <input class="form-check-input" type="radio" name="rating" id="rating4">
+                            <label class="form-check-label" for="rating4">
+                                <i class="bi bi-star-fill text-warning"></i> 4 & above
                             </label>
                         </div>
-                        <th:block th:each="subCategory : ${category.subCategories}">
-                            <div class="form-check mb-2">
-                                <input class="form-check-input" type="checkbox" th:id="${subCategory.id}">
-                                <label class="form-check-label" th:for="${subCategory.id}" th:text="${subCategory.name}">
-                                    Electronics
-                                </label>
-                            </div>
-                        </th:block>
-
-                    </th:block>
-                </div>
-
-                <div class="filter-group">
-                    <h6 class="mb-3">Price Range</h6>
-                    <input type="range" class="form-range" min="0" max="1000" value="500">
-                    <div class="d-flex justify-content-between">
-                        <span class="text-muted">$0</span>
-                        <span class="text-muted">$1000</span>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="rating" id="rating3">
+                            <label class="form-check-label" for="rating3">
+                                <i class="bi bi-star-fill text-warning"></i> 3 & above
+                            </label>
+                        </div>
                     </div>
                 </div>
 
-                <div class="filter-group">
-                    <h6 class="mb-3">Colors</h6>
-                    <div class="d-flex gap-2">
-                        <div class="color-option selected" style="background: #000000;"></div>
-                        <div class="color-option" style="background: #dc2626;"></div>
-                        <div class="color-option" style="background: #2563eb;"></div>
-                        <div class="color-option" style="background: #16a34a;"></div>
-                    </div>
-                </div>
-
-                <div class="filter-group">
-                    <h6 class="mb-3">Rating</h6>
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="radio" name="rating" id="rating4">
-                        <label class="form-check-label" for="rating4">
-                            <i class="bi bi-star-fill text-warning"></i> 4 & above
-                        </label>
-                    </div>
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="radio" name="rating" id="rating3">
-                        <label class="form-check-label" for="rating3">
-                            <i class="bi bi-star-fill text-warning"></i> 3 & above
-                        </label>
-                    </div>
-                </div>
-
-                <button class="btn btn-outline-primary w-100">Apply Filters</button>
+                <button class="btn btn-outline-primary w-100">Áp dụng bộ lọc</button>
             </div>
         </div>
 
@@ -280,27 +283,27 @@
                 </div>
 
                 <!-- Product Card Loop -->
-<!--                <div class="col" th:each="book : ${books}">-->
-<!--                    <div class="card h-100">-->
-<!--&lt;!&ndash;                        <a th:href="@{/book/{id}(id=${book.id})}">&ndash;&gt;-->
-<!--&lt;!&ndash;                            <img th:src="@{${#lists.first(book.bookDetail.bookDetailImages).imageUrl}}" class="card-img-top" th:alt="${book.title}">&ndash;&gt;-->
-<!--&lt;!&ndash;                        </a>&ndash;&gt;-->
-<!--                        <div class="card-body">-->
-<!--                            <h5 class="card-title">-->
-<!--                                <a th:href="@{/book/{id}(id=${book.id})}" th:text="${book.title}">Book Title</a>-->
-<!--                            </h5>-->
-<!--                            <p class="card-text badge rounded-pill text-bg-light">-->
-<!--                                <a th:href="@{/category/{id}(id=${book.subCategory.id})}" th:text="${book.subCategory.name}">SubCategory</a>-->
-<!--                            </p>-->
-<!--                            <div class="d-flex justify-content-between align-items-center">-->
-<!--                                <span class="h5 mb-0" th:text="${book.price} + ' VNĐ'">Price</span>-->
-<!--                                <button class="btn btn-outline-primary">-->
-<!--                                    <i class="fa-solid fa-cart-plus"></i>-->
-<!--                                </button>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
+                <div class="col" th:each="book : ${books}">
+                    <div class="card h-100">
+                        <a th:href="@{/book/{id}(id=${book.id})}">
+                            <img th:src="${book.cover}" class="card-img-top" th:alt="${book.title}">
+                        </a>
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <a th:href="@{/book/{id}(id=${book.id})}" th:text="${book.title}">Book Title</a>
+                            </h5>
+                            <p class="card-text badge rounded-pill text-bg-light">
+                                <a th:href="@{/category/{id}(id=${book.subCategory.id})}" th:text="${book.subCategory.name}">SubCategory</a>
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="h5 mb-0" th:text="${book.price} + ' VNĐ'">Price</span>
+                                <button class="btn btn-outline-primary">
+                                    <i class="fa-solid fa-cart-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <!-- End Product Card Loop -->
             </div>
         </div>

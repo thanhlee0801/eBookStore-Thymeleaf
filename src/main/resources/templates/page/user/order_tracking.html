@@ -17,9 +17,39 @@
 <body>
     <th:block th:replace="~{index :: header}"></th:block>
 
-    <div>
-
+    <div class="container mt-5">
+        <h2 class="mb-4">Theo Dõi Đơn Hàng</h2>
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Nhập mã đơn hàng" aria-label="Order ID"
+                aria-describedby="button-addon2">
+            <button class="btn btn-outline-secondary" type="button" id="button-addon2">Tìm kiếm</button>
+        </div>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Tên sản phẩm</th>
+                    <th scope="col">Số lượng</th>
+                    <th scope="col">Giá</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">1</th>
+                    <td>Sản phẩm A</td>
+                    <td>2</td>
+                    <td>300.000 VNĐ</td>
+                </tr>
+                <tr>
+                    <th scope="row">2</th>
+                    <td>Sản phẩm B</td>
+                    <td>1</td>
+                    <td>150.000 VNĐ</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
+    <br>
 
     <th:block th:replace="~{index :: footer}"></th:block>
     <!-- Include các script từ frame.html -->
@@ -32,5 +62,3 @@
 </body>
 
 </html>
-
-html

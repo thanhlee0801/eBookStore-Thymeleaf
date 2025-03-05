@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/admin")
 public class AdminController {
 
-    @GetMapping("/home")
+    @GetMapping("/dashboard")
     public String home() {
-        return "page/admin/admin_home";
+        return "page/admin/dashboard";
     }
 
     // Thêm các endpoint khác cho admin ở đây

@@ -52,7 +52,7 @@ public class WebSecurityConfig {
                 .passwordParameter("password")
                 .successHandler((request, response, authentication) -> {
                     if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
-                        response.sendRedirect("/admin/home");
+                        response.sendRedirect("/admin/dashboard");
                     } else {
                         // Chuyển hướng về trang chủ của user sau khi đăng nhập
                         response.sendRedirect("/user/home");

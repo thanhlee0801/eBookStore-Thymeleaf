@@ -13,6 +13,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -23,6 +25,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService, UserDetailsService {
+
+    private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
     private UserRepository userRepository;
@@ -35,13 +39,25 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        logger.info("Đang tìm user với email: {}", email);
+        
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Không tìm thấy user với email: " + email));
+                .orElseThrow(() -> {
+                    logger.error("Không tìm thấy user với email: {}", email);
+                    return new UsernameNotFoundException("Không tìm thấy user với email: " + email);
+                });
+
+        logger.info("Tìm thấy user: {}", user.getEmail());
+        logger.info("Mật khẩu trong database: {}", user.getPassword());
+        
+        // Load roles một cách eager
+        Collection<Role> roles = user.getRoles();
+        logger.info("Roles của user: {}", roles.stream().map(Role::getName).collect(Collectors.joining(", ")));
 
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
                 user.getPassword(),
-                mapRolesToAuthorities(user.getRoles())
+                mapRolesToAuthorities(roles)
         );
     }
 
@@ -128,5 +144,26 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public boolean checkUsernameExists(String username) {
         return userRepository.findByUsername(username).isPresent();
+    }
+
+    @Override
+    public boolean checkPassword(String rawPassword, String encodedPassword) {
+        try {
+            logger.info("Kiểm tra mật khẩu - Raw: {}, Encoded: {}", rawPassword, encodedPassword);
+            
+            // Thử so sánh trực tiếp nếu mật khẩu chưa mã hóa
+            if (rawPassword.equals(encodedPassword)) {
+                logger.info("Mật khẩu khớp (chưa mã hóa)");
+                return true;
+            }
+            
+            // Nếu không khớp, thử so sánh với mật khẩu đã mã hóa
+            boolean matches = passwordEncoder.matches(rawPassword, encodedPassword);
+            logger.info("Kết quả so sánh mật khẩu đã mã hóa: {}", matches);
+            return matches;
+        } catch (Exception e) {
+            logger.error("Lỗi khi kiểm tra mật khẩu: {}", e.getMessage());
+            return false;
+        }
     }
 }

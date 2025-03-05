@@ -129,11 +129,25 @@
                             <span th:if="${#authentication != null}" th:text="'Xin chào ' + ${#authentication.principal.firstName}"></span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                            <li th:if="${#authentication != null}"><a class="dropdown-item" th:href="@{/profile}">Thông tin cá nhân</a></li>
-                            <li th:if="${#authentication != null}"><a class="dropdown-item" th:href="@{/settings}">Cài đặt</a></li>
-                            <li th:if="${#authentication != null}"><a class="dropdown-item" th:href="@{/logout}">Đăng xuất</a></li>
-                            <li th:if="${#authentication == null}"><a class="dropdown-item" th:href="@{/login}">Đăng nhập</a></li>
-                            <li th:if="${#authentication == null}"><a class="dropdown-item" th:href="@{/register}">Đăng ký</a></li>
+                            <!-- Hiển thị cho người dùng đã đăng nhập -->
+                            <li th:if="${#authentication != null}">
+                                <a class="dropdown-item" th:href="@{/profile}">Thông tin cá nhân</a>
+                            </li>
+                            <li th:if="${#authentication != null}">
+                                <a class="dropdown-item" th:href="@{/settings}">Cài đặt</a>
+                            </li>
+                            <li th:if="${#authentication != null}">
+                                <form th:action="@{/logout}" method="post" class="d-inline">
+                                    <button type="submit" class="dropdown-item">Đăng xuất</button>
+                                </form>
+                            </li>
+                            <!-- Hiển thị cho người dùng chưa đăng nhập -->
+                            <li th:if="${#authentication == null}">
+                                <a class="dropdown-item" th:href="@{/login}">Đăng nhập</a>
+                            </li>
+                            <li th:if="${#authentication == null}">
+                                <a class="dropdown-item" th:href="@{/register}">Đăng ký</a>
+                            </li>
                         </ul>
                     </div>
                 </div>

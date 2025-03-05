@@ -33,21 +33,41 @@ public class WebSecurityConfig {
         http
             .authorizeHttpRequests((authorize) -> 
                 authorize
-                    .requestMatchers("/**").permitAll() // Cho phép tất cả các đường dẫn
-                    .requestMatchers("/admin/**").hasRole("ADMIN")
+                    // Các URL công khai cho tất cả người dùng (bao gồm cả guest)
+                    .requestMatchers("/", "/products/**", "/about_us","/wishlist","/categories/**", "/register", "/login", 
+                                   "/css/**", "/js/**", "/image/**", "/api/**", "/cart/**", "/checkout/**").permitAll()
+                    
+                    // Các URL yêu cầu đăng nhập (người dùng thường)
                     .requestMatchers("/user/**").hasRole("CUSTOMER")
+                    
+                    // Các URL dành cho admin
+                    .requestMatchers("/admin/**").hasRole("ADMIN")
+                    
+                    // Các URL còn lại yêu cầu đăng nhập
                     .anyRequest().authenticated()
             )
             .formLogin(form -> form
                 .loginPage("/login")
                 .loginProcessingUrl("/login")
-                .defaultSuccessUrl("/")
+                .usernameParameter("email")
+                .passwordParameter("password")
+                .successHandler((request, response, authentication) -> {
+                    if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+                        response.sendRedirect("/admin/home");
+                    } else {
+                        // Chuyển hướng về trang chủ sau khi đăng nhập
+                        response.sendRedirect("/");
+                    }
+                })
+                .failureUrl("/login?error=true")
                 .permitAll()
             )
             .logout(logout -> logout
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                .logoutSuccessUrl("/")  // Chuyển về trang chủ sau khi đăng xuất
                 .permitAll()
-            );
+            )
+            .csrf(csrf -> csrf.disable()); // Tạm thời tắt CSRF trong quá trình phát triển
         
         return http.build();
     }

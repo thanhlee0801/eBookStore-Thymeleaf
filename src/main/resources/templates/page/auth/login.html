@@ -50,6 +50,9 @@
     <div class="login-container">
         <div class="login-form">
             <h2 class="text-center mb-4">Đăng nhập</h2>
+            <div th:if="${param.error}" class="alert alert-danger" role="alert">
+                Email hoặc mật khẩu không chính xác. Vui lòng thử lại.
+            </div>
             <form action="/login" method="post" id="loginForm">
                 <div class="mb-3">
                     <label for="email" class="form-label">Email</label>

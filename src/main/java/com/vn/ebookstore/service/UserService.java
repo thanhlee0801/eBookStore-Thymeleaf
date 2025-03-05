@@ -17,4 +17,5 @@ public interface UserService {
     User registerNewUser(User user);
     boolean checkEmailExists(String email);
     boolean checkUsernameExists(String username);
+    boolean checkPassword(String rawPassword, String encodedPassword);
 }

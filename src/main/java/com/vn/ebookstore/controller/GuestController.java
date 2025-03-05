@@ -2,13 +2,13 @@ package com.vn.ebookstore.controller;
 
 import com.vn.ebookstore.model.Book;
 import com.vn.ebookstore.model.Category;
-import com.vn.ebookstore.service.CategoryService;
 import com.vn.ebookstore.service.BookService;
-
+import com.vn.ebookstore.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -17,40 +17,29 @@ public class GuestController {
 
     @Autowired
     private CategoryService categoryService;
+
     @Autowired
     private BookService bookService;
 
     @GetMapping("/")
     public String home(Model model) {
         List<Category> categories = categoryService.getAllCategories();
-        List<Book> books = bookService.getAllBooks();
+        List<Book> premiumBooks = bookService.getPremiumBooks();
+        List<Book> latestBooks = bookService.getLatestBooks();
+        
         model.addAttribute("categories", categories);
-        model.addAttribute("books", books);
-        return "index"; // src/main/resources/templates/index.html
+        model.addAttribute("premiumBooks", premiumBooks);
+        model.addAttribute("latestBooks", latestBooks);
+        return "index";
     }
 
     @GetMapping("/about_us")
-    public String aboutUs(Model model) {
-        return "page/user/about_us"; // Tương ứng với src/main/resources/templates/page/user/about_us.html
-    }
-
-    @GetMapping("/cart")
-    public String cart(Model model) {
-        return "page/user/cart"; // Tương ứng với src/main/resources/templates/page/user/cart.html
-    }
-
-    @GetMapping("/faq")
-    public String faq(Model model) {
-        return "page/user/faq"; // Tương ứng với src/main/resources/templates/page/user/faq.html
-    }
-
-    @GetMapping("/order_tracking")
-    public String orderTracking(Model model) {
-        return "page/user/order_tracking"; // Tương ứng với src/main/resources/templates/page/user/order_tracking.html
+    public String aboutUs() {
+        return "page/user/about_us";
     }
 
     @GetMapping("/products")
-    public String product(Model model) {
+    public String products(Model model) {
         List<Category> categories = categoryService.getAllCategories();
         List<Book> books = bookService.getAllBooks();
         model.addAttribute("categories", categories);
@@ -58,15 +47,15 @@ public class GuestController {
         return "page/user/product"; // src/main/resources/templates/page/user/product.html
     }
 
-    @GetMapping("/product_detail")
-    public String productDetail(Model model) {
-        return "page/user/product_detail"; // Tương ứng với src/main/resources/templates/page/user/product_detail.html
+    @GetMapping("/product/{id}")
+    public String productDetail(@PathVariable("id") int id, Model model) {
+        Book book = bookService.getBookById(id);
+        model.addAttribute("book", book);
+        return "page/user/product_detail";
     }
 
-    @GetMapping("/wishlist")
-    public String wishlist(Model model) {
-        return "page/user/wishlist"; // Tương ứng với src/main/resources/templates/page/user/wishlist.html
+    @GetMapping("/faq")
+    public String faq() {
+        return "page/user/faq";
     }
-
-    // Thêm các phương thức điều hướng khác nếu cần
 }

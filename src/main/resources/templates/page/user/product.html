@@ -294,13 +294,12 @@
                             </h6>
                             <!-- Đánh giá sao -->
                             <div class="rating-stars mb-2">
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-half"></i>
-                                <span class="text-muted ms-2">(4.5)</span>
-<!--                                <span class="text-muted ms-2" th:text="'(' + ${book.rating} + ')'">(4.5)</span>-->
+                                <th:block th:with="rating=${book.averageRating}">
+                                    <i th:each="i : ${#numbers.sequence(1, 5)}"
+                                       th:class="${i <= rating ? 'fas' : (i <= rating + 0.5 ? 'fas' : 'far')} + ' fa-star'"
+                                       style="color: #fbbf24;"></i>
+                                </th:block>
+                                <span class="text-muted ms-2" th:text="'(' + ${book.averageRating} + ' / ' + ${book.reviewCount} + ' đánh giá)'"></span>
                             </div>
                             <!-- Giá và nút thêm vào giỏ hàng -->
                             <div class="d-flex justify-content-between align-items-center">

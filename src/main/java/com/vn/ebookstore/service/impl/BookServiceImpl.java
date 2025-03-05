@@ -6,6 +6,7 @@ import com.vn.ebookstore.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -43,5 +44,27 @@ public class BookServiceImpl implements BookService {
     @Override
     public List<Book> getAllBooks() {
         return bookRepository.findAll();
+    }
+
+    @Override
+    public List<Book> getBooksByCategory(int categoryId) {
+        return bookRepository.findBySubCategory_Parent_IdAndDeletedAtIsNull(categoryId);
+    }
+
+    @Override
+    public List<Book> getLatestBooks() {
+        return bookRepository.findLatestBooks();
+    }
+
+    @Override
+    public List<Book> getPremiumBooks() {
+        return bookRepository.findPremiumBooks();
+    }
+
+    @Override
+    public void softDeleteBook(int id) {
+        Book book = getBookById(id);
+        book.setDeletedAt(new Date());
+        bookRepository.save(book);
     }
 }

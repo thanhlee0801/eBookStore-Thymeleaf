@@ -33,16 +33,42 @@ public class WebSecurityConfig {
         http
             .authorizeHttpRequests((authorize) -> 
                 authorize
-                    // Các URL công khai cho tất cả người dùng (bao gồm cả guest)
-                    .requestMatchers("/register", "/login", "/css/**", "/js/**", "/image/**").permitAll()
+                    // Resources tĩnh
+                    .requestMatchers(
+                        "/css/**", 
+                        "/js/**", 
+                        "/image/**", 
+                        "/vendor/**", 
+                        "/fonts/**"
+                    ).permitAll()
                     
-                    // Các URL không yêu cầu đăng nhập
-                    .requestMatchers("/", "/about_us", "/products", "/category/**", "/book/**", "/faq", "/order_tracking").permitAll()
+                    // Trang xác thực
+                    .requestMatchers("/login", "/register").permitAll()
                     
-                    // Các URL dành cho admin
+                    // Trang công khai (guest)
+                    .requestMatchers(
+                        "/",                // Trang chủ
+                        "/about_us",        // Về chúng tôi
+                        "/products",        // Danh sách sản phẩm
+                        "/product/*",       // Chi tiết sản phẩm
+                        "/category/*",      // Danh mục
+                        "/faq"             // FAQ
+                    ).permitAll()
+                    
+                    // Trang admin
                     .requestMatchers("/admin/**").hasRole("ADMIN")
                     
-                    // Các URL còn lại yêu cầu đăng nhập
+                    // Trang user (yêu cầu đăng nhập)
+                    .requestMatchers(
+                        "/user/**",         // Trang cá nhân
+                        "/cart/**",         // Giỏ hàng
+                        "/checkout/**",     // Thanh toán
+                        "/wishlist/**",     // Yêu thích
+                        "/order/**",        // Đơn hàng
+                        "/review/**"        // Đánh giá
+                    ).authenticated()
+                    
+                    // Mặc định
                     .anyRequest().authenticated()
             )
             .formLogin(form -> form
@@ -50,23 +76,29 @@ public class WebSecurityConfig {
                 .loginProcessingUrl("/login")
                 .usernameParameter("email")
                 .passwordParameter("password")
-                .successHandler((request, response, authentication) -> {
-                    if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
-                        response.sendRedirect("/admin/dashboard");
-                    } else {
-                        // Chuyển hướng về trang chủ của user sau khi đăng nhập
-                        response.sendRedirect("/user/home");
-                    }
-                })
+                .defaultSuccessUrl("/", true)
                 .failureUrl("/login?error=true")
                 .permitAll()
             )
             .logout(logout -> logout
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                .logoutSuccessUrl("/")  // Chuyển về trang chủ sau khi đăng xuất
+                .logoutSuccessUrl("/")
+                .clearAuthentication(true)
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID", "remember-me")
                 .permitAll()
             )
-            .csrf(csrf -> csrf.disable()); // Tạm thời tắt CSRF trong quá trình phát triển
+            .rememberMe(remember -> remember
+                .key("uniqueAndSecretKey")
+                .tokenValiditySeconds(86400) // 24 giờ
+                .rememberMeParameter("rememberMe")
+                .userDetailsService((UserDetailsService) userService)
+            )
+            .csrf(csrf -> csrf.disable())
+            .sessionManagement(session -> session
+                .maximumSessions(1)
+                .expiredUrl("/login?expired=true")
+            );
         
         return http.build();
     }

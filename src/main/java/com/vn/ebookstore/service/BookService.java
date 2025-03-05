@@ -9,4 +9,8 @@ public interface BookService {
     void deleteBook(int id);
     Book getBookById(int id);
     List<Book> getAllBooks();
+    List<Book> getBooksByCategory(int categoryId);
+    List<Book> getLatestBooks();
+    List<Book> getPremiumBooks();
+    void softDeleteBook(int id);
 }

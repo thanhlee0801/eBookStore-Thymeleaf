@@ -160,78 +160,109 @@
         <!-- Filters Sidebar -->
         <div class="col-lg-3">
             <div class="filter-sidebar p-4 shadow-sm">
-                <!-- Danh mục sản phẩm -->
-                <div class="filter-group">
-                    <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#categoryCollapse" aria-expanded="true" aria-controls="categoryCollapse">
-                        Danh mục sản phẩm
-                    </button>
-                    <div id="categoryCollapse" class="collapse show">
-                        <th:block th:each="category : ${categories}">
-                            <div class="form-check mb-2">
-                                <input class="form-check-input" type="checkbox" th:id="${category.id}">
-                                <label class="form-check-label" th:for="${category.id}" th:text="${category.name}"></label>
+                <div class="accordion" id="filterAccordion">
+                    <!-- Danh mục sản phẩm -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingCategory">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#categoryCollapse" aria-expanded="false" aria-controls="categoryCollapse">
+                                Danh mục sản phẩm
+                            </button>
+                        </h2>
+                        <div id="categoryCollapse" class="accordion-collapse collapse" aria-labelledby="headingCategory" data-bs-parent="#filterAccordion">
+                            <div class="accordion-body">
+                                <th:block th:each="category : ${categories}">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" th:id="${category.id}">
+                                        <label class="form-check-label" th:for="${category.id}" th:text="${category.name}"></label>
+                                    </div>
+                                    <th:block th:each="subCategory : ${category.subCategories}">
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="checkbox" th:id="${subCategory.id}">
+                                            <label class="form-check-label" th:for="${subCategory.id}" th:text="${subCategory.name}"></label>
+                                        </div>
+                                    </th:block>
+                                </th:block>
                             </div>
-                            <th:block th:each="subCategory : ${category.subCategories}">
+                        </div>
+                    </div>
+
+                    <!-- Khoảng giá -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingPrice">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#priceCollapse" aria-expanded="false" aria-controls="priceCollapse">
+                                Khoảng giá
+                            </button>
+                        </h2>
+                        <div id="priceCollapse" class="accordion-collapse collapse" aria-labelledby="headingPrice" data-bs-parent="#filterAccordion">
+                            <div class="accordion-body">
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input" type="checkbox" th:id="${subCategory.id}">
-                                    <label class="form-check-label" th:for="${subCategory.id}" th:text="${subCategory.name}"></label>
+                                    <input class="form-check-input" type="checkbox" id="price1" value="under100">
+                                    <label class="form-check-label" for="price1">
+                                        Dưới 100,000 VNĐ
+                                    </label>
                                 </div>
-                            </th:block>
-                        </th:block>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="price2" value="100to500">
+                                    <label class="form-check-label" for="price2">
+                                        100,000 VNĐ - 500,000 VNĐ
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="price3" value="above500">
+                                    <label class="form-check-label" for="price3">
+                                        Trên 500,000 VNĐ
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
 
-                <!-- Khoảng giá -->
-                <div class="filter-group">
-                    <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#priceCollapse" aria-expanded="true" aria-controls="priceCollapse">
-                        Khoảng giá
-                    </button>
-                    <div id="priceCollapse" class="collapse show">
-                        <input type="range" class="form-range" min="0" max="1000" value="500">
-                        <div class="d-flex justify-content-between">
-                            <span class="text-muted">$0</span>
-                            <span class="text-muted">$1000</span>
+                    <!-- Màu sắc -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingColor">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#colorCollapse" aria-expanded="false" aria-controls="colorCollapse">
+                                Màu sắc
+                            </button>
+                        </h2>
+                        <div id="colorCollapse" class="accordion-collapse collapse" aria-labelledby="headingColor" data-bs-parent="#filterAccordion">
+                            <div class="accordion-body">
+                                <div class="d-flex gap-2">
+                                    <div class="color-option selected" style="background: #000000;"></div>
+                                    <div class="color-option" style="background: #dc2626;"></div>
+                                    <div class="color-option" style="background: #2563eb;"></div>
+                                    <div class="color-option" style="background: #16a34a;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Đánh giá -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingRating">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ratingCollapse" aria-expanded="false" aria-controls="ratingCollapse">
+                                Đánh giá
+                            </button>
+                        </h2>
+                        <div id="ratingCollapse" class="accordion-collapse collapse" aria-labelledby="headingRating" data-bs-parent="#filterAccordion">
+                            <div class="accordion-body">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="rating" id="rating4">
+                                    <label class="form-check-label" for="rating4">
+                                        <i class="bi bi-star-fill text-warning"></i> 4 & above
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="rating" id="rating3">
+                                    <label class="form-check-label" for="rating3">
+                                        <i class="bi bi-star-fill text-warning"></i> 3 & above
+                                    </label>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Màu sắc -->
-                <div class="filter-group">
-                    <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#colorCollapse" aria-expanded="true" aria-controls="colorCollapse">
-                        Màu sắc
-                    </button>
-                    <div id="colorCollapse" class="collapse show">
-                        <div class="d-flex gap-2">
-                            <div class="color-option selected" style="background: #000000;"></div>
-                            <div class="color-option" style="background: #dc2626;"></div>
-                            <div class="color-option" style="background: #2563eb;"></div>
-                            <div class="color-option" style="background: #16a34a;"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Đánh giá -->
-                <div class="filter-group">
-                    <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#ratingCollapse" aria-expanded="true" aria-controls="ratingCollapse">
-                        Đánh giá
-                    </button>
-                    <div id="ratingCollapse" class="collapse show">
-                        <div class="form-check mb-2">
-                            <input class="form-check-input" type="radio" name="rating" id="rating4">
-                            <label class="form-check-label" for="rating4">
-                                <i class="bi bi-star-fill text-warning"></i> 4 & above
-                            </label>
-                        </div>
-                        <div class="form-check mb-2">
-                            <input class="form-check-input" type="radio" name="rating" id="rating3">
-                            <label class="form-check-label" for="rating3">
-                                <i class="bi bi-star-fill text-warning"></i> 3 & above
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <button class="btn btn-outline-primary w-100">Áp dụng bộ lọc</button>
+                <button class="btn btn-outline-primary w-100 mt-3">Áp dụng bộ lọc</button>
             </div>
         </div>
 

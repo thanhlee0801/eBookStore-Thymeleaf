@@ -2,8 +2,10 @@ package com.vn.ebookstore.service.impl;
 
 import com.vn.ebookstore.model.Role;
 import com.vn.ebookstore.model.User;
+import com.vn.ebookstore.model.Address;
 import com.vn.ebookstore.repository.RoleRepository;
 import com.vn.ebookstore.repository.UserRepository;
+import com.vn.ebookstore.repository.AddressRepository;
 import com.vn.ebookstore.security.UserDetailsImpl;
 import com.vn.ebookstore.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +39,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private AddressRepository addressRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -130,7 +135,19 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 .orElseThrow(() -> new RuntimeException("Role 'customer' không tồn tại"));
         user.setRoles(Arrays.asList(customerRole));
 
-        return userRepository.save(user);
+        // Lưu user trước để có ID
+        user = userRepository.save(user);
+
+        // Lưu địa chỉ nếu có
+        if (user.getAddresses() != null && !user.getAddresses().isEmpty()) {
+            for (Address address : user.getAddresses()) {
+                address.setUser(user);
+                address.setCreatedAt(new Date());
+                addressRepository.save(address);
+            }
+        }
+
+        return user;
     }
 
     @Override

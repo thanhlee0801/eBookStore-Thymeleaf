@@ -1,6 +1,7 @@
 package com.vn.ebookstore.controller;
 
 import com.vn.ebookstore.model.User;
+import com.vn.ebookstore.model.Address;
 import com.vn.ebookstore.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -21,6 +21,8 @@ import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 public class AuthController {
@@ -54,10 +56,48 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String registerUser(@ModelAttribute("user") User user, 
+    public String registerUser(@RequestParam("firstName") String firstName,
+                             @RequestParam("lastName") String lastName,
+                             @RequestParam("username") String username,
+                             @RequestParam("email") String email,
+                             @RequestParam("password") String password,
+                             @RequestParam("confirmPassword") String confirmPassword,
+                             @RequestParam("birthOfDate") String birthOfDate,
+                             @RequestParam("phoneNumber") String phoneNumber,
                              @RequestParam("avatar") MultipartFile avatar,
+                             @RequestParam("addressLine1") String addressLine1,
+                             @RequestParam("addressLine2") String addressLine2,
+                             @RequestParam("country") String country,
+                             @RequestParam("city") String city,
+                             @RequestParam("postalCode") String postalCode,
+                             @RequestParam("landmark") String landmark,
                              RedirectAttributes redirectAttributes) {
         try {
+            // Kiểm tra mật khẩu xác nhận
+            if (!password.equals(confirmPassword)) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Mật khẩu xác nhận không khớp!");
+                return "redirect:/register";
+            }
+
+            // Tạo đối tượng User
+            User user = new User();
+            user.setFirstName(firstName);
+            user.setLastName(lastName);
+            user.setUsername(username);
+            user.setEmail(email);
+            user.setPassword(password);
+            user.setPhoneNumber(phoneNumber);
+
+            // Parse ngày sinh
+            try {
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                Date birthDate = dateFormat.parse(birthOfDate);
+                user.setBirthOfDate(birthDate);
+            } catch (Exception e) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Định dạng ngày sinh không hợp lệ!");
+                return "redirect:/register";
+            }
+
             // Xử lý upload ảnh
             if (!avatar.isEmpty()) {
                 // Tạo thư mục nếu chưa tồn tại
@@ -80,6 +120,22 @@ public class AuthController {
                 user.setAvatar("/image/avatar/" + filename);
             }
 
+            // Tạo đối tượng Address và thiết lập thông tin
+            Address address = new Address();
+            address.setAddressLine1(addressLine1);
+            address.setAddressLine2(addressLine2);
+            address.setCountry(country);
+            address.setCity(city);
+            address.setPostalCode(postalCode);
+            address.setLandmark(landmark);
+            address.setUser(user);
+
+            // Thiết lập danh sách địa chỉ cho user
+            List<Address> addresses = new ArrayList<>();
+            addresses.add(address);
+            user.setAddresses(addresses);
+
+            // Đăng ký user mới
             userService.registerNewUser(user);
             redirectAttributes.addFlashAttribute("successMessage", "Đăng ký thành công! Vui lòng đăng nhập.");
             return "redirect:/login";

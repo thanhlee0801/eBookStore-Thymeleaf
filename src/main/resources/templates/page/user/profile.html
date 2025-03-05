@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Thông tin cá nhân - Hanoi Aptech Bookstore</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/index_style.css}">
+</head>
+
+<body>
+    <!-- Header -->
+    <div th:replace="index :: header"></div>
+
+    <!-- Main Content -->
+    <div class="container my-5">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3">
+                <div class="list-group">
+                    <a th:href="@{/user/profile}" class="list-group-item list-group-item-action active">Thông tin cá nhân</a>
+                    <a th:href="@{/user/settings}" class="list-group-item list-group-item-action">Cài đặt</a>
+                    <a th:href="@{/user/orders}" class="list-group-item list-group-item-action">Đơn hàng của tôi</a>
+                    <a th:href="@{/user/wishlist}" class="list-group-item list-group-item-action">Danh sách yêu thích</a>
+                </div>
+            </div>
+
+            <!-- Profile Content -->
+            <div class="col-md-9">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">Thông tin cá nhân</h4>
+                        <a th:href="@{/user/profile/edit}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-edit"></i> Chỉnh sửa
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <!-- Avatar -->
+                            <div class="col-md-3 text-center mb-4">
+                                <div class="position-relative">
+                                    <img th:if="${#authentication.principal.avatar != null}" 
+                                         th:src="${#authentication.principal.avatar}"
+                                         class="rounded-circle img-thumbnail"
+                                         style="width: 150px; height: 150px; object-fit: cover;"
+                                         alt="Avatar">
+                                    <i th:unless="${#authentication.principal.avatar != null}" 
+                                       class="fa-regular fa-user fa-6x"></i>
+                                </div>
+                            </div>
+                            <!-- User Details -->
+                            <div class="col-md-9">
+                                <div class="row mb-3">
+                                    <div class="col-sm-3">
+                                        <p class="mb-0 fw-bold">Họ và tên</p>
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <p class="text-muted mb-0" th:text="${user.firstName + ' ' + user.lastName}"></p>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-sm-3">
+                                        <p class="mb-0 fw-bold">Tên đăng nhập</p>
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <p class="text-muted mb-0" th:text="${user.username}"></p>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-sm-3">
+                                        <p class="mb-0 fw-bold">Email</p>
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <p class="text-muted mb-0" th:text="${user.email}"></p>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-sm-3">
+                                        <p class="mb-0 fw-bold">Ngày sinh</p>
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <p class="text-muted mb-0" th:text="${#dates.format(user.birthOfDate, 'dd/MM/yyyy')}"></p>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-sm-3">
+                                        <p class="mb-0 fw-bold">Số điện thoại</p>
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <p class="text-muted mb-0" th:text="${user.phoneNumber}"></p>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-sm-3">
+                                        <p class="mb-0 fw-bold">Địa chỉ</p>
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <div th:if="${user.addresses != null and !user.addresses.isEmpty()}" th:each="address, addressStat : ${user.addresses}" class="address-item">
+                                            <div class="p-3 bg-light rounded mb-2">
+                                                <p class="text-muted mb-1" th:text="${address.addressLine}"></p>
+                                                <p class="text-muted mb-1">
+                                                    <span th:text="${address.ward}"></span>,
+                                                    <span th:text="${address.district}"></span>
+                                                </p>
+                                                <p class="text-muted mb-1">
+                                                    <span th:text="${address.city}"></span>
+                                                    <span th:if="${address.postalCode}" th:text="' - ' + ${address.postalCode}"></span>
+                                                </p>
+                                                <p class="text-muted mb-0">
+                                                    <i class="fas fa-globe me-1"></i>
+                                                    <span th:text="${address.country}"></span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <p th:if="${user.addresses == null or user.addresses.isEmpty()}" class="text-muted mb-0">
+                                            <i class="fas fa-info-circle me-1"></i> Chưa có địa chỉ nào
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-sm-3">
+                                        <p class="mb-0 fw-bold">Ngày tham gia</p>
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <p class="text-muted mb-0">
+                                            <i class="fas fa-calendar me-1"></i>
+                                            <span th:text="${#dates.format(user.createdAt, 'dd/MM/yyyy')}"></span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div th:replace="index :: footer"></div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
+

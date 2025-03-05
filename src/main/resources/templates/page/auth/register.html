@@ -105,18 +105,18 @@
 
                 <div class="mb-3">
                     <label class="form-label">Địa chỉ</label>
-                    <input type="text" class="form-control mb-2" name="addressLine1" placeholder="Địa chỉ dòng 1">
-                    <input type="text" class="form-control mb-2" name="addressLine2" placeholder="Địa chỉ dòng 2">
+                    <input type="text" class="form-control mb-2" name="addressLine" placeholder="Địa chỉ" required>
+                    <input type="text" class="form-control mb-2" name="ward" placeholder="Phường/Xã" required>
+                    <input type="text" class="form-control mb-2" name="district" placeholder="Quận/Huyện" required>
                     <div class="row">
                         <div class="col-md-6 mb-2">
-                            <input type="text" class="form-control" name="country" placeholder="Quốc gia">
+                            <input type="text" class="form-control" name="city" placeholder="Thành phố" required>
                         </div>
                         <div class="col-md-6 mb-2">
-                            <input type="text" class="form-control" name="city" placeholder="Thành phố">
+                            <input type="text" class="form-control" name="country" placeholder="Quốc gia" required>
                         </div>
                     </div>
-                    <input type="text" class="form-control mb-2" name="postalCode" placeholder="Mã bưu chính">
-                    <input type="text" class="form-control" name="landmark" placeholder="Địa điểm đánh dấu">
+                    <input type="text" class="form-control" name="postalCode" placeholder="Mã bưu chính">
                 </div>
 
                 <button type="submit" class="btn btn-register">Đăng ký</button>

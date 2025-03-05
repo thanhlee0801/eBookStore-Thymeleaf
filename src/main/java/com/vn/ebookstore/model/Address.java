@@ -9,16 +9,29 @@ public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String title;
-    private String addressLine1;
-    private String addressLine2;
-    private String country;
+
+    @Column(name = "address_line")
+    private String addressLine;
+
+    @Column(name = "ward")
+    private String ward;
+
+    @Column(name = "district")
+    private String district;
+
+    @Column(name = "city")
     private String city;
+
+    @Column(name = "country")
+    private String country;
+
+    @Column(name = "postal_code")
     private String postalCode;
-    private String landmark;
-    private String phoneNumber;
-    @Column(updatable = false)
+
+    @Column(name = "created_at", updatable = false)
     private Date createdAt;
+
+    @Column(name = "deleted_at")
     private Date deletedAt;
 
     @ManyToOne
@@ -33,36 +46,28 @@ public class Address {
         this.id = id;
     }
 
-    public String getTitle() {
-        return title;
+    public String getAddressLine() {
+        return addressLine;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setAddressLine(String addressLine) {
+        this.addressLine = addressLine;
     }
 
-    public String getAddressLine1() {
-        return addressLine1;
+    public String getWard() {
+        return ward;
     }
 
-    public void setAddressLine1(String addressLine1) {
-        this.addressLine1 = addressLine1;
+    public void setWard(String ward) {
+        this.ward = ward;
     }
 
-    public String getAddressLine2() {
-        return addressLine2;
+    public String getDistrict() {
+        return district;
     }
 
-    public void setAddressLine2(String addressLine2) {
-        this.addressLine2 = addressLine2;
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
+    public void setDistrict(String district) {
+        this.district = district;
     }
 
     public String getCity() {
@@ -73,28 +78,20 @@ public class Address {
         this.city = city;
     }
 
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
     public String getPostalCode() {
         return postalCode;
     }
 
     public void setPostalCode(String postalCode) {
         this.postalCode = postalCode;
-    }
-
-    public String getLandmark() {
-        return landmark;
-    }
-
-    public void setLandmark(String landmark) {
-        this.landmark = landmark;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
     }
 
     public Date getCreatedAt() {

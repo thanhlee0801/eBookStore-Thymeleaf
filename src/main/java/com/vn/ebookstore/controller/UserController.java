@@ -2,14 +2,21 @@ package com.vn.ebookstore.controller;
 
 import com.vn.ebookstore.model.Book;
 import com.vn.ebookstore.model.Category;
+import com.vn.ebookstore.model.User;
 import com.vn.ebookstore.service.CategoryService;
 import com.vn.ebookstore.service.BookService;
+import com.vn.ebookstore.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -21,6 +28,10 @@ public class UserController {
     private CategoryService categoryService;
     @Autowired
     private BookService bookService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/home")
     public String home(Model model) {
@@ -71,12 +82,44 @@ public class UserController {
     }
 
     @GetMapping("/profile")
-    public String profile(Model model, Authentication authentication) {
+    public String showProfile(Model model) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userService.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+        model.addAttribute("user", user);
         return "page/user/profile";
     }
 
     @GetMapping("/settings")
-    public String settings() {
+    public String showSettings() {
         return "page/user/settings";
+    }
+
+    @PostMapping("/settings/update")
+    public String updatePassword(
+            @RequestParam("currentPassword") String currentPassword,
+            @RequestParam("newPassword") String newPassword,
+            @RequestParam("confirmPassword") String confirmPassword,
+            RedirectAttributes redirectAttributes) {
+        
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userService.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            redirectAttributes.addFlashAttribute("error", "Mật khẩu hiện tại không đúng");
+            return "redirect:/user/settings";
+        }
+
+        if (!newPassword.equals(confirmPassword)) {
+            redirectAttributes.addFlashAttribute("error", "Mật khẩu mới và xác nhận mật khẩu không khớp");
+            return "redirect:/user/settings";
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userService.save(user);
+
+        redirectAttributes.addFlashAttribute("success", "Đổi mật khẩu thành công");
+        return "redirect:/user/settings";
     }
 }

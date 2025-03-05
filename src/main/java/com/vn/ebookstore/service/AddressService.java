@@ -9,4 +9,6 @@ public interface AddressService {
     void deleteAddress(int id);
     Address getAddressById(int id);
     List<Address> getAllAddresses();
+    List<Address> getAddressesByUserId(int userId);
+    void softDeleteAddress(int id);
 }

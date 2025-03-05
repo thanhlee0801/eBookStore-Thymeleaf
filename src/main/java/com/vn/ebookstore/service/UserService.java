@@ -18,4 +18,5 @@ public interface UserService {
     boolean checkEmailExists(String email);
     boolean checkUsernameExists(String username);
     boolean checkPassword(String rawPassword, String encodedPassword);
+    User save(User user);
 }

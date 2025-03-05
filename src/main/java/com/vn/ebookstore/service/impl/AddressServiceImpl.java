@@ -6,6 +6,7 @@ import com.vn.ebookstore.service.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -16,20 +17,22 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public Address createAddress(Address address) {
+        address.setCreatedAt(new Date());
         return addressRepository.save(address);
     }
 
     @Override
     public Address updateAddress(int id, Address address) {
-        Address existingAddress = addressRepository.findById(id).orElseThrow(() -> new RuntimeException("Address not found"));
-        existingAddress.setTitle(address.getTitle());
-        existingAddress.setAddressLine1(address.getAddressLine1());
-        existingAddress.setAddressLine2(address.getAddressLine2());
-        existingAddress.setCountry(address.getCountry());
+        Address existingAddress = addressRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy địa chỉ"));
+        
+        existingAddress.setAddressLine(address.getAddressLine());
+        existingAddress.setWard(address.getWard());
+        existingAddress.setDistrict(address.getDistrict());
         existingAddress.setCity(address.getCity());
+        existingAddress.setCountry(address.getCountry());
         existingAddress.setPostalCode(address.getPostalCode());
-        existingAddress.setLandmark(address.getLandmark());
-        existingAddress.setPhoneNumber(address.getPhoneNumber());
+        
         return addressRepository.save(existingAddress);
     }
 
@@ -40,11 +43,24 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public Address getAddressById(int id) {
-        return addressRepository.findById(id).orElseThrow(() -> new RuntimeException("Address not found"));
+        return addressRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy địa chỉ"));
     }
 
     @Override
     public List<Address> getAllAddresses() {
         return addressRepository.findAll();
+    }
+
+    @Override
+    public List<Address> getAddressesByUserId(int userId) {
+        return addressRepository.findByUserIdAndDeletedAtIsNull(userId);
+    }
+
+    @Override
+    public void softDeleteAddress(int id) {
+        Address address = getAddressById(id);
+        address.setDeletedAt(new Date());
+        addressRepository.save(address);
     }
 }

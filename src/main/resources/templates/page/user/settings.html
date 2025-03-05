@@ -34,6 +34,10 @@
                         <h4 class="mb-0">Cài đặt tài khoản</h4>
                     </div>
                     <div class="card-body">
+                        <!-- Thông báo lỗi/thành công -->
+                        <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
+                        <div th:if="${success}" class="alert alert-success" role="alert" th:text="${success}"></div>
+                        
                         <form th:action="@{/user/settings/update}" method="post">
                             <!-- Đổi mật khẩu -->
                             <div class="mb-4">

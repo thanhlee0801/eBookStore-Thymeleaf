@@ -11,6 +11,7 @@ public class UserDetailsImpl implements UserDetails {
     private String password;
     private String firstName;
     private String lastName;
+    private String phoneNumber;
     private String avatar;
     private Collection<? extends GrantedAuthority> authorities;
 
@@ -20,6 +21,7 @@ public class UserDetailsImpl implements UserDetails {
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
         this.avatar = user.getAvatar();
+        this.phoneNumber = user.getPhoneNumber();
         this.authorities = authorities;
     }
 
@@ -52,6 +54,9 @@ public class UserDetailsImpl implements UserDetails {
 
     public String getFullName() {
         return firstName + " " + lastName;
+    }
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
     @Override

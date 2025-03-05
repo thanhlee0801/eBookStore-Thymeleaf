@@ -65,12 +65,12 @@ public class AuthController {
                              @RequestParam("birthOfDate") String birthOfDate,
                              @RequestParam("phoneNumber") String phoneNumber,
                              @RequestParam("avatar") MultipartFile avatar,
-                             @RequestParam("addressLine1") String addressLine1,
-                             @RequestParam("addressLine2") String addressLine2,
-                             @RequestParam("country") String country,
+                             @RequestParam("addressLine") String addressLine,
+                             @RequestParam("ward") String ward,
+                             @RequestParam("district") String district,
                              @RequestParam("city") String city,
+                             @RequestParam("country") String country,
                              @RequestParam("postalCode") String postalCode,
-                             @RequestParam("landmark") String landmark,
                              RedirectAttributes redirectAttributes) {
         try {
             // Kiểm tra mật khẩu xác nhận
@@ -122,12 +122,12 @@ public class AuthController {
 
             // Tạo đối tượng Address và thiết lập thông tin
             Address address = new Address();
-            address.setAddressLine1(addressLine1);
-            address.setAddressLine2(addressLine2);
-            address.setCountry(country);
+            address.setAddressLine(addressLine);
+            address.setWard(ward);
+            address.setDistrict(district);
             address.setCity(city);
+            address.setCountry(country);
             address.setPostalCode(postalCode);
-            address.setLandmark(landmark);
             address.setUser(user);
 
             // Thiết lập danh sách địa chỉ cho user

@@ -34,11 +34,10 @@ public class WebSecurityConfig {
             .authorizeHttpRequests((authorize) -> 
                 authorize
                     // Các URL công khai cho tất cả người dùng (bao gồm cả guest)
-                    .requestMatchers("/", "/products/**", "/about_us","/wishlist","/categories/**", "/register", "/login", 
-                                   "/css/**", "/js/**", "/image/**", "/api/**", "/cart/**", "/checkout/**").permitAll()
+                    .requestMatchers("/register", "/login", "/css/**", "/js/**", "/image/**").permitAll()
                     
-                    // Các URL yêu cầu đăng nhập (người dùng thường)
-                    .requestMatchers("/user/**").hasRole("CUSTOMER")
+                    // Các URL không yêu cầu đăng nhập
+                    .requestMatchers("/", "/about_us", "/products", "/category/**", "/book/**", "/faq", "/order_tracking").permitAll()
                     
                     // Các URL dành cho admin
                     .requestMatchers("/admin/**").hasRole("ADMIN")
@@ -55,8 +54,8 @@ public class WebSecurityConfig {
                     if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
                         response.sendRedirect("/admin/home");
                     } else {
-                        // Chuyển hướng về trang chủ sau khi đăng nhập
-                        response.sendRedirect("/");
+                        // Chuyển hướng về trang chủ của user sau khi đăng nhập
+                        response.sendRedirect("/user/home");
                     }
                 })
                 .failureUrl("/login?error=true")

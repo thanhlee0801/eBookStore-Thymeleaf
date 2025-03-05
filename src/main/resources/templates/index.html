@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 
 <head>
     <meta charset="UTF-8">
@@ -16,7 +16,7 @@
         <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
             <div class="container d-flex justify-content-between align-items-center">
                 <!-- Logo -->
-                <a class="navbar-brand" th:href="@{/}">
+                <a class="navbar-brand" th:href="${#authorization.expression('isAuthenticated()')} ? @{/user/home} : @{/}">
                     <img th:src="@{/image/logo.png}" alt="Logo" width="30" height="30"
                         class="d-inline-block align-text-top">
                     Hanoi Aptech BookStore
@@ -79,8 +79,10 @@
                                     </tr>
                                 </tbody>
                             </table>
-                            <p class="text-center fw-bold"><a th:href="@{/wishlist}" style="color: black;"
-                                    class="btn">Xem danh sách yêu thích</a></p>
+                            <p class="text-center fw-bold">
+                                <a th:href="${#authorization.expression('isAuthenticated()')} ? @{/user/wishlist} : @{/wishlist}" 
+                                   style="color: black;" class="btn">Xem danh sách yêu thích</a>
+                            </p>
                         </div>
                     </div>
                     <!-- Giỏ hàng -->
@@ -117,35 +119,48 @@
                                     </tr>
                                 </tbody>
                             </table>
-                            <p class="text-center fw-bold"><a th:href="@{/cart}" style="color: black;" class="btn">Xem
-                                    giỏ hàng</a></p>
+                            <p class="text-center fw-bold">
+                                <a th:href="${#authorization.expression('isAuthenticated()')} ? @{/user/cart} : @{/cart}" 
+                                   style="color: black;" class="btn">Xem giỏ hàng</a>
+                            </p>
                         </div>
                     </div>
                     <!-- Tài khoản người dùng -->
                     <div class="dropdown">
                         <a href="#" class="btn position-relative dropdown-toggle" id="userDropdown" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fa-regular fa-user"></i>
-                            <span th:if="${#authentication != null}" th:text="'Xin chào ' + ${#authentication.principal.firstName}"></span>
+                            <!-- Hiển thị avatar cho người dùng đã đăng nhập -->
+                            <span sec:authorize="isAuthenticated()">
+                                <img th:if="${#authentication.principal.avatar != null}" 
+                                     th:src="${#authentication.principal.avatar}"
+                                     class="rounded-circle"
+                                     style="width: 32px; height: 32px; object-fit: cover;"
+                                     alt="Avatar">
+                                <i th:unless="${#authentication.principal.avatar != null}" 
+                                   class="fa-regular fa-user"></i>
+                            </span>
+                            <!-- Hiển thị icon mặc định cho người dùng chưa đăng nhập -->
+                            <i sec:authorize="!isAuthenticated()" class="fa-regular fa-user"></i>
+                            <span sec:authorize="isAuthenticated()" th:text="${#authentication.principal.firstName}"></span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                             <!-- Hiển thị cho người dùng đã đăng nhập -->
-                            <li th:if="${#authentication != null}">
-                                <a class="dropdown-item" th:href="@{/profile}">Thông tin cá nhân</a>
+                            <li sec:authorize="isAuthenticated()">
+                                <a class="dropdown-item" th:href="@{/user/profile}">Thông tin cá nhân</a>
                             </li>
-                            <li th:if="${#authentication != null}">
-                                <a class="dropdown-item" th:href="@{/settings}">Cài đặt</a>
+                            <li sec:authorize="isAuthenticated()">
+                                <a class="dropdown-item" th:href="@{/user/settings}">Cài đặt</a>
                             </li>
-                            <li th:if="${#authentication != null}">
+                            <li sec:authorize="isAuthenticated()">
                                 <form th:action="@{/logout}" method="post" class="d-inline">
                                     <button type="submit" class="dropdown-item">Đăng xuất</button>
                                 </form>
                             </li>
                             <!-- Hiển thị cho người dùng chưa đăng nhập -->
-                            <li th:if="${#authentication == null}">
+                            <li sec:authorize="!isAuthenticated()">
                                 <a class="dropdown-item" th:href="@{/login}">Đăng nhập</a>
                             </li>
-                            <li th:if="${#authentication == null}">
+                            <li sec:authorize="!isAuthenticated()">
                                 <a class="dropdown-item" th:href="@{/register}">Đăng ký</a>
                             </li>
                         </ul>
@@ -166,14 +181,16 @@
                             <!-- Duyệt danh mục cha -->
                             <th:block th:each="category : ${categories}">
                                 <li>
-                                    <a class="dropdown-item fw-bold" th:href="@{/category/{id}(id=${category.id})}"
-                                        th:text="${category.name}" style="color: #EA6C80;"></a>
+                                    <a class="dropdown-item fw-bold" 
+                                       th:href="${#authorization.expression('isAuthenticated()')} ? @{/user/category/{id}(id=${category.id})} : @{/category/{id}(id=${category.id})}"
+                                       th:text="${category.name}" style="color: #EA6C80;"></a>
                                 </li>
                                 <!-- Duyệt danh mục con -->
                                 <th:block th:each="subCategory : ${category.subCategories}">
                                     <li>
-                                        <a class="dropdown-item" th:href="@{/category/{id}(id=${subCategory.id})}"
-                                            th:text="${subCategory.name}" style="padding-left: 20px;"></a>
+                                        <a class="dropdown-item" 
+                                           th:href="${#authorization.expression('isAuthenticated()')} ? @{/user/category/{id}(id=${subCategory.id})} : @{/category/{id}(id=${subCategory.id})}"
+                                           th:text="${subCategory.name}" style="padding-left: 20px;"></a>
                                     </li>
                                 </th:block>
                             </th:block>
@@ -185,9 +202,15 @@
                     </button>
                     <div class="collapse navbar-collapse" id="navbarMenu">
                         <ul class="navbar-nav mx-auto">
-                            <li class="nav-item"><a class="nav-link" th:href="@{/}">Trang Chủ</a></li>
-                            <li class="nav-item"><a class="nav-link" th:href="@{/about_us}">Về Chúng Tôi</a></li>
-                            <li class="nav-item"><a class="nav-link" th:href="@{/products}">Sản Phẩm</a></li>
+                            <li class="nav-item">
+                                <a class="nav-link" th:href="${#authorization.expression('isAuthenticated()')} ? @{/user/home} : @{/}">Trang Chủ</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" th:href="${#authorization.expression('isAuthenticated()')} ? @{/user/about_us} : @{/about_us}">Về Chúng Tôi</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" th:href="${#authorization.expression('isAuthenticated()')} ? @{/user/products} : @{/products}">Sản Phẩm</a>
+                            </li>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="taiLieuDropdown"
                                     data-bs-toggle="dropdown" aria-expanded="false">
@@ -204,8 +227,14 @@
                                     Hỗ Trợ Khách Hàng
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="hoTroDropdown">
-                                    <li><a class="dropdown-item" th:href="@{/faq}">Câu Hỏi Thường Gặp</a></li>
-                                    <li><a class="dropdown-item" th:href="@{/order_tracking}">Theo dõi đơn hàng</a></li>
+                                    <li>
+                                        <a class="dropdown-item" 
+                                           th:href="${#authorization.expression('isAuthenticated()')} ? @{/user/faq} : @{/faq}">Câu Hỏi Thường Gặp</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" 
+                                           th:href="${#authorization.expression('isAuthenticated()')} ? @{/user/order_tracking} : @{/order_tracking}">Theo dõi đơn hàng</a>
+                                    </li>
                                 </ul>
                             </li>
                         </ul>
@@ -268,15 +297,15 @@
             <th:block th:each="book : ${books}">
                 <div class="col">
                     <div class="card border-light mb-3">
-                        <a th:href="@{/book/{id}(id=${book.id})}">
+                        <a th:href="${#authorization.expression('isAuthenticated()')} ? @{/user/book/{id}(id=${book.id})} : @{/book/{id}(id=${book.id})}">
                             <img th:src="${book.cover}" class="card-img-top" th:alt="${book.title}">
                         </a>
                         <div class="card-body">
                             <h5 class="card-title">
-                                <a th:href="@{/book/{id}(id=${book.id})}" th:text="${book.title}">Book Title</a>
+                                <a th:href="${#authorization.expression('isAuthenticated()')} ? @{/user/book/{id}(id=${book.id})} : @{/book/{id}(id=${book.id})}" th:text="${book.title}">Book Title</a>
                             </h5>
                             <p class="card-text badge rounded-pill text-bg-light">
-                                <a th:href="@{/category/{id}(id=${book.subCategory.id})}"
+                                <a th:href="${#authorization.expression('isAuthenticated()')} ? @{/user/category/{id}(id=${book.subCategory.id})} : @{/category/{id}(id=${book.subCategory.id})}"
                                     th:text="${book.subCategory.name}">SubCategory</a>
                             </p>
                             <div class="d-flex justify-content-between align-items-center">
@@ -307,9 +336,18 @@
                     <div class="col-md-4">
                         <h5>Liên Kết Nhanh</h5>
                         <ul class="list-unstyled">
-                            <li><a th:href="@{/}" class="text-light text-decoration-none">Trang Chủ</a></li>
-                            <li><a th:href="@{/about_us}" class="text-light text-decoration-none">Giới Thiệu</a></li>
-                            <li><a th:href="@{/products}" class="text-light text-decoration-none">Sản Phẩm</a></li>
+                            <li>
+                                <a th:href="${#authorization.expression('isAuthenticated()')} ? @{/user/home} : @{/}" 
+                                   class="text-light text-decoration-none">Trang Chủ</a>
+                            </li>
+                            <li>
+                                <a th:href="${#authorization.expression('isAuthenticated()')} ? @{/user/about_us} : @{/about_us}" 
+                                   class="text-light text-decoration-none">Giới Thiệu</a>
+                            </li>
+                            <li>
+                                <a th:href="${#authorization.expression('isAuthenticated()')} ? @{/user/products} : @{/products}" 
+                                   class="text-light text-decoration-none">Sản Phẩm</a>
+                            </li>
                         </ul>
                     </div>
                     <div class="col-md-4">

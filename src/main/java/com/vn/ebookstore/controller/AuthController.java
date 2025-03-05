@@ -47,14 +47,4 @@ public class AuthController {
             return "redirect:/register";
         }
     }
-
-    @GetMapping("/admin/home")
-    public String adminHome() {
-        return "page/admin/admin_home";
-    }
-
-    @GetMapping("/user/profile")
-    public String userProfile() {
-        return "page/user/profile";
-    }
 }

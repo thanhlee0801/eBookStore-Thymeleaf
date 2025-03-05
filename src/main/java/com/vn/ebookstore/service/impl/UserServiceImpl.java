@@ -4,6 +4,7 @@ import com.vn.ebookstore.model.Role;
 import com.vn.ebookstore.model.User;
 import com.vn.ebookstore.repository.RoleRepository;
 import com.vn.ebookstore.repository.UserRepository;
+import com.vn.ebookstore.security.UserDetailsImpl;
 import com.vn.ebookstore.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -54,11 +55,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         Collection<Role> roles = user.getRoles();
         logger.info("Roles của user: {}", roles.stream().map(Role::getName).collect(Collectors.joining(", ")));
 
-        return new org.springframework.security.core.userdetails.User(
-                user.getEmail(),
-                user.getPassword(),
-                mapRolesToAuthorities(roles)
-        );
+        return new UserDetailsImpl(user, mapRolesToAuthorities(roles));
     }
 
     private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles) {

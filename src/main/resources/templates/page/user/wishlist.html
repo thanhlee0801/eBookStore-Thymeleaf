@@ -3,31 +3,129 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-
-    <!-- Include phần head từ frame.html -->
+    <title>Danh sách yêu thích</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-
     <link rel="stylesheet" th:href="@{/css/index_style.css}">
 </head>
 
 <body>
     <th:block th:replace="~{index :: header}"></th:block>
-    <div>
 
+    <div class="container py-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Danh sách yêu thích</h2>
+            <button class="btn btn-outline-danger" onclick="clearWishlist()" th:if="${not #lists.isEmpty(wishlists)}">
+                <i class="fas fa-trash me-2"></i>Xóa tất cả
+            </button>
+        </div>
+        
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">Hình ảnh</th>
+                        <th scope="col">Tên sách</th>
+                        <th scope="col">Thể loại</th>
+                        <th scope="col">Giá</th>
+                        <th scope="col">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="wishlist : ${wishlists}">
+                        <td>
+                            <img th:src="${wishlist.book.cover}" alt="Book Cover" style="width: 50px; height: 70px; object-fit: cover;">
+                        </td>
+                        <td>
+                            <a th:href="@{/user/book/{id}(id=${wishlist.book.id})}" 
+                               th:text="${wishlist.book.title}"
+                               class="text-decoration-none"></a>
+                        </td>
+                        <td>
+                            <span class="badge bg-light text-dark" th:text="${wishlist.book.subCategory.name}"></span>
+                        </td>
+                        <td th:text="${wishlist.book.price} + ' VNĐ'"></td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-outline-primary btn-sm" 
+                                        th:onclick="'addToCart(' + ${wishlist.book.id} + ', 1)'">
+                                    <i class="fas fa-cart-plus"></i>
+                                </button>
+                                <button class="btn btn-outline-danger btn-sm" 
+                                        th:onclick="'toggleWishlist(' + ${wishlist.book.id} + ')'">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(wishlists)}">
+                        <td colspan="5" class="text-center">
+                            <p class="my-5">Danh sách yêu thích trống</p>
+                            <a th:href="@{/user/products}" class="btn btn-primary">Tiếp tục mua sắm</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <th:block th:replace="~{index :: footer}"></th:block>
-    <!-- Include các script từ frame.html -->
+
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
         integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
         crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
         integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
         crossorigin="anonymous"></script>
+    <script>
+        function toggleWishlist(bookId) {
+            fetch(`/user/wishlist/toggle/${bookId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                window.location.reload();
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function addToCart(bookId, quantity) {
+            fetch(`/user/cart/add/${bookId}?quantity=${quantity}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const cartCount = document.querySelector('#cartCount');
+                if (cartCount) {
+                    cartCount.textContent = data.itemCount;
+                }
+                alert('Đã thêm sản phẩm vào giỏ hàng!');
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function clearWishlist() {
+            if (confirm('Bạn có chắc chắn muốn xóa tất cả sản phẩm khỏi danh sách yêu thích?')) {
+                fetch('/user/wishlist/clear', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(() => {
+                    window.location.reload();
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        }
+    </script>
 </body>
 
 </html>

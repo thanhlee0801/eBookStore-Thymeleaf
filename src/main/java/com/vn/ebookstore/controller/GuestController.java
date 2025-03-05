@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.Collections;
 import java.util.List;
 
 @Controller
@@ -26,10 +27,15 @@ public class GuestController {
         List<Category> categories = categoryService.getAllCategories();
         List<Book> premiumBooks = bookService.getPremiumBooks();
         List<Book> latestBooks = bookService.getLatestBooks();
-        
+
         model.addAttribute("categories", categories);
         model.addAttribute("premiumBooks", premiumBooks);
         model.addAttribute("latestBooks", latestBooks);
+        
+        // Thêm danh sách rỗng cho wishlists và cart để tránh lỗi null
+        model.addAttribute("wishlists", Collections.emptyList());
+        model.addAttribute("cart", null); // Đảm bảo cart là null để Thymeleaf check if condition
+        
         return "index";
     }
 
@@ -44,7 +50,7 @@ public class GuestController {
         List<Book> books = bookService.getAllBooks();
         model.addAttribute("categories", categories);
         model.addAttribute("books", books);
-        return "page/user/product"; // src/main/resources/templates/page/user/product.html
+        return "page/user/product";
     }
 
     @GetMapping("/product/{id}")

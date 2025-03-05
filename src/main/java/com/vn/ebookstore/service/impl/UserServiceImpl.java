@@ -185,4 +185,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public User save(User user) {
         return userRepository.save(user);
     }
+
+    @Override
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy user với email: " + email));
+    }
 }

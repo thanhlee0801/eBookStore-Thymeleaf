@@ -1,6 +1,8 @@
 package com.vn.ebookstore.model;
 
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -20,7 +22,7 @@ public class Cart {
     private User user;
 
     @OneToMany(mappedBy = "cart")
-    private List<CartItem> cartItems;
+    private List<CartItem> cartItems = new ArrayList<>();;
 
     public int getId() {
         return id;
@@ -69,4 +71,6 @@ public class Cart {
     public void setCartItems(List<CartItem> cartItems) {
         this.cartItems = cartItems;
     }
+
+
 }

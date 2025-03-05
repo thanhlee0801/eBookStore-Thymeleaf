@@ -141,7 +141,7 @@
                             </span>
                             <!-- Hiển thị icon mặc định cho người dùng chưa đăng nhập -->
                             <i sec:authorize="!isAuthenticated()" class="fa-regular fa-user"></i>
-                            <span sec:authorize="isAuthenticated()" th:text="${#authentication.principal.firstName}"></span>
+                            <span sec:authorize="isAuthenticated()" th:text="${#authentication.principal.fullName}"></span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                             <!-- Hiển thị cho người dùng đã đăng nhập -->

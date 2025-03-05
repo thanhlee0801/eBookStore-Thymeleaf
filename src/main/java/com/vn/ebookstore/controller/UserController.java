@@ -70,7 +70,7 @@ public class UserController {
         return "page/user/wishlist";
     }
 
-    @GetMapping("/my-profile")
+    @GetMapping("/profile")
     public String profile(Model model, Authentication authentication) {
         return "page/user/profile";
     }

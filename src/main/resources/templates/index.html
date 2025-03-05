@@ -105,14 +105,12 @@
         <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
             <div class="container d-flex justify-content-between align-items-center">
                 <!-- Logo -->
-                <a class="navbar-brand"
-                    sec:authorize="isAuthenticated()" th:href="@{/user/home}">
+                <a class="navbar-brand" sec:authorize="isAuthenticated()" th:href="@{/user/home}">
                     <img th:src="@{/image/logo.png}" alt="Logo" width="30" height="30"
                         class="d-inline-block align-text-top">
                     Hanoi Aptech BookStore
                 </a>
-                <a class="navbar-brand"
-                    sec:authorize="!isAuthenticated()" th:href="@{/}">
+                <a class="navbar-brand" sec:authorize="!isAuthenticated()" th:href="@{/}">
                     <img th:src="@{/image/logo.png}" alt="Logo" width="30" height="30"
                         class="d-inline-block align-text-top">
                     Hanoi Aptech BookStore
@@ -232,44 +230,48 @@
                                 </thead>
                                 <tbody>
                                     <!-- Trường hợp giỏ hàng trống -->
-                                    <tr th:if="${cart == null or cart.cartItems == null or #lists.isEmpty(cart.cartItems)}">
+                                    <tr
+                                        th:if="${cart == null or cart.cartItems == null or #lists.isEmpty(cart.cartItems)}">
                                         <td colspan="4" class="text-center">
                                             <p class="mb-0">Giỏ hàng trống</p>
                                         </td>
                                     </tr>
                                     <!-- Trường hợp có sản phẩm trong giỏ -->
-                                    <tr th:each="item : ${cart != null and cart.cartItems != null ? cart.cartItems : {}}" 
+                                    <tr th:each="item : ${cart != null and cart.cartItems != null ? cart.cartItems : {}}"
                                         th:if="${cart != null and cart.cartItems != null and not #lists.isEmpty(cart.cartItems) and itemStat.index < 3}">
                                         <td style="width: 50%;">
                                             <div class="d-flex align-items-center">
-                                                <img th:if="${item.book != null and item.book.cover != null}" 
-                                                    th:src="${item.book.cover}" 
-                                                    alt="Book Cover"
-                                                    style="width: 40px; height: 60px; object-fit: cover;" 
-                                                    class="me-2">
-                                                <img th:if="${item.book != null and item.book.cover == null}" 
-                                                    th:src="@{/image/default-book-cover.png}" 
-                                                    alt="Default Cover"
-                                                    style="width: 40px; height: 60px; object-fit: cover;" 
-                                                    class="me-2">
+                                                <img th:if="${item.book != null and item.book.cover != null}"
+                                                    th:src="${item.book.cover}" alt="Book Cover"
+                                                    style="width: 40px; height: 60px; object-fit: cover;" class="me-2">
+                                                <img th:if="${item.book != null and item.book.cover == null}"
+                                                    th:src="@{/image/default-book-cover.png}" alt="Default Cover"
+                                                    style="width: 40px; height: 60px; object-fit: cover;" class="me-2">
                                                 <div>
-                                                    <p class="text-break mb-0 small" th:text="${item.book != null ? item.book.title : ''}">Book Title</p>
-                                                    <small class="text-muted" th:text="${#numbers.formatDecimal(item.book.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">Đơn giá</small>
+                                                    <p class="text-break mb-0 small"
+                                                        th:text="${item.book != null ? item.book.title : ''}">Book Title
+                                                    </p>
+                                                    <small class="text-muted"
+                                                        th:text="${#numbers.formatDecimal(item.book.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">Đơn
+                                                        giá</small>
                                                 </div>
                                             </div>
                                         </td>
                                         <td class="text-center align-middle" style="width: 25%;">
-                                            <div class="input-group input-group-sm justify-content-center" style="max-width: 120px; margin: 0 auto;">
+                                            <div class="input-group input-group-sm justify-content-center"
+                                                style="max-width: 120px; margin: 0 auto;">
                                                 <button class="btn btn-outline-secondary btn-sm px-2" type="button"
-                                                    th:onclick="'updateQuantity(' + ${item.book != null ? item.book.id : 0} + ', ' + (${item.quantity} - 1) + ')'">-</button>
-                                                <input type="text" class="form-control text-center px-0" th:value="${item.quantity}"
-                                                    style="min-width: 45px;" readonly>
+                                                    th:onclick="'updateQuantity(' + ${item.book.id} + ', -1)'">-</button>
+                                                <input type="text" class="form-control text-center px-0"
+                                                    th:value="${item.quantity}" style="min-width: 45px;" readonly>
                                                 <button class="btn btn-outline-secondary btn-sm px-2" type="button"
-                                                    th:onclick="'updateQuantity(' + ${item.book != null ? item.book.id : 0} + ', ' + (${item.quantity} + 1) + ')'">+</button>
+                                                    th:onclick="'updateQuantity(' + ${item.book.id} + ', 1)'">+</button>
                                             </div>
                                         </td>
                                         <td class="text-end align-middle" style="width: 20%;">
-                                            <span class="small" th:text="${item != null and item.book != null ? #numbers.formatDecimal(item.book.price * item.quantity, 0, 'COMMA', 0, 'POINT') : 0} + ' VNĐ'">0 VNĐ</span>
+                                            <span class="small"
+                                                th:text="${item != null and item.book != null ? #numbers.formatDecimal(item.book.price * item.quantity, 0, 'COMMA', 0, 'POINT') : 0} + ' VNĐ'">0
+                                                VNĐ</span>
                                         </td>
                                         <td class="text-end align-middle" style="width: 5%;">
                                             <button class="btn btn-outline-danger btn-sm p-1"
@@ -283,12 +285,14 @@
                             </table>
                             <div th:if="${cart != null and cart.cartItems != null and #lists.size(cart.cartItems) > 3}"
                                 class="text-center text-muted small mb-2">
-                                <span>Và <span th:text="${#lists.size(cart.cartItems) - 3}"></span> sản phẩm khác...</span>
+                                <span>Và <span th:text="${#lists.size(cart.cartItems) - 3}"></span> sản phẩm
+                                    khác...</span>
                             </div>
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <span>Tổng tiền:</span>
-                                <span class="text-primary fw-bold" 
-                                    th:text="${cart != null and cart.cartItems != null ? #numbers.formatDecimal(#aggregates.sum(cart.cartItems.?[book != null].![book.price * quantity]), 0, 'COMMA', 0, 'POINT') : '0'} + ' VNĐ'">0 VNĐ</span>
+                                <span class="text-primary fw-bold"
+                                    th:text="${cart != null and cart.cartItems != null ? #numbers.formatDecimal(#aggregates.sum(cart.cartItems.?[book != null].![book.price * quantity]), 0, 'COMMA', 0, 'POINT') : '0'} + ' VNĐ'">0
+                                    VNĐ</span>
                             </div>
                             <div class="d-grid gap-2">
                                 <a th:href="@{/user/cart}" class="btn btn-primary btn-sm">Xem giỏ hàng</a>
@@ -352,11 +356,11 @@
                             <th:block th:each="category : ${categories}">
                                 <li>
                                     <a sec:authorize="isAuthenticated()" class="dropdown-item fw-bold"
-                                        th:href="@{/user/category/{id}(id=${category.id})}"
-                                        th:text="${category.name}" style="color: #EA6C80;"></a>
+                                        th:href="@{/user/category/{id}(id=${category.id})}" th:text="${category.name}"
+                                        style="color: #EA6C80;"></a>
                                     <a sec:authorize="!isAuthenticated()" class="dropdown-item fw-bold"
-                                        th:href="@{/category/{id}(id=${category.id})}"
-                                        th:text="${category.name}" style="color: #EA6C80;"></a>
+                                        th:href="@{/category/{id}(id=${category.id})}" th:text="${category.name}"
+                                        style="color: #EA6C80;"></a>
                                 </li>
                                 <!-- Duyệt danh mục con -->
                                 <th:block th:each="subCategory : ${category.subCategories}">
@@ -379,16 +383,21 @@
                     <div class="collapse navbar-collapse" id="navbarMenu">
                         <ul class="navbar-nav mx-auto">
                             <li class="nav-item">
-                                <a sec:authorize="isAuthenticated()" class="nav-link" th:href="@{/user/home}">Trang Chủ</a>
+                                <a sec:authorize="isAuthenticated()" class="nav-link" th:href="@{/user/home}">Trang
+                                    Chủ</a>
                                 <a sec:authorize="!isAuthenticated()" class="nav-link" th:href="@{/}">Trang Chủ</a>
                             </li>
                             <li class="nav-item">
-                                <a sec:authorize="isAuthenticated()" class="nav-link" th:href="@{/user/about_us}">Về Chúng Tôi</a>
-                                <a sec:authorize="!isAuthenticated()" class="nav-link" th:href="@{/about_us}">Về Chúng Tôi</a>
+                                <a sec:authorize="isAuthenticated()" class="nav-link" th:href="@{/user/about_us}">Về
+                                    Chúng Tôi</a>
+                                <a sec:authorize="!isAuthenticated()" class="nav-link" th:href="@{/about_us}">Về Chúng
+                                    Tôi</a>
                             </li>
                             <li class="nav-item">
-                                <a sec:authorize="isAuthenticated()" class="nav-link" th:href="@{/user/products}">Sản Phẩm</a>
-                                <a sec:authorize="!isAuthenticated()" class="nav-link" th:href="@{/products}">Sản Phẩm</a>
+                                <a sec:authorize="isAuthenticated()" class="nav-link" th:href="@{/user/products}">Sản
+                                    Phẩm</a>
+                                <a sec:authorize="!isAuthenticated()" class="nav-link" th:href="@{/products}">Sản
+                                    Phẩm</a>
                             </li>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="taiLieuDropdown"
@@ -482,27 +491,42 @@
                     <div class="product-card shadow-sm">
                         <div class="position-relative">
                             <!-- Link for authenticated users -->
-                            <a th:if="${book != null}" sec:authorize="isAuthenticated()" th:href="@{'/user/book/' + ${book.id}}">
-                                <img th:if="${book.cover != null}" th:src="${book.cover}" class="product-image w-100" th:alt="${book.title}">
-                                <img th:unless="${book.cover != null}" th:src="@{/image/default-book-cover.png}" class="product-image w-100" th:alt="Default Cover">
+                            <a th:if="${book != null}" sec:authorize="isAuthenticated()"
+                                th:href="@{'/user/book/' + ${book.id}}">
+                                <img th:if="${book.cover != null}" th:src="${book.cover}" class="product-image w-100"
+                                    th:alt="${book.title}">
+                                <img th:unless="${book.cover != null}" th:src="@{/image/default-book-cover.png}"
+                                    class="product-image w-100" th:alt="Default Cover">
                             </a>
                             <!-- Link for non-authenticated users -->
-                            <a th:if="${book != null}" sec:authorize="!isAuthenticated()" th:href="@{'/book/' + ${book.id}}">
-                                <img th:if="${book.cover != null}" th:src="${book.cover}" class="product-image w-100" th:alt="${book.title}">
-                                <img th:unless="${book.cover != null}" th:src="@{/image/default-book-cover.png}" class="product-image w-100" th:alt="Default Cover">
+                            <a th:if="${book != null}" sec:authorize="!isAuthenticated()"
+                                th:href="@{'/book/' + ${book.id}}">
+                                <img th:if="${book.cover != null}" th:src="${book.cover}" class="product-image w-100"
+                                    th:alt="${book.title}">
+                                <img th:unless="${book.cover != null}" th:src="@{/image/default-book-cover.png}"
+                                    class="product-image w-100" th:alt="Default Cover">
                             </a>
-                            
-                            <button sec:authorize="isAuthenticated()" th:if="${book != null}" class="wishlist-btn" th:onclick="'toggleWishlist(' + ${book.id} + ')'">
-                                <i class="far fa-heart" th:class="${wishlists != null and #lists.contains(wishlists.![book.id], book.id)} ? 'fas fa-heart text-danger' : 'far fa-heart'"></i>
+
+                            <button sec:authorize="isAuthenticated()" th:if="${book != null}" class="wishlist-btn"
+                                th:onclick="'toggleWishlist(' + ${book.id} + ')'">
+                                <i class="far fa-heart"
+                                    th:class="${wishlists != null and #lists.contains(wishlists.![book.id], book.id)} ? 'fas fa-heart text-danger' : 'far fa-heart'"></i>
                             </button>
                         </div>
                         <div class="p-3">
                             <!-- Danh mục sách -->
-                            <span class="category-badge mb-2 d-inline-block" th:if="${book != null and book.subCategory != null}" th:text="${book.subCategory.name}">Category Name</span>
-                            <span class="category-badge mb-2 d-inline-block" th:if="${book != null and book.subCategory == null}" th:text="${book.category.name}">Category Name</span>
+                            <span class="category-badge mb-2 d-inline-block"
+                                th:if="${book != null and book.subCategory != null}"
+                                th:text="${book.subCategory.name}">Category Name</span>
+                            <span class="category-badge mb-2 d-inline-block"
+                                th:if="${book != null and book.subCategory == null}"
+                                th:text="${book.category.name}">Category Name</span>
                             <!-- Tiêu đề sách -->
                             <h6 class="mb-1" th:if="${book != null and book.title != null}">
-                                <a th:href="@{'/book/' + ${book.id}}" class="text-decoration-none" th:text="${book.title}">Book Title</a>
+                                <a sec:authorize="isAuthenticated()" th:href="@{'/user/book/' + ${book.id}}"
+                                    class="text-decoration-none" th:text="${book.title}">Book Title</a>
+                                <a sec:authorize="!isAuthenticated()" th:href="@{'/book/' + ${book.id}}"
+                                    class="text-decoration-none" th:text="${book.title}">Book Title</a>
                             </h6>
                             <!-- Đánh giá sao -->
                             <div class="rating-stars mb-2" th:if="${book != null and book.averageRating != null}">
@@ -516,8 +540,11 @@
                             </div>
                             <!-- Giá và nút thêm vào giỏ hàng -->
                             <div class="d-flex justify-content-between align-items-center">
-                                <span class="price" th:if="${book != null and book.price != null}" th:text="${#numbers.formatDecimal(book.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">100,000 VNĐ</span>
-                                <button sec:authorize="isAuthenticated()" th:if="${book != null}" class="btn cart-btn" th:onclick="'addToCart(' + ${book.id} + ', 1)'" title="Thêm vào giỏ hàng">
+                                <span class="price" th:if="${book != null and book.price != null}"
+                                    th:text="${#numbers.formatDecimal(book.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">100,000
+                                    VNĐ</span>
+                                <button sec:authorize="isAuthenticated()" th:if="${book != null}" class="btn cart-btn"
+                                    th:onclick="'addToCart(' + ${book.id} + ', 1)'" title="Thêm vào giỏ hàng">
                                     <i class="fa-solid fa-cart-plus"></i>
                                 </button>
                                 <a sec:authorize="!isAuthenticated()" th:href="@{/login}" class="btn cart-btn">
@@ -530,7 +557,7 @@
             </th:block>
         </div>
     </div>
-    
+
     <!-- Footer -->
     <br>
     <div th:fragment="footer">
@@ -547,16 +574,22 @@
                         <h5>Liên Kết Nhanh</h5>
                         <ul class="list-unstyled">
                             <li>
-                                <a sec:authorize="isAuthenticated()" th:href="@{/user/home}" class="text-light text-decoration-none">Trang Chủ</a>
-                                <a sec:authorize="!isAuthenticated()" th:href="@{/}" class="text-light text-decoration-none">Trang Chủ</a>
+                                <a sec:authorize="isAuthenticated()" th:href="@{/user/home}"
+                                    class="text-light text-decoration-none">Trang Chủ</a>
+                                <a sec:authorize="!isAuthenticated()" th:href="@{/}"
+                                    class="text-light text-decoration-none">Trang Chủ</a>
                             </li>
                             <li>
-                                <a sec:authorize="isAuthenticated()" th:href="@{/user/about_us}" class="text-light text-decoration-none">Giới Thiệu</a>
-                                <a sec:authorize="!isAuthenticated()" th:href="@{/about_us}" class="text-light text-decoration-none">Giới Thiệu</a>
+                                <a sec:authorize="isAuthenticated()" th:href="@{/user/about_us}"
+                                    class="text-light text-decoration-none">Giới Thiệu</a>
+                                <a sec:authorize="!isAuthenticated()" th:href="@{/about_us}"
+                                    class="text-light text-decoration-none">Giới Thiệu</a>
                             </li>
                             <li>
-                                <a sec:authorize="isAuthenticated()" th:href="@{/user/products}" class="text-light text-decoration-none">Sản Phẩm</a>
-                                <a sec:authorize="!isAuthenticated()" th:href="@{/products}" class="text-light text-decoration-none">Sản Phẩm</a>
+                                <a sec:authorize="isAuthenticated()" th:href="@{/user/products}"
+                                    class="text-light text-decoration-none">Sản Phẩm</a>
+                                <a sec:authorize="!isAuthenticated()" th:href="@{/products}"
+                                    class="text-light text-decoration-none">Sản Phẩm</a>
                             </li>
                         </ul>
                     </div>

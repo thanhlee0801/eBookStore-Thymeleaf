@@ -311,7 +311,8 @@
                                     <span class="category-badge mb-2 d-inline-block" th:if="${book != null and book.subCategory == null}" th:text="${book.category.name}">Category Name</span>
                                     <!-- Tiêu đề sách -->
                                     <h6 class="mb-1" th:if="${book != null and book.title != null}">
-                                        <a th:href="@{'/book/' + ${book.id}}" class="text-decoration-none" th:text="${book.title}">Book Title</a>
+                                        <a sec:authorize="isAuthenticated()" th:href="@{'/user/book/' + ${book.id}}" class="text-decoration-none" th:text="${book.title}">Book Title</a>
+                                        <a sec:authorize="!isAuthenticated()" th:href="@{'/book/' + ${book.id}}" class="text-decoration-none" th:text="${book.title}">Book Title</a>
                                     </h6>
                                     <!-- Đánh giá sao -->
                                     <div class="rating-stars mb-2" th:if="${book != null and book.averageRating != null}">
@@ -375,6 +376,7 @@
                     if (cartCount) {
                         cartCount.textContent = data.itemCount;
                     }
+                    window.location.reload();
                     // Hiển thị thông báo thành công
                     alert('Đã thêm sản phẩm vào giỏ hàng!');
                 })

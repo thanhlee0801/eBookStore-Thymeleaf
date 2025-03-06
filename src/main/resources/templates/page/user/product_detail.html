@@ -164,9 +164,9 @@
                     <a sec:authorize="isAuthenticated()" th:href="@{/user/products(category=${book.subCategory.id})}"
                        th:text="${book.subCategory.name}"
                        class="text-decoration-none">Danh mục</a>
-<!--                    <a sec:authorize="!isAuthenticated()" th:href="@{/products(category=${book.subCategory.category.id})}"-->
-<!--                       th:text="${book.subCategory.category.name}"-->
-<!--                       class="text-decoration-none">Danh mục</a>-->
+                    <a sec:authorize="!isAuthenticated()" th:href="@{/products(category=${book.subCategory.category.id})}"
+                       th:text="${book.subCategory.category.name}"
+                       class="text-decoration-none">Danh mục</a>
                 </li>
                 <li class="breadcrumb-item active" aria-current="page" th:text="${book != null ? book.title : ''}">Tên sách</li>
             </ol>
@@ -203,29 +203,32 @@
                         <h1 class="book-title mb-2" th:text="${book != null ? book.title : ''}">Tên sách</h1>
                         <p class="book-author mb-2" th:if="${book != null}" th:text="'Tác giả: ' + ${book.author}">Tác giả</p>
                         
-<!--                        &lt;!&ndash; Danh mục &ndash;&gt;-->
-<!--                        <div class="mb-3">-->
-<!--                            <a th:if="${book != null and book.subCategory != null}" -->
-<!--                               sec:authorize="isAuthenticated()"-->
-<!--                               th:href="@{/user/products(subcategory=${book.subCategory.id})}"-->
-<!--                               class="category-badge me-2" -->
-<!--                               th:text="${book.subCategory.name}">Danh mục con</a>-->
-<!--                            <a th:if="${book != null and book.subCategory != null}" -->
-<!--                               sec:authorize="!isAuthenticated()"-->
-<!--                               th:href="@{/products(subcategory=${book.subCategory.id})}"-->
-<!--                               class="category-badge me-2" -->
-<!--                               th:text="${book.subCategory.name}">Danh mục con</a>-->
-<!--                            <a th:if="${book != null and book.subCategory != null}" -->
-<!--                               sec:authorize="isAuthenticated()"-->
-<!--                               th:href="@{/user/products(category=${book.subCategory.category.id})}"-->
-<!--                               class="category-badge" -->
-<!--                               th:text="${book.subCategory.category.name}">Danh mục cha</a>-->
-<!--                            <a th:if="${book != null and book.subCategory != null}" -->
-<!--                               sec:authorize="!isAuthenticated()"-->
-<!--                               th:href="@{/products(category=${book.subCategory.category.id})}"-->
-<!--                               class="category-badge" -->
-<!--                               th:text="${book.subCategory.category.name}">Danh mục cha</a>-->
-<!--                        </div>-->
+                        <div class="mb-3">
+                            <!-- Danh mục con -->
+                            <a th:if="${book != null and book.subCategory != null}" 
+                               sec:authorize="isAuthenticated()"
+                               th:href="@{/user/subcategory/{id}(id=${book.subCategory.id})}"
+                               class="category-badge me-2" 
+                               th:text="${book.subCategory.name}">Danh mục con</a>
+                            <a th:if="${book != null and book.subCategory != null}" 
+                               sec:authorize="!isAuthenticated()"
+                               th:href="@{/subcategory/{id}(id=${book.subCategory.id})}"
+                               class="category-badge me-2" 
+                               th:text="${book.subCategory.name}">Danh mục con</a>
+                            
+                            <!-- Danh mục cha -->
+                            <a th:if="${book != null and book.subCategory != null}" 
+                               sec:authorize="isAuthenticated()"
+                               th:href="@{/user/category/{id}(id=${book.subCategory.category.id})}"
+                               class="category-badge" 
+                               th:text="${book.subCategory.category.name}">Danh mục cha</a>
+                            <a th:if="${book != null and book.subCategory != null}" 
+                               sec:authorize="!isAuthenticated()"
+                               th:href="@{/category/{id}(id=${book.subCategory.category.id})}"
+                               class="category-badge" 
+                               th:text="${book.subCategory.category.name}">Danh mục cha</a>
+                        </div>
+                    </div>
 
                         <!-- Đánh giá -->
                         <div class="d-flex align-items-center mb-3" th:if="${book != null}">

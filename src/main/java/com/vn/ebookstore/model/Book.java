@@ -37,8 +37,14 @@ public class Book {
     @OneToMany(mappedBy = "book")
     private List<OrderItem> orderItems;
 
-    @OneToMany(mappedBy = "book")
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
     private List<Review> reviews;
+
+    @Column(nullable = false)
+    private Double averageRating = 0.0;
+
+    @Column(nullable = false)
+    private Integer reviewCount = 0;
 
     public int getId() {
         return id;
@@ -152,18 +158,19 @@ public class Book {
         this.reviews = reviews;
     }
 
-    public double getAverageRating() {
-        if (reviews == null || reviews.isEmpty()) {
-            return 0.0;
-        }
-        double sum = 0;
-        for (Review review : reviews) {
-            sum += review.getRating();
-        }
-        return Math.round((sum / reviews.size()) * 10.0) / 10.0;
+    public Double getAverageRating() {
+        return averageRating;
     }
 
-    public int getReviewCount() {
-        return reviews == null ? 0 : reviews.size();
+    public void setAverageRating(Double averageRating) {
+        this.averageRating = averageRating;
+    }
+
+    public Integer getReviewCount() {
+        return reviewCount;
+    }
+
+    public void setReviewCount(Integer reviewCount) {
+        this.reviewCount = reviewCount;
     }
 }

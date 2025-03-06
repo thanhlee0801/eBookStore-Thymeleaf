@@ -6,6 +6,7 @@ import com.vn.ebookstore.service.CategoryService;
 import com.vn.ebookstore.service.UserService;
 import com.vn.ebookstore.service.WishlistService;
 import com.vn.ebookstore.service.CartService;
+import com.vn.ebookstore.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,6 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.http.ResponseEntity;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -37,6 +39,8 @@ public class UserController {
     private WishlistService wishlistService;
     @Autowired
     private CartService cartService;
+    @Autowired
+    private ReviewService reviewService;
 
     // ==================== Page Navigation Mappings ====================
     @GetMapping("/home")
@@ -304,6 +308,102 @@ public class UserController {
             User user = userService.getUserByEmail(principal.getName());
             wishlistService.clearWishlist(user.getId());
             return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    // ==================== Review Related Mappings ====================
+    @PostMapping("/review/add")
+    public String addReview(
+            @RequestParam("bookId") Integer bookId,
+            @RequestParam("rating") Integer rating,
+            @RequestParam("comment") String comment,
+            Principal principal,
+            RedirectAttributes redirectAttributes) {
+        try {
+            User user = userService.getUserByEmail(principal.getName());
+            
+            if (reviewService.hasUserReviewedBook(user.getId(), bookId)) {
+                redirectAttributes.addFlashAttribute("error", "Bạn đã đánh giá cuốn sách này rồi");
+                return "redirect:/user/book/" + bookId;
+            }
+
+            Book book = bookService.findById(bookId)
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy sách"));
+
+            Review review = new Review();
+            review.setUser(user);
+            review.setBook(book);
+            review.setRating(rating);
+            review.setComment(comment);
+            review.setCreatedAt(new Date());
+            
+            reviewService.saveReview(review);
+            redirectAttributes.addFlashAttribute("success", "Đã thêm đánh giá thành công");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/user/book/" + bookId;
+    }
+
+    @PutMapping("/review/update/{reviewId}")
+    @ResponseBody
+    public ResponseEntity<?> updateReview(
+            @PathVariable("reviewId") Integer reviewId,
+            @RequestParam("rating") Integer rating,
+            @RequestParam("comment") String comment,
+            Principal principal) {
+        try {
+            User user = userService.getUserByEmail(principal.getName());
+            Review review = reviewService.findById(reviewId)
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy đánh giá"));
+            
+            // Kiểm tra quyền sở hữu review
+            if (review.getUser().getId() != user.getId()) {
+                return ResponseEntity.status(403).body(Map.of("error", "Không có quyền sửa đánh giá này"));
+            }
+
+            // Validate rating
+            if (rating < 1 || rating > 5) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Đánh giá phải từ 1 đến 5 sao"));
+            }
+            
+            review.setRating(rating);
+            review.setComment(comment);
+            review.setUpdatedAt(new Date());
+            
+            Review updatedReview = reviewService.saveReview(review);
+            return ResponseEntity.ok().body(Map.of(
+                "success", true,
+                "review", updatedReview,
+                "message", "Đã cập nhật đánh giá thành công"
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @DeleteMapping("/review/delete/{reviewId}")
+    @ResponseBody
+    public ResponseEntity<?> deleteReview(
+            @PathVariable("reviewId") Integer reviewId,
+            Principal principal) {
+        try {
+            User user = userService.getUserByEmail(principal.getName());
+            Review review = reviewService.findById(reviewId)
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy đánh giá"));
+            
+            // Kiểm tra quyền sở hữu review
+            if (review.getUser().getId() != user.getId()) {
+                return ResponseEntity.status(403).body(Map.of("error", "Không có quyền xóa đánh giá này"));
+            }
+            
+            reviewService.deleteReview(reviewId);
+            return ResponseEntity.ok().body(Map.of(
+                "success", true,
+                "message", "Đã xóa đánh giá thành công"
+            ));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }

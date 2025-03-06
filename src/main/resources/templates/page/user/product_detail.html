@@ -125,6 +125,23 @@
         .active-image {
             border: 2px solid #2563eb;
         }
+
+        .rating-input {
+            font-size: 24px;
+            color: #fbbf24;
+            cursor: pointer;
+        }
+
+        .rating-star {
+            margin-right: 5px;
+            transition: all 0.2s;
+        }
+
+        .rating-star:hover,
+        .rating-star.active {
+            color: #f59e0b;
+            transform: scale(1.1);
+        }
     </style>
 </head>
 
@@ -314,8 +331,48 @@
                 <!-- Đánh giá -->
                 <div class="book-detail-card p-4 mt-4">
                     <h5 class="mb-4">Đánh giá từ độc giả</h5>
+                    
+                    <!-- Form đánh giá mới -->
+                    <div class="mb-4" sec:authorize="isAuthenticated()">
+                        <form th:action="@{/user/review/add}" method="post">
+                            <input type="hidden" name="bookId" th:value="${book.id}">
+                            <div class="mb-3">
+                                <label class="form-label">Đánh giá của bạn:</label>
+                                <div class="rating-input mb-2">
+                                    <i class="far fa-star rating-star" data-rating="1"></i>
+                                    <i class="far fa-star rating-star" data-rating="2"></i>
+                                    <i class="far fa-star rating-star" data-rating="3"></i>
+                                    <i class="far fa-star rating-star" data-rating="4"></i>
+                                    <i class="far fa-star rating-star" data-rating="5"></i>
+                                </div>
+                                <input type="hidden" name="rating" id="ratingInput" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="reviewComment" class="form-label">Nhận xét:</label>
+                                <textarea class="form-control" id="reviewComment" name="comment" rows="3" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
+                        </form>
+                    </div>
+
+                    <!-- Thêm alert messages -->
+                    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                        <span th:text="${success}">Success message</span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+
+                    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <span th:text="${error}">Error message</span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+
+                    <div class="alert alert-info" sec:authorize="!isAuthenticated()">
+                        Vui lòng <a th:href="@{/login}" class="alert-link">đăng nhập</a> để gửi đánh giá
+                    </div>
+
+                    <!-- Existing review display code -->
                     <div th:if="${book != null and book.reviews != null and not #lists.isEmpty(book.reviews)}">
-                        <div class="review-card p-3 mb-3" th:each="review : ${book.reviews}">
+                        <div class="review-card p-3 mb-3" th:each="review : ${book.reviews}" th:id="'review-' + ${review.id}">
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <div>
                                     <span class="review-author" th:text="${review.user.lastName}">Người dùng</span>
@@ -324,10 +381,22 @@
                                            th:class="${i <= review.rating ? 'fas' : 'far'} + ' fa-star'"></i>
                                     </div>
                                 </div>
-                                <span class="review-date" 
-                                      th:text="${#dates.format(review.createdAt, 'dd/MM/yyyy HH:mm')}">
-                                    01/01/2024
-                                </span>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="review-date" th:text="${#dates.format(review.createdAt, 'dd/MM/yyyy HH:mm')}">
+                                        01/01/2024
+                                    </span>
+                                    <!-- Thêm nút sửa/xóa chỉ hiển thị với chủ review -->
+                                    <div class="btn-group" th:if="${#authentication.name == review.user.email}">
+                                        <button class="btn btn-sm btn-outline-primary" 
+                                                th:onclick="'editReview(' + ${review.id} + ')'">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger" 
+                                                th:onclick="'deleteReview(' + ${review.id} + ')'">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                             <p class="mb-0" th:text="${review.comment}">Nội dung đánh giá...</p>
                         </div>
@@ -382,10 +451,171 @@
             document.querySelector('.book-cover').src = imageUrl;
         }
 
+        document.addEventListener('DOMContentLoaded', function() {
+            const ratingStars = document.querySelectorAll('.rating-star');
+            const ratingInput = document.getElementById('ratingInput');
+            
+            function setRating(rating) {
+                ratingInput.value = rating;
+                ratingStars.forEach((star, index) => {
+                    if (index < rating) {
+                        star.classList.remove('far');
+                        star.classList.add('fas');
+                    } else {
+                        star.classList.remove('fas');
+                        star.classList.add('far');
+                    }
+                });
+            }
+            
+            ratingStars.forEach(star => {
+                star.addEventListener('click', () => {
+                    const rating = star.dataset.rating;
+                    setRating(rating);
+                });
+                
+                star.addEventListener('mouseover', () => {
+                    const rating = star.dataset.rating;
+                    ratingStars.forEach((s, index) => {
+                        if (index < rating) {
+                            s.classList.remove('far');
+                            s.classList.add('fas');
+                        } else {
+                            s.classList.remove('fas');
+                            s.classList.add('far');
+                        }
+                    });
+                });
+            });
+            
+            const ratingContainer = document.querySelector('.rating-input');
+            ratingContainer.addEventListener('mouseleave', () => {
+                const currentRating = ratingInput.value || 0;
+                ratingStars.forEach((star, index) => {
+                    if (index < currentRating) {
+                        star.classList.remove('far');
+                        star.classList.add('fas');
+                    } else {
+                        star.classList.remove('fas');
+                        star.classList.add('far');
+                    }
+                });
+            });
+        });
+
+        function editReview(reviewId) {
+            const reviewCard = document.getElementById('review-' + reviewId);
+            const comment = reviewCard.querySelector('p').textContent;
+            const rating = reviewCard.querySelectorAll('.fa-star.fas').length;
+            
+            document.getElementById('editReviewId').value = reviewId;
+            document.getElementById('editReviewComment').value = comment;
+            document.getElementById('editRatingInput').value = rating;
+            setEditRating(rating);
+            
+            new bootstrap.Modal(document.getElementById('editReviewModal')).show();
+        }
+
+        function setEditRating(rating) {
+            const stars = document.querySelectorAll('.rating-star-edit');
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.classList.remove('far');
+                    star.classList.add('fas');
+                } else {
+                    star.classList.remove('fas');
+                    star.classList.add('far');
+                }
+            });
+        }
+
+        function updateReview() {
+            const reviewId = document.getElementById('editReviewId').value;
+            const rating = document.getElementById('editRatingInput').value;
+            const comment = document.getElementById('editReviewComment').value;
+            
+            fetch(`/user/review/update/${reviewId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `rating=${rating}&comment=${encodeURIComponent(comment)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    location.reload();
+                }
+            })
+            .catch(error => alert('Có lỗi xảy ra'));
+        }
+
+        function deleteReview(reviewId) {
+            if (confirm('Bạn có chắc muốn xóa đánh giá này?')) {
+                fetch(`/user/review/delete/${reviewId}`, {
+                    method: 'DELETE'
+                })
+                .then(response => {
+                    if (response.ok) {
+                        document.getElementById('review-' + reviewId).remove();
+                    } else {
+                        throw new Error('Có lỗi xảy ra');
+                    }
+                })
+                .catch(error => alert(error.message));
+            }
+        }
+
+        // Thêm xử lý cho rating stars trong modal sửa
+        document.querySelectorAll('.rating-star-edit').forEach(star => {
+            star.addEventListener('click', () => {
+                const rating = star.dataset.rating;
+                document.getElementById('editRatingInput').value = rating;
+                setEditRating(rating);
+            });
+        });
     </script>
 
     <script th:src="@{/js/cart.js}"></script>
     <script th:src="@{/js/wishlist.js}"></script>
+
+    <!-- Thêm modal sửa review -->
+    <div class="modal fade" id="editReviewModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Sửa đánh giá</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editReviewForm">
+                        <input type="hidden" id="editReviewId">
+                        <div class="mb-3">
+                            <label class="form-label">Đánh giá:</label>
+                            <div class="rating-input mb-2">
+                                <i class="far fa-star rating-star-edit" data-rating="1"></i>
+                                <i class="far fa-star rating-star-edit" data-rating="2"></i>
+                                <i class="far fa-star rating-star-edit" data-rating="3"></i>
+                                <i class="far fa-star rating-star-edit" data-rating="4"></i>
+                                <i class="far fa-star rating-star-edit" data-rating="5"></i>
+                            </div>
+                            <input type="hidden" id="editRatingInput" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editReviewComment" class="form-label">Nhận xét:</label>
+                            <textarea class="form-control" id="editReviewComment" rows="3" required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-primary" onclick="updateReview()">Cập nhật</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

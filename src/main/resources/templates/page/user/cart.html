@@ -92,7 +92,7 @@
                             <span>Tổng tiền:</span>
                             <span th:text="${cart.total} + ' VNĐ'" class="fw-bold"></span>
                         </div>
-                        <button class="btn btn-primary w-100">Thanh toán</button>
+                        <a th:href="@{/user/purchase}" class="btn btn-primary w-100">Thanh toán</a>
                     </div>
                 </div>
             </div>

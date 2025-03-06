@@ -39,6 +39,8 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import com.vn.ebookstore.security.UserDetailsImpl;
+import com.vn.ebookstore.service.AddressService;
+import com.vn.ebookstore.service.OrderDetailService;
 
 @Controller
 @RequestMapping("/user")
@@ -59,6 +61,11 @@ public class UserController {
     private CartService cartService;
     @Autowired
     private ReviewService reviewService;
+    @Autowired
+    private AddressService addressService; // Thêm service quản lý địa chỉ
+
+    @Autowired
+    private OrderDetailService orderDetailService; // Thay đổi service
 
     // ==================== Page Navigation Mappings ====================
     @GetMapping("/home")
@@ -656,5 +663,119 @@ public class UserController {
             return "redirect:/user/profile"; // Return to profile page on error
         }
         return "redirect:/user/profile"; // Redirect to home page on success
+    }
+
+    // ==================== Order Related Mappings ====================
+    @GetMapping("/purchase")
+    public String showPurchaseForm(Model model, Principal principal) {
+        List<Category> categories = categoryService.getAllCategories();
+        model.addAttribute("categories", categories);
+
+        User user = userService.getUserByEmail(principal.getName());
+        Cart cart = cartService.getCurrentCartByUser(user);
+        List<Address> addresses = addressService.getAddressesByUserId(user.getId());
+        List<Wishlist> wishlists = wishlistService.getWishlistsByUser(user);
+
+        model.addAttribute("cart", cart);
+        model.addAttribute("addresses", addresses);
+        model.addAttribute("wishlists", wishlists);
+
+        return "page/user/purchase";
+    }
+
+    @PostMapping("/purchase/confirm")
+    public String confirmPurchase(
+            @RequestParam("addressId") Integer addressId,
+            @RequestParam("paymentMethod") String paymentMethod,
+            @RequestParam(value = "note", required = false) String note,
+            Principal principal,
+            RedirectAttributes redirectAttributes) {
+        try {
+            User user = userService.getUserByEmail(principal.getName());
+            Cart cart = cartService.getCurrentCartByUser(user);
+            
+            // Kiểm tra giỏ hàng
+            if (cart == null || cart.getCartItems() == null || cart.getCartItems().isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Giỏ hàng trống!");
+                return "redirect:/user/cart";
+            }
+
+            // Kiểm tra địa chỉ
+            Address shippingAddress = addressService.getAddressById(addressId);
+            if (shippingAddress == null || shippingAddress.getUser().getId() != user.getId()) {
+                redirectAttributes.addFlashAttribute("error", "Địa chỉ không hợp lệ!");
+                return "redirect:/user/purchase";
+            }
+
+            // Tạo đơn hàng mới
+            OrderDetail order = orderDetailService.createOrder(user.getId(), addressId, paymentMethod, note);
+            
+            if (order != null) {
+                // Xóa giỏ hàng cũ sau khi đặt hàng thành công
+                cartService.deleteCart(cart.getId());
+                
+                // Tạo giỏ hàng mới cho user
+                Cart newCart = new Cart();
+                newCart.setUser(user);
+                newCart.setCreatedAt(new Date());
+                cartService.save(newCart);
+                
+                redirectAttributes.addFlashAttribute("success", "Đặt hàng thành công!");
+                return "redirect:/user/orders";
+            } else {
+                throw new RuntimeException("Không thể tạo đơn hàng!");
+            }
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Lỗi: " + e.getMessage());
+            return "redirect:/user/purchase";
+        }
+    }
+
+    @GetMapping("/orders")
+    public String showOrders(Model model, Principal principal) {
+        List<Category> categories = categoryService.getAllCategories();
+        model.addAttribute("categories", categories);
+
+        User user = userService.getUserByEmail(principal.getName());
+        List<OrderDetail> orders = orderDetailService.getOrdersByUserId(user.getId());
+        Cart cart = cartService.getCurrentCartByUser(user);
+        List<Wishlist> wishlists = wishlistService.getWishlistsByUser(user);
+
+        model.addAttribute("orders", orders);
+        model.addAttribute("cart", cart);
+        model.addAttribute("wishlists", wishlists);
+
+        return "page/user/order";
+    }
+
+    @PostMapping("/order/{orderId}/cancel")
+    @ResponseBody
+    public ResponseEntity<?> cancelOrder(@PathVariable Integer orderId, Principal principal) {
+        try {
+            User user = userService.getUserByEmail(principal.getName());
+            OrderDetail order = orderDetailService.getOrderById(orderId);
+            
+            if (order == null) {
+                return ResponseEntity.badRequest()
+                    .body(Map.of("error", "Không tìm thấy đơn hàng!"));
+            }
+            
+            if (order.getUser().getId() != user.getId()) {
+                return ResponseEntity.status(403)
+                    .body(Map.of("error", "Không có quyền hủy đơn hàng này"));
+            }
+
+            if (!order.getStatus().equals("PENDING")) {
+                return ResponseEntity.badRequest()
+                    .body(Map.of("error", "Chỉ có thể hủy đơn hàng ở trạng thái chờ xử lý"));
+            }
+
+            orderDetailService.cancelOrder(orderId);
+            return ResponseEntity.ok()
+                .body(Map.of("message", "Hủy đơn hàng thành công"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                .body(Map.of("error", e.getMessage()));
+        }
     }
 }

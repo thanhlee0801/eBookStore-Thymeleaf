@@ -7,23 +7,28 @@ import java.util.List;
 @Entity
 @Table(name = "categories")
 public class Category {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
     private String name;
     private String description;
-    @Column(updatable = false)
+    
+    @Column(name = "created_at", updatable = false)
     private Date createdAt;
+    
+    @Column(name = "deleted_at")
     private Date deletedAt;
 
-    @OneToMany(mappedBy = "parent")
+    @OneToMany(mappedBy = "category")
+    @OrderBy("id ASC")
     private List<SubCategory> subCategories;
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

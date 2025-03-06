@@ -28,32 +28,59 @@ public class CategoryController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private SubCategoryService subCategoryService; // Thêm service này
+
     @GetMapping("/user/category/{id}")
     public String showCategoryBooks(@PathVariable Integer id, Model model, Principal principal) {
-        // Lấy tất cả categories cho navigation
-        List<Category> categories = categoryService.getAllCategories();
-        model.addAttribute("categories", categories);
-        
-        // Lấy category hiện tại
         Category currentCategory = categoryService.getCategoryById(id);
-        model.addAttribute("currentCategory", currentCategory);
-        
-        // Lấy danh sách sách
-        List<Book> books;
-        if (currentCategory.getSubCategories() != null && !currentCategory.getSubCategories().isEmpty()) {
-            // Nếu là category cha, lấy tất cả sách từ các subcategory
-            books = bookService.getBooksByCategoryId(id);
-        } else {
-            // Nếu là subcategory, chỉ lấy sách của subcategory đó
-            books = bookService.getBooksBySubCategoryId(id);
+        if (currentCategory == null) {
+            return "redirect:/user/home";
         }
+
+        List<Book> books = bookService.getBooksByCategory(id);
+        List<Category> categories = categoryService.getAllCategories();
+        
+        model.addAttribute("currentCategory", currentCategory);
+        model.addAttribute("categories", categories);
         model.addAttribute("books", books);
+        model.addAttribute("isSubCategory", false);
 
         // Xử lý thông tin user nếu đã đăng nhập
         if (principal != null) {
             User user = userService.getUserByEmail(principal.getName());
             Cart cart = cartService.getCurrentCartByUser(user);
             List<Wishlist> wishlists = wishlistService.getWishlistsByUser(user);
+            
+            model.addAttribute("cart", cart);
+            model.addAttribute("wishlists", wishlists != null ? wishlists : new ArrayList<>());
+        }
+
+        return "page/user/category_books";
+    }
+
+    @GetMapping("/user/subcategory/{id}")
+    public String showSubCategoryBooks(@PathVariable Integer id, Model model, Principal principal) {
+        SubCategory subCategory = subCategoryService.getSubCategoryById(id);
+        if (subCategory == null) {
+            return "redirect:/user/home";
+        }
+
+        List<Book> books = bookService.getBooksBySubCategoryId(id);
+        List<Category> categories = categoryService.getAllCategories();
+        
+        model.addAttribute("currentCategory", subCategory);
+        model.addAttribute("parentCategory", subCategory.getCategory());
+        model.addAttribute("categories", categories);
+        model.addAttribute("books", books);
+        model.addAttribute("isSubCategory", true);
+
+        // Xử lý thông tin user nếu đã đăng nhập
+        if (principal != null) {
+            User user = userService.getUserByEmail(principal.getName());
+            Cart cart = cartService.getCurrentCartByUser(user);
+            List<Wishlist> wishlists = wishlistService.getWishlistsByUser(user);
+            
             model.addAttribute("cart", cart);
             model.addAttribute("wishlists", wishlists != null ? wishlists : new ArrayList<>());
         }
@@ -69,7 +96,7 @@ public class CategoryController {
         List<Book> books;
         
         if (currentCategory.getSubCategories() != null && !currentCategory.getSubCategories().isEmpty()) {
-            books = bookService.getBooksByCategoryId(id);
+            books = bookService.getBooksByCategory(id);
         } else {
             books = bookService.getBooksBySubCategoryId(id);
         }
@@ -78,6 +105,25 @@ public class CategoryController {
         model.addAttribute("currentCategory", currentCategory);
         model.addAttribute("books", books);
         
+        return "page/user/category_books";
+    }
+
+    @GetMapping("/subcategory/{id}")
+    public String showPublicSubCategoryBooks(@PathVariable Integer id, Model model) {
+        SubCategory subCategory = subCategoryService.getSubCategoryById(id);
+        if (subCategory == null) {
+            return "redirect:/home";
+        }
+
+        List<Book> books = bookService.getBooksBySubCategoryId(id);
+        List<Category> categories = categoryService.getAllCategories();
+        
+        model.addAttribute("currentCategory", subCategory);
+        model.addAttribute("parentCategory", subCategory.getCategory());
+        model.addAttribute("categories", categories);
+        model.addAttribute("books", books);
+        model.addAttribute("isSubCategory", true);
+
         return "page/user/category_books";
     }
 }

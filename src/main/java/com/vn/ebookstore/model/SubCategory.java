@@ -7,27 +7,31 @@ import java.util.List;
 @Entity
 @Table(name = "sub_categories")
 public class SubCategory {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
     private String name;
     private String description;
-    @Column(updatable = false)
+    
+    @Column(name = "created_at", updatable = false)
     private Date createdAt;
+    
+    @Column(name = "deleted_at")
     private Date deletedAt;
 
     @ManyToOne
     @JoinColumn(name = "parent_id")
-    private Category parent;
+    private Category category;
 
     @OneToMany(mappedBy = "subCategory")
     private List<Book> books;
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -63,12 +67,12 @@ public class SubCategory {
         this.deletedAt = deletedAt;
     }
 
-    public Category getParent() {
-        return parent;
+    public Category getCategory() {
+        return category;
     }
 
-    public void setParent(Category parent) {
-        this.parent = parent;
+    public void setCategory(Category category) {
+        this.category = category;
     }
 
     public List<Book> getBooks() {

@@ -68,3 +68,17 @@
 a {
     text-decoration: none;
 }
+
+.category-badge {
+    background: #e5e7eb;
+    color: #4b5563;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    transition: all 0.2s ease;
+}
+
+.category-badge:hover {
+    background: #EA6C80;
+    color: white;
+}

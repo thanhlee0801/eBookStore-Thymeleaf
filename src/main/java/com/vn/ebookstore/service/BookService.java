@@ -9,15 +9,11 @@ public interface BookService {
     Book updateBook(int id, Book book);
     void deleteBook(int id);
     Book getBookById(int id);
-
     Optional<Book> findById(Integer id);
-
     List<Book> getAllBooks();
     List<Book> getBooksByCategory(int categoryId);
     List<Book> getLatestBooks();
     List<Book> getPremiumBooks();
     void softDeleteBook(int id);
-
-    List<Book> getBooksByCategoryId(Integer categoryId);
     List<Book> getBooksBySubCategoryId(Integer subCategoryId);
 }

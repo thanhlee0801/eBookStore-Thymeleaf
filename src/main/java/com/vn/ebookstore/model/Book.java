@@ -9,27 +9,30 @@ import java.util.List;
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
     private String title;
     private String author;
     private String cover;
-    private long price;
-    @Column(updatable = false)
+    private Long price;
+    
+    @Column(name = "created_at", updatable = false)
     private Date createdAt;
+    
+    @Column(name = "deleted_at")
     private Date deletedAt;
 
     @ManyToOne
     @JoinColumn(name = "sub_category_id")
     private SubCategory subCategory;
 
-    @OneToOne(mappedBy = "book")
+    @OneToOne(mappedBy = "book", cascade = CascadeType.ALL)
     private BookDetail bookDetail;
 
-    @OneToMany(mappedBy = "book")
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
     private List<BookImage> images;
 
     @OneToMany(mappedBy = "book")
-    private List<Wishlist> wishlist;
+    private List<Wishlist> wishlists;
 
     @OneToMany(mappedBy = "book")
     private List<CartItem> cartItems;
@@ -40,17 +43,17 @@ public class Book {
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
     private List<Review> reviews;
 
-    @Column(nullable = false)
-    private Double averageRating = 0.0;
+    @Transient
+    private Double averageRating;
 
-    @Column(nullable = false)
-    private Integer reviewCount = 0;
+    @Transient
+    private Integer reviewCount;
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -78,11 +81,11 @@ public class Book {
         this.cover = cover;
     }
 
-    public long getPrice() {
+    public Long getPrice() {
         return price;
     }
 
-    public void setPrice(long price) {
+    public void setPrice(Long price) {
         this.price = price;
     }
 
@@ -126,12 +129,12 @@ public class Book {
         this.images = images;
     }
 
-    public List<Wishlist> getWishlist() {
-        return wishlist;
+    public List<Wishlist> getWishlists() {
+        return wishlists;
     }
 
-    public void setWishlist(List<Wishlist> wishlist) {
-        this.wishlist = wishlist;
+    public void setWishlists(List<Wishlist> wishlists) {
+        this.wishlists = wishlists;
     }
 
     public List<CartItem> getCartItems() {
@@ -159,18 +162,17 @@ public class Book {
     }
 
     public Double getAverageRating() {
-        return averageRating;
-    }
-
-    public void setAverageRating(Double averageRating) {
-        this.averageRating = averageRating;
+        if (this.reviews != null && !this.reviews.isEmpty()) {
+            double sum = this.reviews.stream()
+                    .mapToInt(Review::getRating)
+                    .sum();
+            // Làm tròn đến 1 chữ số thập phân
+            return Math.round((sum / this.reviews.size()) * 10.0) / 10.0;
+        }
+        return 0.0;
     }
 
     public Integer getReviewCount() {
-        return reviewCount;
-    }
-
-    public void setReviewCount(Integer reviewCount) {
-        this.reviewCount = reviewCount;
+        return this.reviews != null ? this.reviews.size() : 0;
     }
 }

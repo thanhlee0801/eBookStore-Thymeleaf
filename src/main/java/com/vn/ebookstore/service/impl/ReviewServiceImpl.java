@@ -25,7 +25,12 @@ public class ReviewServiceImpl implements ReviewService {
     @Transactional
     public Review saveReview(Review review) {
         Review savedReview = reviewRepository.save(review);
-        updateBookRating(review.getBook().getId());
+        
+        // Refresh book object to update review calculations
+        Book book = review.getBook();
+        book.getReviews().add(savedReview);
+        bookRepository.save(book);
+        
         return savedReview;
     }
 
@@ -49,34 +54,16 @@ public class ReviewServiceImpl implements ReviewService {
     public void deleteReview(Integer reviewId) {
         Optional<Review> reviewOpt = reviewRepository.findById(reviewId);
         if (reviewOpt.isPresent()) {
-            Integer bookId = reviewOpt.get().getBook().getId();
+            Review review = reviewOpt.get();
+            Book book = review.getBook();
+            book.getReviews().remove(review);
             reviewRepository.deleteById(reviewId);
-            updateBookRating(bookId);
+            bookRepository.save(book);
         }
     }
 
     @Override
     public boolean hasUserReviewedBook(Integer userId, Integer bookId) {
         return reviewRepository.existsByUserIdAndBookId(userId, bookId);
-    }
-
-    private void updateBookRating(Integer bookId) {
-        List<Review> reviews = reviewRepository.findByBookId(bookId);
-        Book book = bookRepository.findById(bookId).orElse(null);
-        
-        if (book != null) {
-            if (!reviews.isEmpty()) {
-                double averageRating = reviews.stream()
-                        .mapToInt(Review::getRating)
-                        .average()
-                        .orElse(0.0);
-                book.setAverageRating(averageRating);
-                book.setReviewCount(reviews.size());
-            } else {
-                book.setAverageRating(0.0);
-                book.setReviewCount(0);
-            }
-            bookRepository.save(book);
-        }
     }
 }

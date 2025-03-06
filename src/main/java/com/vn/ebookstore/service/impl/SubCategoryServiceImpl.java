@@ -21,10 +21,11 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
     @Override
     public SubCategory updateSubCategory(int id, SubCategory subCategory) {
-        SubCategory existingSubCategory = subCategoryRepository.findById(id).orElseThrow(() -> new RuntimeException("SubCategory not found"));
+        SubCategory existingSubCategory = subCategoryRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("SubCategory not found"));
         existingSubCategory.setName(subCategory.getName());
         existingSubCategory.setDescription(subCategory.getDescription());
-        existingSubCategory.setParent(subCategory.getParent());
+        existingSubCategory.setCategory(subCategory.getCategory()); // Changed from setParent to setCategory
         return subCategoryRepository.save(existingSubCategory);
     }
 
@@ -34,8 +35,9 @@ public class SubCategoryServiceImpl implements SubCategoryService {
     }
 
     @Override
-    public SubCategory getSubCategoryById(int id) {
-        return subCategoryRepository.findById(id).orElseThrow(() -> new RuntimeException("SubCategory not found"));
+    public SubCategory getSubCategoryById(Integer id) {
+        return subCategoryRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("SubCategory not found"));
     }
 
     @Override

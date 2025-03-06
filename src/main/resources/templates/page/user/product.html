@@ -305,10 +305,33 @@
                                         <i class="far fa-heart" th:class="${wishlists != null and #lists.contains(wishlists.![book.id], book.id)} ? 'fas fa-heart text-danger' : 'far fa-heart'"></i>
                                     </button>
                                 </div>
+                                <!-- Category badge with link -->
                                 <div class="p-3">
-                                    <!-- Danh mục sách -->
-                                    <span class="category-badge mb-2 d-inline-block" th:if="${book != null and book.subCategory != null}" th:text="${book.subCategory.name}">Category Name</span>
-                                    <span class="category-badge mb-2 d-inline-block" th:if="${book != null and book.subCategory == null}" th:text="${book.category.name}">Category Name</span>
+                                    <a th:if="${book != null and book.subCategory != null}" 
+                                       sec:authorize="isAuthenticated()"
+                                       th:href="@{/user/subcategory/{id}(id=${book.subCategory.id})}"
+                                       class="category-badge mb-2 d-inline-block text-decoration-none"
+                                       th:text="${book.subCategory.name}">Category Name</a>
+                                    
+                                    <a th:if="${book != null and book.subCategory != null}" 
+                                       sec:authorize="!isAuthenticated()"
+                                       th:href="@{/subcategory/{id}(id=${book.subCategory.id})}"
+                                       class="category-badge mb-2 d-inline-block text-decoration-none"
+                                       th:text="${book.subCategory.name}">Category Name</a>
+                                
+                                    <a th:if="${book != null and book.subCategory == null}" 
+                                       sec:authorize="isAuthenticated()"
+                                       th:href="@{/user/category/{id}(id=${book.subCategory.category.id})}"
+                                       class="category-badge mb-2 d-inline-block text-decoration-none"
+                                       th:text="${book.subCategory.category.name}">Category Name</a>
+                                    
+                                    <a th:if="${book != null and book.subCategory == null}" 
+                                       sec:authorize="!isAuthenticated()"
+                                       th:href="@{/category/{id}(id=${book.subCategory.category.id})}"
+                                       class="category-badge mb-2 d-inline-block text-decoration-none"
+                                       th:text="${book.subCategory.category.name}">Category Name</a>
+                                    
+                                    <!-- Rest of product card content -->
                                     <!-- Tiêu đề sách -->
                                     <h6 class="mb-1" th:if="${book != null and book.title != null}">
                                         <a sec:authorize="isAuthenticated()" th:href="@{'/user/book/' + ${book.id}}" class="text-decoration-none" th:text="${book.title}">Book Title</a>

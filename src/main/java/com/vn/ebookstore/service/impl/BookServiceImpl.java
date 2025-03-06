@@ -2,14 +2,13 @@ package com.vn.ebookstore.service.impl;
 
 import com.vn.ebookstore.model.Book;
 import com.vn.ebookstore.model.Category;
-import com.vn.ebookstore.model.SubCategory;
 import com.vn.ebookstore.repository.BookRepository;
 import com.vn.ebookstore.repository.CategoryRepository;
+import com.vn.ebookstore.repository.SubCategoryRepository;
 import com.vn.ebookstore.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +21,9 @@ public class BookServiceImpl implements BookService {
 
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @Autowired
+    private SubCategoryRepository subCategoryRepository;
 
     @Override
     public Book createBook(Book book) {
@@ -61,7 +63,12 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<Book> getBooksByCategory(int categoryId) {
-        return bookRepository.findBySubCategory_Parent_IdAndDeletedAtIsNull(categoryId);
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+        if (category.getDeletedAt() != null) {
+            throw new RuntimeException("Category has been deleted");
+        }
+        return bookRepository.findBySubCategory_Category_IdAndDeletedAtIsNull(categoryId);
     }
 
     @Override
@@ -81,23 +88,11 @@ public class BookServiceImpl implements BookService {
         bookRepository.save(book);
     }
 
-    @Override
-    public List<Book> getBooksByCategoryId(Integer categoryId) {
-        Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new RuntimeException("Category not found"));
-        
-        List<Book> books = new ArrayList<>();
-        if (category.getSubCategories() != null && !category.getSubCategories().isEmpty()) {
-            // Nếu là category cha, lấy sách từ tất cả subcategories
-            for (SubCategory subCategory : category.getSubCategories()) {
-                books.addAll(bookRepository.findBySubCategoryIdAndDeletedAtIsNull(subCategory.getId()));
-            }
-        }
-        return books;
-    }
-
     @Override 
     public List<Book> getBooksBySubCategoryId(Integer subCategoryId) {
+        if (!subCategoryRepository.existsById(subCategoryId)) {
+            throw new RuntimeException("SubCategory not found");
+        }
         return bookRepository.findBySubCategoryIdAndDeletedAtIsNull(subCategoryId);
     }
 }

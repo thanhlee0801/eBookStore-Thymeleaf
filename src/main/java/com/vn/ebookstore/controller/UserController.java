@@ -7,6 +7,7 @@ import com.vn.ebookstore.service.UserService;
 import com.vn.ebookstore.service.WishlistService;
 import com.vn.ebookstore.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -18,6 +19,7 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/user")
@@ -44,7 +46,7 @@ public class UserController {
         model.addAttribute("books", books);
         if (principal != null) {
             User user = userService.getUserByEmail(principal.getName());
-            
+
             // Initialize cart
             Cart cart = cartService.getCurrentCartByUser(user);
             if (cart == null) {
@@ -54,11 +56,11 @@ public class UserController {
                 cart = cartService.save(cart);
             }
             model.addAttribute("cart", cart);
-            
+
             // Initialize wishlist
             List<Wishlist> wishlists = wishlistService.getWishlistsByUser(user);
             model.addAttribute("wishlists", wishlists != null ? wishlists : new ArrayList<>());
-            
+
             return "index";
         }
         return "redirect:/login";
@@ -68,7 +70,7 @@ public class UserController {
     public String aboutUs(Model model, Principal principal) {
         List<Category> categories = categoryService.getAllCategories();
         model.addAttribute("categories", categories);
-        
+
         if (principal != null) {
             User user = userService.getUserByEmail(principal.getName());
             Cart cart = cartService.getCurrentCartByUser(user);
@@ -83,7 +85,7 @@ public class UserController {
     public String cart(Model model, Principal principal) {
         List<Category> categories = categoryService.getAllCategories();
         model.addAttribute("categories", categories);
-        
+
         if (principal != null) {
             User user = userService.getUserByEmail(principal.getName());
             Cart cart = cartService.getCurrentCartByUser(user);
@@ -98,7 +100,7 @@ public class UserController {
     public String faq(Model model, Principal principal) {
         List<Category> categories = categoryService.getAllCategories();
         model.addAttribute("categories", categories);
-        
+
         if (principal != null) {
             User user = userService.getUserByEmail(principal.getName());
             Cart cart = cartService.getCurrentCartByUser(user);
@@ -113,7 +115,7 @@ public class UserController {
     public String orderTracking(Model model, Principal principal) {
         List<Category> categories = categoryService.getAllCategories();
         model.addAttribute("categories", categories);
-        
+
         if (principal != null) {
             User user = userService.getUserByEmail(principal.getName());
             Cart cart = cartService.getCurrentCartByUser(user);
@@ -145,7 +147,7 @@ public class UserController {
     public String productDetail(Model model, Principal principal) {
         List<Category> categories = categoryService.getAllCategories();
         model.addAttribute("categories", categories);
-        
+
         if (principal != null) {
             User user = userService.getUserByEmail(principal.getName());
             Cart cart = cartService.getCurrentCartByUser(user);
@@ -160,7 +162,7 @@ public class UserController {
     public String wishlist(Model model, Principal principal) {
         List<Category> categories = categoryService.getAllCategories();
         model.addAttribute("categories", categories);
-        
+
         if (principal != null) {
             User user = userService.getUserByEmail(principal.getName());
             Cart cart = cartService.getCurrentCartByUser(user);
@@ -180,8 +182,8 @@ public class UserController {
             boolean isInWishlist = wishlistService.isBookInWishlist(user.getId(), bookId);
             List<Wishlist> wishlists = wishlistService.getWishlistsByUser(user);
             return ResponseEntity.ok().body(Map.of(
-                "inWishlist", isInWishlist,
-                "wishlistCount", wishlists != null ? wishlists.size() : 0
+                    "inWishlist", isInWishlist,
+                    "wishlistCount", wishlists != null ? wishlists.size() : 0
             ));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
@@ -191,7 +193,7 @@ public class UserController {
     @PostMapping("/cart/add/{bookId}")
     @ResponseBody
     public ResponseEntity<?> addToCart(@PathVariable("bookId") int bookId, @RequestParam("quantity") int quantity,
-            Principal principal) {
+                                       Principal principal) {
         try {
             User user = userService.getUserByEmail(principal.getName());
             cartService.addToCart(user.getId(), bookId, quantity);
@@ -268,7 +270,7 @@ public class UserController {
     public String showProfile(Model model, Principal principal) {
         List<Category> categories = categoryService.getAllCategories();
         model.addAttribute("categories", categories);
-        
+
         if (principal != null) {
             User user = userService.getUserByEmail(principal.getName());
             Cart cart = cartService.getCurrentCartByUser(user);
@@ -284,7 +286,7 @@ public class UserController {
     public String showSettings(Model model, Principal principal) {
         List<Category> categories = categoryService.getAllCategories();
         model.addAttribute("categories", categories);
-        
+
         if (principal != null) {
             User user = userService.getUserByEmail(principal.getName());
             Cart cart = cartService.getCurrentCartByUser(user);
@@ -321,5 +323,41 @@ public class UserController {
 
         redirectAttributes.addFlashAttribute("success", "Đổi mật khẩu thành công");
         return "redirect:/user/settings";
+    }
+
+    @GetMapping("/book/{id}")
+    public String viewBookDetail(@PathVariable Integer id, Model model, Principal principal) {
+        // Lấy danh sách categories (đồng bộ với các controller khác)
+        List<Category> categories = categoryService.getAllCategories();
+        model.addAttribute("categories", categories);
+
+        // Lấy thông tin sách
+        Optional<Book> bookOptional = bookService.findById(id);
+        if (bookOptional.isPresent()) {
+            Book book = bookOptional.get();
+            model.addAttribute("book", book);
+
+            // Kiểm tra và xử lý nếu người dùng đã đăng nhập
+            if (principal != null) {
+                User user = userService.getUserByEmail(principal.getName());
+                // Lấy giỏ hàng
+                Cart cart = cartService.getCurrentCartByUser(user);
+                if (cart == null) {
+                    cart = new Cart();
+                    cart.setUser(user);
+                    cart.setCartItems(new ArrayList<>());
+                    cart = cartService.save(cart);
+                }
+                model.addAttribute("cart", cart);
+
+                // Lấy danh sách wishlist
+                List<Wishlist> wishlists = wishlistService.getWishlistsByUser(user);
+                model.addAttribute("wishlists", wishlists != null ? wishlists : new ArrayList<>());
+            }
+
+            return "page/user/product_detail";
+        } else {
+            return "redirect:/user/products";
+        }
     }
 }

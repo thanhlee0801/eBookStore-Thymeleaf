@@ -1,11 +1,15 @@
 package com.vn.ebookstore.service.impl;
 
 import com.vn.ebookstore.model.Book;
+import com.vn.ebookstore.model.Category;
+import com.vn.ebookstore.model.SubCategory;
 import com.vn.ebookstore.repository.BookRepository;
+import com.vn.ebookstore.repository.CategoryRepository;
 import com.vn.ebookstore.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -15,6 +19,9 @@ public class BookServiceImpl implements BookService {
 
     @Autowired
     private BookRepository bookRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     @Override
     public Book createBook(Book book) {
@@ -72,5 +79,25 @@ public class BookServiceImpl implements BookService {
         Book book = getBookById(id);
         book.setDeletedAt(new Date());
         bookRepository.save(book);
+    }
+
+    @Override
+    public List<Book> getBooksByCategoryId(Integer categoryId) {
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+        
+        List<Book> books = new ArrayList<>();
+        if (category.getSubCategories() != null && !category.getSubCategories().isEmpty()) {
+            // Nếu là category cha, lấy sách từ tất cả subcategories
+            for (SubCategory subCategory : category.getSubCategories()) {
+                books.addAll(bookRepository.findBySubCategoryIdAndDeletedAtIsNull(subCategory.getId()));
+            }
+        }
+        return books;
+    }
+
+    @Override 
+    public List<Book> getBooksBySubCategoryId(Integer subCategoryId) {
+        return bookRepository.findBySubCategoryIdAndDeletedAtIsNull(subCategoryId);
     }
 }

@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <!-- Custom CSS -->
     <link rel="stylesheet" th:href="@{/css/index_style.css}">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 </head>
 
 <body>
@@ -22,12 +23,7 @@
         <div class="row">
             <!-- Sidebar -->
             <div class="col-md-3">
-                <div class="list-group">
-                    <a th:href="@{/user/profile}" class="list-group-item list-group-item-action active">Thông tin cá nhân</a>
-                    <a th:href="@{/user/settings}" class="list-group-item list-group-item-action">Cài đặt</a>
-                    <a th:href="@{/user/orders}" class="list-group-item list-group-item-action">Đơn hàng của tôi</a>
-                    <a th:href="@{/user/wishlist}" class="list-group-item list-group-item-action">Danh sách yêu thích</a>
-                </div>
+                <div th:replace="~{fragments/user_sidebar :: sidebar('profile')}"></div>
             </div>
 
             <!-- Profile Content -->
@@ -35,9 +31,14 @@
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h4 class="mb-0">Thông tin cá nhân</h4>
-                        <a th:href="@{/user/profile/edit}" class="btn btn-primary btn-sm">
-                            <i class="fas fa-edit"></i> Chỉnh sửa
-                        </a>
+                        <div>
+                            <button type="button" class="btn btn-outline-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#editUsernameModal">
+                                <i class="fas fa-user-edit"></i> Đổi tên đăng nhập
+                            </button>
+                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+                                <i class="fas fa-edit"></i> Chỉnh sửa thông tin
+                            </button>
+                        </div>
                     </div>
                     <div class="card-body">
                         <div class="row">
@@ -141,6 +142,166 @@
         </div>
     </div>
 
+    <!-- Modal đổi username -->
+    <div class="modal fade" id="editUsernameModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Đổi tên đăng nhập</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form th:action="@{/user/profile/update-username}" method="post">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="newUsername" class="form-label">Tên đăng nhập mới</label>
+                            <input type="text" class="form-control" id="newUsername" name="newUsername" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Nhập mật khẩu để xác nhận</label>
+                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                        <button type="submit" class="btn btn-primary">Cập nhật</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal chỉnh sửa thông tin -->
+    <div class="modal fade" id="editProfileModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Chỉnh sửa thông tin cá nhân</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form th:action="@{/user/profile/update}" method="post" enctype="multipart/form-data">
+                        <div class="container-fluid px-0">
+                            <div class="row g-3">
+                                <!-- Họ và tên -->
+                                <div class="col-md-6">
+                                    <label for="firstName" class="form-label">Họ <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="firstName" name="firstName" 
+                                           th:value="${user.firstName}" required>
+                                    <div class="invalid-feedback">Vui lòng nhập họ</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="lastName" class="form-label">Tên <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="lastName" name="lastName" 
+                                           th:value="${user.lastName}" required>
+                                    <div class="invalid-feedback">Vui lòng nhập tên</div>
+                                </div>
+
+                                <!-- Email -->
+                                <div class="col-12">
+                                    <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                                    <input type="email" class="form-control" id="email" name="email" 
+                                           th:value="${user.email}" required 
+                                           pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
+                                    <div class="invalid-feedback">Email không hợp lệ</div>
+                                </div>
+
+                                <!-- Số điện thoại -->
+                                <div class="col-md-6">
+                                    <label for="phoneNumber" class="form-label">Số điện thoại</label>
+                                    <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" 
+                                           th:value="${user.phoneNumber}" pattern="[0-9]{10}">
+                                    <div class="invalid-feedback">Số điện thoại không hợp lệ</div>
+                                </div>
+
+                                <!-- Ngày sinh -->
+                                <div class="col-md-6">
+                                    <label for="birthOfDate" class="form-label">Ngày sinh</label>
+                                    <input type="text" class="form-control datepicker" id="birthOfDate" name="birthOfDate" 
+                                           th:value="${#dates.format(user.birthOfDate, 'dd/MM/yyyy')}"
+                                           placeholder="dd/mm/yyyy" autocomplete="off">
+                                    <div class="invalid-feedback">Ngày sinh không hợp lệ</div>
+                                </div>
+
+                                <!-- Avatar -->
+                                <div class="col-12">
+                                    <label for="avatar" class="form-label">Ảnh đại diện</label>
+                                    <input type="file" class="form-control" id="avatar" name="avatar" 
+                                           accept="image/*">
+                                    <div class="form-text">Chọn file ảnh có định dạng: jpg, jpeg, png. Tối đa 2MB</div>
+                                </div>
+
+                                <!-- Preview ảnh -->
+                                <div class="col-12">
+                                    <div id="imagePreview" class="mt-2 text-center">
+                                        <img id="preview" src="#" alt="Preview" style="max-width: 200px; display: none;">
+                                    </div>
+                                </div>
+
+                                <!-- Thêm các trường địa chỉ -->
+                                <h5 class="mt-4">Thông tin địa chỉ</h5>
+                                <div class="col-12">
+                                    <label for="addressLine" class="form-label">Địa chỉ chi tiết</label>
+                                    <input type="text" class="form-control" id="addressLine" name="addressLine"
+                                           th:value="${user.addresses != null and !user.addresses.empty} ? ${user.addresses[0].addressLine} : ''">
+                                </div>
+                                <div class="col-md-6"></div>
+                                    <label for="ward" class="form-label">Phường/Xã</label>
+                                    <input type="text" class="form-control" id="ward" name="ward"
+                                           th:value="${user.addresses != null and !user.addresses.empty} ? ${user.addresses[0].ward} : ''">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="district" class="form-label">Quận/Huyện</label>
+                                    <input type="text" class="form-control" id="district" name="district"
+                                           th:value="${user.addresses != null and !user.addresses.empty} ? ${user.addresses[0].district} : ''">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="city" class="form-label">Thành phố</label>
+                                    <input type="text" class="form-control" id="city" name="city"
+                                           th:value="${user.addresses != null and !user.addresses.empty} ? ${user.addresses[0].city} : ''">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="country" class="form-label">Quốc gia</label>
+                                    <input type="text" class="form-control" id="country" name="country"
+                                           th:value="${user.addresses != null and !user.addresses.empty} ? ${user.addresses[0].country} : ''">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="postalCode" class="form-label">Mã bưu chính</label>
+                                    <input type="text" class="form-control" id="postalCode" name="postalCode"
+                                           th:value="${user.addresses != null and !user.addresses.empty} ? ${user.addresses[0].postalCode} : ''">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer border-top-0 px-0 pb-0">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                            <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Messages -->
+    <div th:if="${success}" class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header bg-success text-white">
+                <strong class="me-auto">Thành công</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body" th:text="${success}"></div>
+        </div>
+    </div>
+
+    <div th:if="${error}" class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true"></div>
+            <div class="toast-header bg-danger text-white">
+                <strong class="me-auto">Lỗi</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body" th:text="${error}"></div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <div th:replace="index :: footer"></div>
 
@@ -151,6 +312,99 @@
 
     <script th:src="@{/js/cart.js}"></script>
     <script th:src="@{/js/wishlist.js}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Datepicker
+            $(".datepicker").datepicker({
+                dateFormat: 'dd/mm/yy',
+                changeMonth: true,
+                changeYear: true,
+                yearRange: "-100:+0",
+                maxDate: '0'
+            });
+
+            // Preview ảnh khi chọn file
+            $("#avatar").change(function() {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        $("#preview").attr('src', e.target.result).show();
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Form validation
+            (function () {
+                'use strict'
+                var forms = document.querySelectorAll('.needs-validation')
+                Array.prototype.slice.call(forms)
+                    .forEach(function (form) {
+                        form.addEventListener('submit', function (event) {
+                            if (!form.checkValidity()) {
+                                event.preventDefault()
+                                event.stopPropagation()
+                            }
+                            form.classList.add('was-validated')
+                        }, false)
+                    })
+            })()
+        });
+
+        // Thêm function để cập nhật avatar
+        function updateAvatarDisplay(avatarUrl) {
+            const avatarContainer = document.querySelector('.position-relative');
+            if (avatarContainer) {
+                if (avatarUrl) {
+                    // Nếu có avatar mới, cập nhật hoặc tạo mới img tag
+                    let avatarImg = avatarContainer.querySelector('img');
+                    if (!avatarImg) {
+                        // Nếu chưa có img tag (đang hiển thị icon), tạo mới
+                        avatarContainer.innerHTML = ''; // Xóa icon cũ
+                        avatarImg = document.createElement('img');
+                        avatarImg.className = 'rounded-circle img-thumbnail';
+                        avatarImg.style = 'width: 150px; height: 150px; object-fit: cover;';
+                        avatarImg.alt = 'Avatar';
+                        avatarContainer.appendChild(avatarImg);
+                    }
+                    // Thêm timestamp để tránh cache
+                    avatarImg.src = avatarUrl + '?t=' + new Date().getTime();
+                }
+            }
+        }
+
+        // Thêm hàm để reload trang 2 lần
+        function reloadTwice() {
+            // Reload lần 1
+            setTimeout(function() {
+                location.reload();
+                // Reload lần 2 sau 500ms
+                setTimeout(function() {
+                    location.reload();
+                }, 500);
+            }, 0);
+        }
+
+        // Thay đổi xử lý form submit
+        document.querySelector('form[enctype="multipart/form-data"]').addEventListener('submit', function(e) {
+            // Không cần preventDefault nữa
+            bootstrap.Modal.getInstance(document.getElementById('editProfileModal')).hide();
+        });
+
+        // Thêm xử lý toast alerts để tự đóng sau 3 giây
+        window.addEventListener('load', function() {
+            const toasts = document.querySelectorAll('.toast');
+            toasts.forEach(toast => {
+                const bsToast = new bootstrap.Toast(toast, {
+                    delay: 3000
+                });
+                bsToast.show();
+            });
+        });
+    </script>
 </body>
 
 </html>

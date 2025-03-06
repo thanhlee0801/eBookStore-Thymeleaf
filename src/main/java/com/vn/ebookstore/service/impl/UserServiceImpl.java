@@ -9,6 +9,7 @@ import com.vn.ebookstore.repository.AddressRepository;
 import com.vn.ebookstore.security.UserDetailsImpl;
 import com.vn.ebookstore.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,7 +19,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -42,6 +42,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Autowired
     private AddressRepository addressRepository;
+
+    @Value("${app.upload.dir:${user.home}}")
+    private String uploadDir;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -191,4 +194,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy user với email: " + email));
     }
+
+    @Override
+    public boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
+    }
+
 }

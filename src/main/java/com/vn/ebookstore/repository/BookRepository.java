@@ -16,4 +16,9 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
     
     @Query(value = "SELECT * FROM books WHERE deleted_at IS NULL ORDER BY price DESC LIMIT 8", nativeQuery = true)
     List<Book> findPremiumBooks();
+
+    List<Book> findBySubCategoryIdAndDeletedAtIsNull(Integer subCategoryId);
+
+    @Query("SELECT b FROM Book b WHERE b.deletedAt IS NULL")
+    List<Book> findAllActive();
 }

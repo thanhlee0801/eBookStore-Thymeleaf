@@ -1,0 +1,18 @@
+<div th:fragment="sidebar(activeTab)" class="list-group shadow-sm">
+    <a th:href="@{/user/profile}" 
+       th:class="'list-group-item list-group-item-action' + (${activeTab == 'profile'} ? ' active' : '')">
+        <i class="fas fa-user me-2"></i>Thông tin cá nhân
+    </a>
+    <a th:href="@{/user/orders}" 
+       th:class="'list-group-item list-group-item-action' + (${activeTab == 'orders'} ? ' active' : '')">
+        <i class="fas fa-shopping-bag me-2"></i>Đơn hàng của tôi
+    </a>
+    <a th:href="@{/user/reviews}" 
+       th:class="'list-group-item list-group-item-action' + (${activeTab == 'reviews'} ? ' active' : '')">
+        <i class="fas fa-star me-2"></i>Đánh giá của tôi
+    </a>
+    <a th:href="@{/user/settings}" 
+       th:class="'list-group-item list-group-item-action' + (${activeTab == 'settings'} ? ' active' : '')">
+        <i class="fas fa-cog me-2"></i>Cài đặt
+    </a>
+</div>

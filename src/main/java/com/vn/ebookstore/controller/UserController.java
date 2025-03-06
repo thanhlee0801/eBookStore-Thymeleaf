@@ -24,7 +24,7 @@ import java.util.Optional;
 @Controller
 @RequestMapping("/user")
 public class UserController {
-
+    // Dependencies injection
     @Autowired
     private CategoryService categoryService;
     @Autowired
@@ -38,6 +38,7 @@ public class UserController {
     @Autowired
     private CartService cartService;
 
+    // ==================== Page Navigation Mappings ====================
     @GetMapping("/home")
     public String home(Model model, Principal principal) {
         List<Category> categories = categoryService.getAllCategories();
@@ -81,21 +82,6 @@ public class UserController {
         return "page/user/about_us";
     }
 
-    @GetMapping("/cart")
-    public String cart(Model model, Principal principal) {
-        List<Category> categories = categoryService.getAllCategories();
-        model.addAttribute("categories", categories);
-
-        if (principal != null) {
-            User user = userService.getUserByEmail(principal.getName());
-            Cart cart = cartService.getCurrentCartByUser(user);
-            List<Wishlist> wishlists = wishlistService.getWishlistsByUser(user);
-            model.addAttribute("cart", cart);
-            model.addAttribute("wishlists", wishlists != null ? wishlists : new ArrayList<>());
-        }
-        return "page/user/cart";
-    }
-
     @GetMapping("/faq")
     public String faq(Model model, Principal principal) {
         List<Category> categories = categoryService.getAllCategories();
@@ -126,6 +112,7 @@ public class UserController {
         return "page/user/order_tracking";
     }
 
+    // ==================== Product Related Mappings ====================
     @GetMapping("/products")
     public String products(Model model, Principal principal) {
         List<Category> categories = categoryService.getAllCategories();
@@ -158,8 +145,45 @@ public class UserController {
         return "page/user/product_detail";
     }
 
-    @GetMapping("/wishlist")
-    public String wishlist(Model model, Principal principal) {
+    @GetMapping("/book/{id}")
+    public String viewBookDetail(@PathVariable Integer id, Model model, Principal principal) {
+        // Lấy danh sách categories (đồng bộ với các controller khác)
+        List<Category> categories = categoryService.getAllCategories();
+        model.addAttribute("categories", categories);
+
+        // Lấy thông tin sách
+        Optional<Book> bookOptional = bookService.findById(id);
+        if (bookOptional.isPresent()) {
+            Book book = bookOptional.get();
+            model.addAttribute("book", book);
+
+            // Kiểm tra và xử lý nếu người dùng đã đăng nhập
+            if (principal != null) {
+                User user = userService.getUserByEmail(principal.getName());
+                // Lấy giỏ hàng
+                Cart cart = cartService.getCurrentCartByUser(user);
+                if (cart == null) {
+                    cart = new Cart();
+                    cart.setUser(user);
+                    cart.setCartItems(new ArrayList<>());
+                    cart = cartService.save(cart);
+                }
+                model.addAttribute("cart", cart);
+
+                // Lấy danh sách wishlist
+                List<Wishlist> wishlists = wishlistService.getWishlistsByUser(user);
+                model.addAttribute("wishlists", wishlists != null ? wishlists : new ArrayList<>());
+            }
+
+            return "page/user/product_detail";
+        } else {
+            return "redirect:/user/products";
+        }
+    }
+
+    // ==================== Cart Related Mappings ====================
+    @GetMapping("/cart")
+    public String cart(Model model, Principal principal) {
         List<Category> categories = categoryService.getAllCategories();
         model.addAttribute("categories", categories);
 
@@ -170,30 +194,14 @@ public class UserController {
             model.addAttribute("cart", cart);
             model.addAttribute("wishlists", wishlists != null ? wishlists : new ArrayList<>());
         }
-        return "page/user/wishlist";
-    }
-
-    @PostMapping("/wishlist/toggle/{bookId}")
-    @ResponseBody
-    public ResponseEntity<?> toggleWishlist(@PathVariable("bookId") int bookId, Principal principal) {
-        try {
-            User user = userService.getUserByEmail(principal.getName());
-            wishlistService.toggleWishlist(user.getId(), bookId);
-            boolean isInWishlist = wishlistService.isBookInWishlist(user.getId(), bookId);
-            List<Wishlist> wishlists = wishlistService.getWishlistsByUser(user);
-            return ResponseEntity.ok().body(Map.of(
-                    "inWishlist", isInWishlist,
-                    "wishlistCount", wishlists != null ? wishlists.size() : 0
-            ));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-        }
+        return "page/user/cart";
     }
 
     @PostMapping("/cart/add/{bookId}")
     @ResponseBody
-    public ResponseEntity<?> addToCart(@PathVariable("bookId") int bookId, @RequestParam("quantity") int quantity,
-                                       Principal principal) {
+    public ResponseEntity<?> addToCart(@PathVariable("bookId") int bookId, 
+                                     @RequestParam("quantity") int quantity,
+                                     Principal principal) {
         try {
             User user = userService.getUserByEmail(principal.getName());
             cartService.addToCart(user.getId(), bookId, quantity);
@@ -208,7 +216,8 @@ public class UserController {
 
     @PostMapping("/cart/remove/{bookId}")
     @ResponseBody
-    public ResponseEntity<?> removeFromCart(@PathVariable("bookId") int bookId, Principal principal) {
+    public ResponseEntity<?> removeFromCart(@PathVariable("bookId") int bookId, 
+                                          Principal principal) {
         try {
             User user = userService.getUserByEmail(principal.getName());
             cartService.removeFromCart(user.getId(), bookId);
@@ -239,18 +248,6 @@ public class UserController {
         }
     }
 
-    @PostMapping("/wishlist/clear")
-    @ResponseBody
-    public ResponseEntity<?> clearWishlist(Principal principal) {
-        try {
-            User user = userService.getUserByEmail(principal.getName());
-            wishlistService.clearWishlist(user.getId());
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-        }
-    }
-
     @PostMapping("/cart/clear")
     @ResponseBody
     public ResponseEntity<?> clearCart(Principal principal) {
@@ -266,6 +263,53 @@ public class UserController {
         }
     }
 
+    // ==================== Wishlist Related Mappings ====================
+    @GetMapping("/wishlist")
+    public String wishlist(Model model, Principal principal) {
+        List<Category> categories = categoryService.getAllCategories();
+        model.addAttribute("categories", categories);
+
+        if (principal != null) {
+            User user = userService.getUserByEmail(principal.getName());
+            Cart cart = cartService.getCurrentCartByUser(user);
+            List<Wishlist> wishlists = wishlistService.getWishlistsByUser(user);
+            model.addAttribute("cart", cart);
+            model.addAttribute("wishlists", wishlists != null ? wishlists : new ArrayList<>());
+        }
+        return "page/user/wishlist";
+    }
+
+    @PostMapping("/wishlist/toggle/{bookId}")
+    @ResponseBody
+    public ResponseEntity<?> toggleWishlist(@PathVariable("bookId") int bookId, 
+                                          Principal principal) {
+        try {
+            User user = userService.getUserByEmail(principal.getName());
+            wishlistService.toggleWishlist(user.getId(), bookId);
+            boolean isInWishlist = wishlistService.isBookInWishlist(user.getId(), bookId);
+            List<Wishlist> wishlists = wishlistService.getWishlistsByUser(user);
+            return ResponseEntity.ok().body(Map.of(
+                    "inWishlist", isInWishlist,
+                    "wishlistCount", wishlists != null ? wishlists.size() : 0
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @PostMapping("/wishlist/clear")
+    @ResponseBody
+    public ResponseEntity<?> clearWishlist(Principal principal) {
+        try {
+            User user = userService.getUserByEmail(principal.getName());
+            wishlistService.clearWishlist(user.getId());
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    // ==================== User Profile & Settings Mappings ====================
     @GetMapping("/profile")
     public String showProfile(Model model, Principal principal) {
         List<Category> categories = categoryService.getAllCategories();
@@ -323,41 +367,5 @@ public class UserController {
 
         redirectAttributes.addFlashAttribute("success", "Đổi mật khẩu thành công");
         return "redirect:/user/settings";
-    }
-
-    @GetMapping("/book/{id}")
-    public String viewBookDetail(@PathVariable Integer id, Model model, Principal principal) {
-        // Lấy danh sách categories (đồng bộ với các controller khác)
-        List<Category> categories = categoryService.getAllCategories();
-        model.addAttribute("categories", categories);
-
-        // Lấy thông tin sách
-        Optional<Book> bookOptional = bookService.findById(id);
-        if (bookOptional.isPresent()) {
-            Book book = bookOptional.get();
-            model.addAttribute("book", book);
-
-            // Kiểm tra và xử lý nếu người dùng đã đăng nhập
-            if (principal != null) {
-                User user = userService.getUserByEmail(principal.getName());
-                // Lấy giỏ hàng
-                Cart cart = cartService.getCurrentCartByUser(user);
-                if (cart == null) {
-                    cart = new Cart();
-                    cart.setUser(user);
-                    cart.setCartItems(new ArrayList<>());
-                    cart = cartService.save(cart);
-                }
-                model.addAttribute("cart", cart);
-
-                // Lấy danh sách wishlist
-                List<Wishlist> wishlists = wishlistService.getWishlistsByUser(user);
-                model.addAttribute("wishlists", wishlists != null ? wishlists : new ArrayList<>());
-            }
-
-            return "page/user/product_detail";
-        } else {
-            return "redirect:/user/products";
-        }
     }
 }

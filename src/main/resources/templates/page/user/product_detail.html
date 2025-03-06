@@ -152,23 +152,45 @@
         <!-- Breadcrumb -->
         <nav aria-label="breadcrumb" class="mb-4">
             <ol class="breadcrumb">
+                <!-- Trang chủ -->
                 <li class="breadcrumb-item">
                     <a sec:authorize="isAuthenticated()" th:href="@{/user/home}" class="text-decoration-none">Trang chủ</a>
                     <a sec:authorize="!isAuthenticated()" th:href="@{/}" class="text-decoration-none">Trang chủ</a>
                 </li>
+                
+                <!-- Sách -->
                 <li class="breadcrumb-item">
                     <a sec:authorize="isAuthenticated()" th:href="@{/user/products}" class="text-decoration-none">Sách</a>
                     <a sec:authorize="!isAuthenticated()" th:href="@{/products}" class="text-decoration-none">Sách</a>
                 </li>
+                
+                <!-- Category Name (Danh mục cha) -->
                 <li class="breadcrumb-item" th:if="${book != null and book.subCategory != null}">
-                    <a sec:authorize="isAuthenticated()" th:href="@{/user/products(category=${book.subCategory.id})}"
-                       th:text="${book.subCategory.name}"
-                       class="text-decoration-none">Danh mục</a>
-                    <a sec:authorize="!isAuthenticated()" th:href="@{/products(category=${book.subCategory.category.id})}"
+                    <a sec:authorize="isAuthenticated()" 
+                       th:href="@{/user/category/{id}(id=${book.subCategory.category.id})}"
                        th:text="${book.subCategory.category.name}"
-                       class="text-decoration-none">Danh mục</a>
+                       class="text-decoration-none">Danh mục cha</a>
+                    <a sec:authorize="!isAuthenticated()" 
+                       th:href="@{/category/{id}(id=${book.subCategory.category.id})}"
+                       th:text="${book.subCategory.category.name}"
+                       class="text-decoration-none">Danh mục cha</a>
                 </li>
-                <li class="breadcrumb-item active" aria-current="page" th:text="${book != null ? book.title : ''}">Tên sách</li>
+                
+                <!-- Subcategory Name (Danh mục con) -->
+                <li class="breadcrumb-item" th:if="${book != null and book.subCategory != null}">
+                    <a sec:authorize="isAuthenticated()" 
+                       th:href="@{/user/subcategory/{id}(id=${book.subCategory.id})}"
+                       th:text="${book.subCategory.name}"
+                       class="text-decoration-none">Danh mục con</a>
+                    <a sec:authorize="!isAuthenticated()" 
+                       th:href="@{/subcategory/{id}(id=${book.subCategory.id})}"
+                       th:text="${book.subCategory.name}"
+                       class="text-decoration-none">Danh mục con</a>
+                </li>
+                
+                <!-- Tên sách -->
+                <li class="breadcrumb-item active" aria-current="page" 
+                    th:text="${book != null ? book.title : ''}">Tên sách</li>
             </ol>
         </nav>
 

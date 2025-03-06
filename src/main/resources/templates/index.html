@@ -249,12 +249,7 @@
                                         <td class="text-center align-middle" style="width: 25%;">
                                             <div class="input-group input-group-sm justify-content-center"
                                                 style="max-width: 120px; margin: 0 auto;">
-                                                <button class="btn btn-outline-secondary btn-sm px-2" type="button"
-                                                    th:onclick="'updateQuantity(' + ${item.book.id} + ', -1)'">-</button>
-                                                <input type="text" class="form-control text-center px-0"
-                                                    th:value="${item.quantity}" style="min-width: 45px;" readonly>
-                                                <button class="btn btn-outline-secondary btn-sm px-2" type="button"
-                                                    th:onclick="'updateQuantity(' + ${item.book.id} + ', 1)'">+</button>
+                                                <span class="mx-2" th:text="${item.quantity}">1</span>
                                             </div>
                                         </td>
                                         <td class="text-end align-middle" style="width: 20%;">
@@ -600,123 +595,10 @@
     </div>
 
     <!-- Cart and Wishlist Functions -->
-    <script>
-        function toggleWishlist(bookId) {
-            fetch(`/user/wishlist/toggle/${bookId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.inWishlist) {
-                        // Thêm vào yêu thích thành công
-                        console.log('Đã thêm vào yêu thích');
-                    } else {
-                        // Xóa khỏi yêu thích thành công
-                        console.log('Đã xóa khỏi yêu thích');
-                    }
-                    // Reload page để cập nhật UI
-                    window.location.reload();
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Có lỗi xảy ra khi cập nhật danh sách yêu thích!');
-                });
-        }
 
-        function addToCart(bookId, quantity) {
-            fetch(`/user/cart/add/${bookId}?quantity=${quantity}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Success:', data);
-                    alert('Đã thêm sản phẩm vào giỏ hàng!');
-                    // Reload page để cập nhật UI
-                    window.location.reload();
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Có lỗi xảy ra khi thêm vào giỏ hàng!');
-                });
-        }
+    <script th:src="@{/js/cart.js}"></script>
+    <script th:src="@{/js/wishlist.js}"></script>
 
-        function removeFromCart(bookId) {
-            fetch(`/user/cart/remove/${bookId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Success:', data);
-                    // Reload page để cập nhật UI
-                    window.location.reload();
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Có lỗi xảy ra khi xóa khỏi giỏ hàng!');
-                });
-        }
-
-        function updateQuantity(bookId, quantity) {
-            if (typeof quantity === 'string') {
-                quantity = parseInt(quantity);
-            }
-
-            const currentInput = document.querySelector(`input[data-book-id="${bookId}"]`);
-            let newQuantity;
-
-            if (currentInput) {
-                const currentQuantity = parseInt(currentInput.value);
-                newQuantity = typeof quantity === 'number' && !isNaN(quantity) ?
-                    (quantity < 0 ? currentQuantity + quantity : quantity) :
-                    currentQuantity;
-
-                if (newQuantity < 1) newQuantity = 1;
-            } else {
-                newQuantity = Math.max(1, quantity);
-            }
-
-            fetch(`/user/cart/update/${bookId}?quantity=${newQuantity}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Success:', data);
-                    // Reload page để cập nhật UI
-                    window.location.reload();
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Có lỗi xảy ra khi cập nhật giỏ hàng!');
-                });
-        }
-    </script>
 </body>
 
 </html>

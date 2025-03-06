@@ -346,43 +346,8 @@
     <th:block th:replace="~{index :: footer}"></th:block>
     <!-- Include các script từ frame.html -->
 
-    <script>
-        function toggleWishlist(bookId) {
-            fetch(`/user/wishlist/toggle/${bookId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-                .then(response => response.json())
-                .then(data => {
-                    // Refresh trang sau khi toggle wishlist thành công
-                    window.location.reload();
-                })
-                .catch(error => console.error('Error:', error));
-        }
-
-        function addToCart(bookId, quantity) {
-            fetch(`/user/cart/add/${bookId}?quantity=${quantity}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-                .then(response => response.json())
-                .then(data => {
-                    // Cập nhật số lượng sản phẩm trong giỏ hàng trên header
-                    const cartCount = document.querySelector('#cartCount');
-                    if (cartCount) {
-                        cartCount.textContent = data.itemCount;
-                    }
-                    window.location.reload();
-                    // Hiển thị thông báo thành công
-                    alert('Đã thêm sản phẩm vào giỏ hàng!');
-                })
-                .catch(error => console.error('Error:', error));
-        }
-    </script>
+    <script th:src="@{/js/cart.js}"></script>
+    <script th:src="@{/js/wishlist.js}"></script>
 </body>
 
 </html>

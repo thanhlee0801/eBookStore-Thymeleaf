@@ -156,22 +156,37 @@
             <!-- Phần sắp xếp -->
             <div class="d-flex gap-2 align-items-center">
                 <div class="btn-group">
-                    <a th:href="@{/user/products(categoryId=${selectedCategoryId},subCategoryId=${selectedSubCategoryId},
-                            minPrice=${selectedMinPrice},maxPrice=${selectedMaxPrice},minRating=${selectedMinRating},
-                            sortBy='newest',sortDir='desc')}"
+                    <a th:href="@{/user/products(
+                            categoryId=${selectedCategoryId},
+                            subCategoryId=${selectedSubCategoryId},
+                            minPrice=${selectedMinPrice},
+                            maxPrice=${selectedMaxPrice},
+                            minRating=${selectedMinRating},
+                            sortBy='newest',
+                            sortDir='desc')}"
                        th:class="'btn btn-outline-primary ' + (${sortBy == 'newest'} ? 'active' : '')">
                         Mới nhất
                     </a>
-                    <a th:href="@{/user/products(categoryId=${selectedCategoryId},subCategoryId=${selectedSubCategoryId},
-                            minPrice=${selectedMinPrice},maxPrice=${selectedMaxPrice},minRating=${selectedMinRating},
-                            sortBy='price',sortDir=${sortDir == 'asc' ? 'desc' : 'asc'})}"
+                    <a th:href="@{/user/products(
+                            categoryId=${selectedCategoryId},
+                            subCategoryId=${selectedSubCategoryId},
+                            minPrice=${selectedMinPrice},
+                            maxPrice=${selectedMaxPrice},
+                            minRating=${selectedMinRating},
+                            sortBy='price',
+                            sortDir=${sortBy == 'price' and sortDir == 'asc' ? 'desc' : 'asc'})}"
                        th:class="'btn btn-outline-primary ' + (${sortBy == 'price'} ? 'active' : '')">
-                        Giá
-                        <i th:class="${sortBy == 'price' && sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}"></i>
+                        Giá 
+                        <i th:class="${sortBy == 'price' ? (sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down') : 'fas fa-sort'}"></i>
                     </a>
-                    <a th:href="@{/user/products(categoryId=${selectedCategoryId},subCategoryId=${selectedSubCategoryId},
-                            minPrice=${selectedMinPrice},maxPrice=${selectedMaxPrice},minRating=${selectedMinRating},
-                            sortBy='rating',sortDir='desc')}"
+                    <a th:href="@{/user/products(
+                            categoryId=${selectedCategoryId},
+                            subCategoryId=${selectedSubCategoryId},
+                            minPrice=${selectedMinPrice},
+                            maxPrice=${selectedMaxPrice},
+                            minRating=${selectedMinRating},
+                            sortBy='rating',
+                            sortDir='desc')}"
                        th:class="'btn btn-outline-primary ' + (${sortBy == 'rating'} ? 'active' : '')">
                         Đánh giá cao
                     </a>

@@ -26,15 +26,19 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
            "ORDER BY COUNT(oi) DESC")
     List<Book> findBestSellingBooks();
     
-    @Query("SELECT b FROM Book b " +
+    @Query("SELECT DISTINCT b FROM Book b " +
+           "LEFT JOIN b.reviews r " +
            "WHERE (:categoryId IS NULL OR b.subCategory.category.id = :categoryId) " +
            "AND (:subCategoryId IS NULL OR b.subCategory.id = :subCategoryId) " +
            "AND (CAST(:minPrice AS double) IS NULL OR b.price >= :minPrice) " + 
            "AND (CAST(:maxPrice AS double) IS NULL OR b.price <= :maxPrice) " +
            "AND b.deletedAt IS NULL " +
+           "GROUP BY b " +
+           "HAVING (:minRating IS NULL OR COALESCE(AVG(r.rating), 0) >= :minRating) " +
            "ORDER BY " +
            "CASE WHEN :sortBy = 'price' AND :sortDir = 'asc' THEN b.price END ASC, " +
            "CASE WHEN :sortBy = 'price' AND :sortDir = 'desc' THEN b.price END DESC, " +
+           "CASE WHEN :sortBy = 'rating' AND :sortDir = 'desc' THEN AVG(r.rating) END DESC, " +
            "CASE WHEN :sortBy = 'newest' THEN b.createdAt END DESC")
     List<Book> filterAndSortBooks(
         @Param("categoryId") Integer categoryId,

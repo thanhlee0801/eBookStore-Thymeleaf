@@ -6,12 +6,99 @@
 .navbar .form-inline input {
     width: 300px;
 }
-/* Thay đổi màu navbar thành xanh biển */
-.bg-primary {
-    background-color: #EA6C80 !important;
+
+/* Màu chủ đạo */
+:root {
+    --primary-color: #EA6C80;
+    --primary-dark: #D85D71;
+    --primary-light: #FCB4B4;
+    --accent-color: #FF8FA3;
+    --text-primary: #333333;
+    --text-light: #666666;
+    --white: #FFFFFF;
 }
-.bg-primary .nav-link {
-    color: snow !important;
+
+/* Override Bootstrap primary colors */
+.bg-primary {
+    background-color: var(--primary-color) !important;
+}
+
+.btn-primary {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    color: var(--white) !important;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark) !important;
+    border-color: var(--primary-dark) !important;
+}
+
+.btn-outline-primary {
+    color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary-color) !important;
+    color: var(--white) !important;
+}
+
+.text-primary {
+    color: var(--primary-color) !important;
+}
+
+/* Navbar styling */
+.navbar-dark .navbar-nav .nav-link {
+    color: var(--text-on-primary) !important;
+}
+
+/* Cart and wishlist buttons */
+.cart-btn {
+    background: var(--primary-color);
+    color: var(--text-on-primary);
+}
+
+.cart-btn:hover {
+    background: var(--primary-dark);
+}
+
+.wishlist-btn:hover {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+}
+
+/* Category badges */
+.category-badge:hover {
+    background: var(--primary-color);
+    color: var(--text-on-primary);
+}
+
+/* Price color */
+.price {
+    color: var(--primary-color) !important;
+}
+
+/* Link colors */
+a {
+    color: var(--text-primary);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--primary-color);
+}
+
+/* Dropdown menu hover */
+.dropdown-item:hover {
+    background-color: var(--primary-light) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Active states */
+.active {
+    background-color: var(--primary-color) !important;
+    color: var(--text-on-primary) !important;
 }
 
 /* Tùy chỉnh khoảng cách giữa các nút */
@@ -38,8 +125,8 @@
 
 /* Đổi màu khi hover vào từng mục */
 .dropdown-item:hover {
-    background-color: #FCB4B4 !important; /* Màu cam khi hover */
-    color: black !important;
+    background-color: var(--primary-light) !important;
+    color: var (--text-primary) !important;
 }
 
 /* Tăng kích thước menu cho wishlist và giỏ hàng */
@@ -61,8 +148,8 @@
 
 /* Đồng nhất màu hover của dropdown trong input group */
 .input-group .dropdown-item:hover {
-    background-color: #FCB4B4 !important;
-    color: black !important;
+    background-color: var(--primary-light) !important;
+    color: var(--primary-dark) !important;
 }
 
 a {
@@ -79,8 +166,8 @@ a {
 }
 
 .category-badge:hover {
-    background: #EA6C80;
-    color: white;
+    background: var(--primary-color);
+    color: var(--text-on-primary);
 }
 
 /* Search Results Dropdown Styling */
@@ -110,4 +197,115 @@ a {
 .search-container {
     position: relative;
     z-index: 1100; /* Đảm bảo container cũng có z-index cao */
+}
+
+/* Dropdown items */
+.dropdown-item {
+    color: var(--text-primary) !important;
+}
+
+/* Timeline items */
+.timeline-item {
+    color: var(--text-light) !important;
+    background: var(--white) !important;
+}
+
+.timeline-item.active {
+    color: var(--primary-color) !important;
+    background: var(--white) !important;
+}
+
+.timeline-item::after {
+    color: var(--text-light);
+}
+
+/* Card and background colors */
+.card {
+    background: var(--white);
+}
+
+.card-header {
+    background-color: #f8f9fa !important;
+    color: var(--text-primary);
+}
+
+/* Navigation text */
+.nav-link {
+    color: var(--text-primary);
+}
+
+.bg-primary .nav-link {
+    color: var(--white) !important;
+}
+
+/* Breadcrumb styling */
+.breadcrumb {
+    margin-bottom: 1rem;
+}
+
+.breadcrumb-item a {
+    color: var(--text-primary);
+    text-decoration: none;
+}
+
+.breadcrumb-item a:hover {
+    color: var(--primary-color);
+}
+
+.breadcrumb-item.active {
+    color: var(--text-light);
+    background: none !important;
+}
+
+/* Navbar link colors */
+.navbar-dark .navbar-nav .nav-link,
+.bg-primary .nav-link {
+    color: var(--white) !important;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover,
+.bg-primary .nav-link:hover {
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* Override default active state */
+.nav-link.active {
+    background-color: transparent !important;
+    color: inherit !important;
+}
+
+/* Fix for tab navigation */
+.nav-tabs .nav-link {
+    color: var(--text-primary);
+    background: none !important;
+}
+
+.nav-tabs .nav-link:hover {
+    border-color: #e9ecef #e9ecef #dee2e6;
+}
+
+.nav-tabs .nav-link.active {
+    color: var(--primary-color) !important;
+    background-color: var(--white) !important;
+    border-color: #dee2e6 #dee2e6 #fff;
+}
+
+/* Card headers in white */
+.card-header {
+    background-color: var(--white) !important;
+    border-bottom: 1px solid rgba(0,0,0,.125);
+}
+
+.navbar-text {
+    color: var(--white) !important;
+}
+
+/* Fix for footer links */
+footer .text-light {
+    color: var(--white) !important;
+}
+
+footer a.text-light:hover {
+    color: rgba(255, 255, 255, 0.8) !important;
+    text-decoration: none;
 }

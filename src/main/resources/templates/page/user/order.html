@@ -33,7 +33,7 @@
         .timeline-item {
             position: relative;
             z-index: 2;
-            background: white;
+            background: white !important; /* Đảm bảo nền luôn màu trắng */
             width: 40px;
             height: 40px;
             border-radius: 50%;
@@ -41,11 +41,13 @@
             align-items: center;
             justify-content: center;
             border: 2px solid #e0e0e0;
+            color: #6B7280; /* Màu xám cho icon chưa active */
         }
 
         .timeline-item.active {
-            border-color: #28a745;
-            color: #28a745;
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            background: white !important; /* Đảm bảo nền luôn màu trắng khi active */
         }
 
         .timeline-item::after {
@@ -58,6 +60,26 @@
             font-size: 12px;
             margin-top: 5px;
         }
+
+        /* Chỉnh lại khoảng cách giữa các đơn hàng */
+        .card.mb-3 {
+            margin-bottom: 1rem !important;
+            border: 1px solid #e5e7eb;
+            background-color: white;
+        }
+
+        /* Định dạng lại card header */
+        .card-header {
+            background-color: #f8f9fa !important; /* Màu xám nhạt */
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        /* Định dạng các badge trạng thái */
+        .badge.bg-warning { background-color: #FCD34D !important; }
+        .badge.bg-info { background-color: #60A5FA !important; }
+        .badge.bg-primary { background-color: #3B82F6 !important; }
+        .badge.bg-success { background-color: #34D399 !important; }
+        .badge.bg-danger { background-color: #EF4444 !important; }
     </style>
 </head>
 

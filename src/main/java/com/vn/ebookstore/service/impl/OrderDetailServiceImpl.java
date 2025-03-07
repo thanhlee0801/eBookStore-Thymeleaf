@@ -4,12 +4,15 @@ import com.vn.ebookstore.model.*;
 import com.vn.ebookstore.repository.*;
 import com.vn.ebookstore.service.OrderDetailService;
 import com.vn.ebookstore.service.PaymentDetailService;
+import com.vn.ebookstore.service.CouponService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderDetailServiceImpl implements OrderDetailService {
@@ -32,52 +35,104 @@ public class OrderDetailServiceImpl implements OrderDetailService {
     @Autowired
     private AddressRepository addressRepository;
 
+    @Autowired
+    private CouponService couponService;
+
+    @Autowired
+    private PaymentDetailRepository paymentDetailRepository;
+
     @Override
     @Transactional
     public OrderDetail createOrder(Integer userId, Integer addressId, String paymentMethod, String note) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        try {
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            
+            Cart cart = cartRepository.findByUserAndUpdatedAtIsNull(user)  // Updated to use correct method name
+                    .orElseThrow(() -> new RuntimeException("Cart not found"));
 
-        Cart cart = cartRepository.findByUserIdAndUpdatedAtIsNull(userId)
-                .orElseThrow(() -> new RuntimeException("Cart not found"));
+            Address address = addressRepository.findById(addressId)
+                    .orElseThrow(() -> new RuntimeException("Address not found"));
 
-        // Lấy thông tin địa chỉ giao hàng
-        Address shippingAddress = addressRepository.findById(addressId)
-                .orElseThrow(() -> new RuntimeException("Address not found"));
-                
-        // Format địa chỉ thành chuỗi
-        String formattedAddress = String.format("%s, %s, %s, %s",
-            shippingAddress.getAddressLine(),
-            shippingAddress.getWard(),
-            shippingAddress.getDistrict(),
-            shippingAddress.getCity());
+            OrderDetail order = new OrderDetail();
+            order.setUser(user);
+            order.setOrderAddress(formatAddress(address));
+            order.setStatus("PENDING");
+            order.setCreatedAt(new Date());
+            
+            // Calculate subtotal
+            double subtotal = calculateSubtotal(cart.getCartItems());
+            order.setSubTotal(subtotal);
 
-        // Tạo đơn hàng mới với địa chỉ
-        OrderDetail orderDetail = new OrderDetail();
-        orderDetail.setUser(user);
-        orderDetail.setTotal(cart.getTotal());
-        orderDetail.setStatus("PENDING");
-        orderDetail.setOrderAddress(formattedAddress); // Lưu địa chỉ giao hàng
-        orderDetail.setCreatedAt(new Date());
-        orderDetail = orderDetailRepository.save(orderDetail);
-
-        // Chuyển các item từ giỏ hàng sang đơn hàng
-        for (CartItem cartItem : cart.getCartItems()) {
-            if (cartItem.getUpdatedAt() == null) { // Chỉ lấy các item chưa bị xóa
-                OrderItem orderItem = new OrderItem();
-                orderItem.setOrder(orderDetail);
-                orderItem.setBook(cartItem.getBook());
-                orderItem.setQuantity(cartItem.getQuantity());
-                orderItem.setPrice(cartItem.getPrice());
-                orderItem.setCreatedAt(new Date());
-                orderItemRepository.save(orderItem);
+            // Apply coupon if exists
+            if (cart.getCoupon() != null) {
+                Double discount = couponService.calculateDiscount(cart.getCoupon(), subtotal);
+                order.setCoupon(cart.getCoupon());
+                order.setDiscountAmount(discount);
+                order.setTotal((long) (subtotal - discount));
+            } else {
+                order.setTotal((long) subtotal);
             }
+
+            // Create order items
+            List<OrderItem> orderItems = createOrderItems(cart.getCartItems(), order);
+            order.setOrderItems(orderItems);
+
+            // Create payment detail
+            PaymentDetail payment = createPaymentDetail(order, paymentMethod);
+            order.setPayments(Arrays.asList(payment));
+
+            // Save order and related entities
+            order = orderDetailRepository.save(order);
+            orderItemRepository.saveAll(orderItems);
+            paymentDetailRepository.save(payment);
+
+            return order;
+        } catch (Exception e) {
+            throw new RuntimeException("Error creating order: " + e.getMessage());
         }
+    }
 
-        // Tạo payment detail sau khi tạo order
-        paymentDetailService.createPayment(orderDetail.getId(), paymentMethod, orderDetail.getTotal());
+    private double calculateSubtotal(List<CartItem> cartItems) {
+        return cartItems.stream()
+                .filter(item -> item.getUpdatedAt() == null)
+                .mapToDouble(item -> item.getPrice() * item.getQuantity())
+                .sum();
+    }
 
-        return orderDetail;
+    private String formatAddress(Address address) {
+        return String.format("%s, %s, %s, %s, %s, %s",
+            address.getAddressLine(),
+            address.getWard(),
+            address.getDistrict(),
+            address.getCity(),
+            address.getCountry(),
+            address.getPostalCode());
+    }
+
+    private List<OrderItem> createOrderItems(List<CartItem> cartItems, OrderDetail order) {
+        return cartItems.stream()
+            .filter(item -> item.getUpdatedAt() == null)
+            .map(item -> {
+                OrderItem orderItem = new OrderItem();
+                orderItem.setOrder(order);
+                orderItem.setBook(item.getBook());
+                orderItem.setQuantity(item.getQuantity());
+                orderItem.setPrice(item.getPrice());
+                orderItem.setCreatedAt(new Date());
+                return orderItem;
+            })
+            .collect(Collectors.toList());
+    }
+
+    private PaymentDetail createPaymentDetail(OrderDetail order, String paymentMethod) {
+        PaymentDetail payment = new PaymentDetail();
+        payment.setOrder(order);
+        payment.setAmount(order.getTotal());
+        payment.setProvider(paymentMethod);
+        payment.setStatus("PENDING");
+        payment.setCreatedAt(new Date());
+        return payment;
     }
 
     @Override

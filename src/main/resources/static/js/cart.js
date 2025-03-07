@@ -103,3 +103,38 @@ function clearCart() {
         .catch(error => console.error('Error:', error));
     }
 }
+
+function applyCoupon() {
+    const code = document.getElementById('couponCode').value;
+    fetch('/user/cart/apply-coupon', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ code: code })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            window.location.reload();
+        } else {
+            document.getElementById('couponMessage').innerHTML = 
+                `<span class="text-danger">${data.message}</span>`;
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+function removeCoupon() {
+    fetch('/user/cart/remove-coupon', {
+        method: 'POST'
+    })
+    .then(() => {
+        window.location.reload();
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}

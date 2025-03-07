@@ -55,6 +55,20 @@
                                 </tbody>
                                 <tfoot>
                                     <tr>
+                                        <td colspan="3" class="text-end">Tạm tính:</td>
+                                        <td class="text-end" th:text="${cart.subTotal} + ' VNĐ'"></td>
+                                    </tr>
+                                    <tr th:if="${cart.coupon != null}">
+                                        <td colspan="3" class="text-end">
+                                            Giảm giá 
+                                            <span class="badge bg-success" th:text="${cart.coupon.discountType == T(com.vn.ebookstore.model.Coupon.DiscountType).PERCENTAGE ? 
+                                                cart.coupon.discountValue + '%' : 
+                                                #numbers.formatDecimal(cart.coupon.discountValue, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}">
+                                            </span>:
+                                        </td>
+                                        <td class="text-end text-danger" th:text="'-' + ${cart.discountAmount} + ' VNĐ'"></td>
+                                    </tr>
+                                    <tr>
                                         <td colspan="3" class="text-end fw-bold">Tổng cộng:</td>
                                         <td class="text-end fw-bold" th:text="${cart.total} + ' VNĐ'"></td>
                                     </tr>
@@ -122,6 +136,27 @@
                                 </div>
                             </div>
 
+                            <!-- Mã giảm giá -->
+                            <div th:if="${cart.coupon == null}" class="mb-3">
+                                <label class="form-label">Mã giảm giá</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="couponCode" placeholder="Nhập mã giảm giá">
+                                    <button class="btn btn-outline-secondary" type="button" onclick="applyCoupon()">Áp dụng</button>
+                                </div>
+                                <div id="couponMessage" class="form-text"></div>
+                            </div>
+                            <div th:if="${cart.coupon != null}" class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="badge bg-success" th:text="${cart.coupon.code}"></span>
+                                        <span class="text-muted ms-2" th:text="${cart.coupon.description}"></span>
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="removeCoupon()">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+
                             <!-- Ghi chú -->
                             <div class="mb-3">
                                 <label class="form-label">Ghi chú</label>
@@ -150,5 +185,34 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
         integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
         crossorigin="anonymous"></script>
+
+    <!-- Thêm script xử lý mã giảm giá -->
+    <script>
+    function applyCoupon() {
+        const code = document.getElementById('couponCode').value;
+        fetch('/api/coupons/validate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ code: code, amount: cartTotal })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.valid) {
+                document.getElementById('couponMessage').innerHTML = 
+                    `Giảm giá: ${data.discount} VNĐ`;
+                // Cập nhật tổng tiền
+                updateOrderTotal(data.discount);
+            } else {
+                document.getElementById('couponMessage').innerHTML = 
+                    `<span class="text-danger">${data.message}</span>`;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+    </script>
 </body>
 </html>

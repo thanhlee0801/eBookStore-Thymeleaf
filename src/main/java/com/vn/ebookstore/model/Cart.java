@@ -15,7 +15,12 @@ public class Cart {
     private long total;
     @Column(updatable = false)
     private Date createdAt;
+
+    @Column(name = "updated_at")
     private Date updatedAt;
+
+    @Column(name = "coupon_id")
+    private Integer couponId;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -23,6 +28,16 @@ public class Cart {
 
     @OneToMany(mappedBy = "cart")
     private List<CartItem> cartItems = new ArrayList<>();;
+
+    @ManyToOne
+    @JoinColumn(name = "coupon_id", insertable = false, updatable = false)
+    private Coupon coupon;
+
+    @Column(name = "discount_amount")
+    private Double discountAmount = 0.0;
+
+    @Column(name = "sub_total")
+    private Double subTotal;
 
     public int getId() {
         return id;
@@ -56,6 +71,14 @@ public class Cart {
         this.updatedAt = updatedAt;
     }
 
+    public Integer getCouponId() {
+        return couponId;
+    }
+
+    public void setCouponId(Integer couponId) {
+        this.couponId = couponId;
+    }
+
     public User getUser() {
         return user;
     }
@@ -72,5 +95,27 @@ public class Cart {
         this.cartItems = cartItems;
     }
 
+    public Coupon getCoupon() {
+        return coupon;
+    }
 
+    public void setCoupon(Coupon coupon) {
+        this.coupon = coupon;
+    }
+
+    public Double getDiscountAmount() {
+        return discountAmount;
+    }
+
+    public void setDiscountAmount(Double discountAmount) {
+        this.discountAmount = discountAmount;
+    }
+
+    public Double getSubTotal() {
+        return subTotal;
+    }
+
+    public void setSubTotal(Double subTotal) {
+        this.subTotal = subTotal;
+    }
 }

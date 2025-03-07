@@ -3,12 +3,14 @@ package com.vn.ebookstore.service.impl;
 import com.vn.ebookstore.model.Book;
 import com.vn.ebookstore.model.Cart;
 import com.vn.ebookstore.model.CartItem;
+import com.vn.ebookstore.model.Coupon;
 import com.vn.ebookstore.model.User;
 import com.vn.ebookstore.repository.BookRepository;
 import com.vn.ebookstore.repository.CartItemRepository;
 import com.vn.ebookstore.repository.CartRepository;
 import com.vn.ebookstore.repository.UserRepository;
 import com.vn.ebookstore.service.CartService;
+import com.vn.ebookstore.service.CouponService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +35,9 @@ public class CartServiceImpl implements CartService {
 
     @Autowired
     private BookRepository bookRepository;
+
+    @Autowired
+    private CouponService couponService;
 
     @Override
     @Transactional
@@ -156,7 +161,7 @@ public class CartServiceImpl implements CartService {
             throw new IllegalArgumentException("User không thể là null");
         }
         
-        Cart cart = cartRepository.findByUserIdAndUpdatedAtIsNull(user.getId())
+        Cart cart = cartRepository.findByUserAndUpdatedAtIsNull(user)  // This line uses the correct method name
                 .orElseGet(() -> {
                     Cart newCart = new Cart();
                     newCart.setUser(user);
@@ -204,5 +209,44 @@ public class CartServiceImpl implements CartService {
         
         cart.setTotal(total);
         cartRepository.save(cart);
+    }
+
+    @Override
+    @Transactional
+    public void applyCoupon(Integer cartId, String couponCode) {
+        Cart cart = cartRepository.findById(cartId)
+                .orElseThrow(() -> new RuntimeException("Cart not found"));
+        
+        double subtotal = calculateSubtotal(cart);
+        
+        Coupon coupon = couponService.findByCode(couponCode)
+                .orElseThrow(() -> new RuntimeException("Invalid coupon code"));
+
+        if (!couponService.isValidForUse(coupon, subtotal)) {
+            throw new RuntimeException("Coupon cannot be applied");
+        }
+
+        Double discount = couponService.calculateDiscount(coupon, subtotal);
+        cart.setCoupon(coupon);
+        cart.setSubTotal(subtotal);
+        cart.setDiscountAmount(discount);
+        cart.setTotal((long)(subtotal - discount));
+        
+        cartRepository.save(cart);
+    }
+
+    @Override
+    public void removeCoupon(Integer cartId) {
+        Cart cart = cartRepository.findById(cartId)
+                .orElseThrow(() -> new RuntimeException("Cart not found"));
+        cart.setCoupon(null);
+        cartRepository.save(cart);
+    }
+
+    private double calculateSubtotal(Cart cart) {
+        return cart.getCartItems().stream()
+                .filter(item -> item.getUpdatedAt() == null)
+                .mapToDouble(item -> item.getPrice() * item.getQuantity())
+                .sum();
     }
 }

@@ -29,6 +29,16 @@ public class OrderDetail {
     @Column(name = "order_address")
     private String orderAddress;
 
+    @ManyToOne
+    @JoinColumn(name = "coupon_id")
+    private Coupon coupon;
+
+    @Column(name = "discount_amount")
+    private Double discountAmount = 0.0;
+
+    @Column(name = "sub_total")
+    private Double subTotal;
+
     public int getId() {
         return id;
     }
@@ -99,5 +109,29 @@ public class OrderDetail {
 
     public void setOrderAddress(String orderAddress) {
         this.orderAddress = orderAddress;
+    }
+
+    public Coupon getCoupon() {
+        return coupon;
+    }
+
+    public void setCoupon(Coupon coupon) {
+        this.coupon = coupon;
+    }
+
+    public Double getDiscountAmount() {
+        return discountAmount;
+    }
+
+    public void setDiscountAmount(Double discountAmount) {
+        this.discountAmount = discountAmount;
+    }
+
+    public Double getSubTotal() {
+        return subTotal;
+    }
+
+    public void setSubTotal(Double subTotal) {
+        this.subTotal = subTotal;
     }
 }

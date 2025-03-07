@@ -16,4 +16,6 @@ public interface CartService {
     void updateCartItemQuantity(int userId, int bookId, int quantity);
     Cart getCurrentCartByUser(User user);
     Cart save(Cart cart);
+    void applyCoupon(Integer cartId, String couponCode);
+    void removeCoupon(Integer cartId);
 }

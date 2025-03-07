@@ -162,35 +162,60 @@ public class UserController {
     public String products(
             @RequestParam(required = false) Integer categoryId,
             @RequestParam(required = false) Integer subCategoryId,
-            @RequestParam(required = false, defaultValue = "0") Double minPrice,
-            @RequestParam(required = false) Double maxPrice,
+            @RequestParam(required = false) String minPrice,
+            @RequestParam(required = false) String maxPrice,
             @RequestParam(required = false) Float minRating,
             @RequestParam(required = false, defaultValue = "newest") String sortBy,
             @RequestParam(required = false, defaultValue = "desc") String sortDir,
             Model model, 
             Principal principal) {
-            
-        // Validate price range
-        if (minPrice != null && minPrice < 0) minPrice = 0.0;
-        if (maxPrice != null && maxPrice < 0) maxPrice = null;
-        if (minPrice != null && maxPrice != null && minPrice > maxPrice) {
-            Double temp = minPrice;
-            minPrice = maxPrice;
-            maxPrice = temp;
+        
+        // Parse giá từ String sang Double với xử lý null/empty
+        Double minPriceDouble = null;
+        Double maxPriceDouble = null;
+        try {
+            if (minPrice != null && !minPrice.trim().isEmpty()) {
+                minPriceDouble = Double.parseDouble(minPrice.replace(",", ""));
+            }
+            if (maxPrice != null && !maxPrice.trim().isEmpty()) {
+                maxPriceDouble = Double.parseDouble(maxPrice.replace(",", ""));
+            }
+        } catch (NumberFormatException e) {
+            // Log lỗi và dùng giá trị mặc định
+            logger.warn("Error parsing price values: " + e.getMessage());
+            minPriceDouble = 0.0;
+            maxPriceDouble = null;
+        }
+
+        // Validate price range và rating
+        if (minPriceDouble != null && minPriceDouble < 0) minPriceDouble = 0.0;
+        if (maxPriceDouble != null && maxPriceDouble < 0) maxPriceDouble = null;
+        if (minPriceDouble != null && maxPriceDouble != null && minPriceDouble > maxPriceDouble) {
+            Double temp = minPriceDouble;
+            minPriceDouble = maxPriceDouble;
+            maxPriceDouble = temp;
+        }
+
+        // Validate sort parameters
+        if (!Arrays.asList("newest", "price", "rating").contains(sortBy)) {
+            sortBy = "newest";
+        }
+        if (!Arrays.asList("asc", "desc").contains(sortDir)) {
+            sortDir = "desc";
         }
 
         List<Category> categories = categoryService.getAllCategories();
         List<Book> books = bookService.filterAndSortBooks(
             categoryId, 
             subCategoryId,
-            minPrice, 
-            maxPrice,
+            minPriceDouble, 
+            maxPriceDouble,
             sortBy,
             sortDir,
             minRating
         );
 
-        // Lấy giá min/max cho slider
+        // Get price range for filter
         Double lowestPrice = bookService.getLowestPrice();
         Double highestPrice = bookService.getHighestPrice();
 
@@ -202,14 +227,15 @@ public class UserController {
             model.addAttribute("wishlists", wishlists);
         }
 
+        // Add attributes to model
         model.addAttribute("categories", categories);
         model.addAttribute("books", books);
         model.addAttribute("lowestPrice", lowestPrice);
         model.addAttribute("highestPrice", highestPrice);
         model.addAttribute("selectedCategoryId", categoryId);
         model.addAttribute("selectedSubCategoryId", subCategoryId);
-        model.addAttribute("selectedMinPrice", minPrice);
-        model.addAttribute("selectedMaxPrice", maxPrice);
+        model.addAttribute("selectedMinPrice", minPriceDouble);
+        model.addAttribute("selectedMaxPrice", maxPriceDouble);
         model.addAttribute("selectedMinRating", minRating);
         model.addAttribute("sortBy", sortBy);
         model.addAttribute("sortDir", sortDir);

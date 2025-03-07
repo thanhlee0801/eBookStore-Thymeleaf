@@ -90,7 +90,7 @@
         }
 
         .cart-btn:hover {
-            background: #1d4ed8;
+            background: var(--primary-dark);
             transform: translateY(-2px);
         }
 
@@ -648,8 +648,9 @@
                                             th:onclick="'addToCart(' + ${book.id} + ', 1)'" title="Thêm vào giỏ hàng">
                                             <i class="fa-solid fa-cart-plus"></i>
                                         </button>
-                                        <a sec:authorize="!isAuthenticated()" th:href="@{/login}" class="btn cart-btn">
-                                            <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập để mua hàng
+                                        <a sec:authorize="!isAuthenticated()" th:href="@{/login}" class="btn cart-btn login-to-buy">
+                                            <i class="fas fa-sign-in-alt"></i>
+                                            Đăng nhập
                                         </a>
                                     </div>
                                 </div>
@@ -748,8 +749,9 @@
                                             th:onclick="'addToCart(' + ${book.id} + ', 1)'" title="Thêm vào giỏ hàng">
                                             <i class="fa-solid fa-cart-plus"></i>
                                         </button>
-                                        <a sec:authorize="!isAuthenticated()" th:href="@{/login}" class="btn cart-btn">
-                                            <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập để mua hàng
+                                        <a sec:authorize="!isAuthenticated()" th:href="@{/login}" class="btn cart-btn login-to-buy">
+                                            <i class="fas fa-sign-in-alt"></i>
+                                            Đăng nhập
                                         </a>
                                     </div>
                                 </div>
@@ -848,8 +850,9 @@
                                             th:onclick="'addToCart(' + ${book.id} + ', 1)'" title="Thêm vào giỏ hàng">
                                             <i class="fa-solid fa-cart-plus"></i>
                                         </button>
-                                        <a sec:authorize="!isAuthenticated()" th:href="@{/login}" class="btn cart-btn">
-                                            <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập để mua hàng
+                                        <a sec:authorize="!isAuthenticated()" th:href="@{/login}" class="btn cart-btn login-to-buy">
+                                            <i class="fas fa-sign-in-alt"></i>
+                                            Đăng nhập
                                         </a>
                                     </div>
                                 </div>

@@ -82,3 +82,32 @@ a {
     background: #EA6C80;
     color: white;
 }
+
+/* Search Results Dropdown Styling */
+.search-results-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1100; /* Tăng z-index lên cao hơn navbar */
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.search-results-dropdown .list-group-item {
+    border: none;
+    border-bottom: 1px solid #eee;
+}
+
+.search-results-dropdown .list-group-item:last-child {
+    border-bottom: none;
+}
+
+.search-container {
+    position: relative;
+    z-index: 1100; /* Đảm bảo container cũng có z-index cao */
+}

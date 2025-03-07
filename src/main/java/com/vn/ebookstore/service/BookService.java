@@ -17,4 +17,16 @@ public interface BookService {
     void softDeleteBook(int id);
     List<Book> getBooksBySubCategoryId(Integer subCategoryId);
     List<Book> searchBooks(String query);
+    List<Book> getBestSellers();
+    List<Book> filterAndSortBooks(
+        Integer categoryId, 
+        Integer subCategoryId,
+        Double minPrice, 
+        Double maxPrice,
+        String sortBy,
+        String sortDirection,
+        Float minRating
+    );
+    Double getLowestPrice();
+    Double getHighestPrice();
 }

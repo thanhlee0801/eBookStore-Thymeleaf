@@ -13,6 +13,7 @@ public class Category {
     private Integer id;
     private String name;
     private String description;
+    private String image;
     
     @Column(name = "created_at", updatable = false)
     private Date createdAt;
@@ -46,6 +47,14 @@ public class Category {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public Date getCreatedAt() {

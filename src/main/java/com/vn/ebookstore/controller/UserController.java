@@ -72,12 +72,24 @@ public class UserController {
 
 
     // ==================== Page Navigation Mappings ====================
-    @GetMapping("/home")
+    @GetMapping("/home") 
     public String home(Model model, Principal principal) {
         List<Category> categories = categoryService.getAllCategories();
-        List<Book> books = bookService.getAllBooks();
-        model.addAttribute("categories", categories);
-        model.addAttribute("books", books);
+        
+        // Lấy tối đa 3 danh mục để hiển thị
+        List<Category> featuredCategories = categories.subList(0, Math.min(3, categories.size()));
+        
+        // Get different book lists
+        List<Book> latestBooks = bookService.getLatestBooks();
+        List<Book> bestSellers = bookService.getBestSellers();
+        List<Book> premiumBooks = bookService.getPremiumBooks();
+        
+        model.addAttribute("categories", categories);  // Cho dropdown menu
+        model.addAttribute("featuredCategories", featuredCategories); // Cho phần Featured Categories
+        model.addAttribute("latestBooks", latestBooks);
+        model.addAttribute("bestSellers", bestSellers);
+        model.addAttribute("premiumBooks", premiumBooks);
+        
         if (principal != null) {
             User user = userService.getUserByEmail(principal.getName());
 
@@ -147,19 +159,61 @@ public class UserController {
 
     // ==================== Product Related Mappings ====================
     @GetMapping("/products")
-    public String products(Model model, Principal principal) {
+    public String products(
+            @RequestParam(required = false) Integer categoryId,
+            @RequestParam(required = false) Integer subCategoryId,
+            @RequestParam(required = false, defaultValue = "0") Double minPrice,
+            @RequestParam(required = false) Double maxPrice,
+            @RequestParam(required = false) Float minRating,
+            @RequestParam(required = false, defaultValue = "newest") String sortBy,
+            @RequestParam(required = false, defaultValue = "desc") String sortDir,
+            Model model, 
+            Principal principal) {
+            
+        // Validate price range
+        if (minPrice != null && minPrice < 0) minPrice = 0.0;
+        if (maxPrice != null && maxPrice < 0) maxPrice = null;
+        if (minPrice != null && maxPrice != null && minPrice > maxPrice) {
+            Double temp = minPrice;
+            minPrice = maxPrice;
+            maxPrice = temp;
+        }
+
         List<Category> categories = categoryService.getAllCategories();
-        List<Book> books = bookService.getAllBooks();
-        model.addAttribute("categories", categories);
-        model.addAttribute("books", books);
+        List<Book> books = bookService.filterAndSortBooks(
+            categoryId, 
+            subCategoryId,
+            minPrice, 
+            maxPrice,
+            sortBy,
+            sortDir,
+            minRating
+        );
+
+        // Lấy giá min/max cho slider
+        Double lowestPrice = bookService.getLowestPrice();
+        Double highestPrice = bookService.getHighestPrice();
 
         if (principal != null) {
             User user = userService.getUserByEmail(principal.getName());
             Cart cart = cartService.getCurrentCartByUser(user);
             List<Wishlist> wishlists = wishlistService.getWishlistsByUser(user);
             model.addAttribute("cart", cart);
-            model.addAttribute("wishlists", wishlists != null ? wishlists : new ArrayList<>());
+            model.addAttribute("wishlists", wishlists);
         }
+
+        model.addAttribute("categories", categories);
+        model.addAttribute("books", books);
+        model.addAttribute("lowestPrice", lowestPrice);
+        model.addAttribute("highestPrice", highestPrice);
+        model.addAttribute("selectedCategoryId", categoryId);
+        model.addAttribute("selectedSubCategoryId", subCategoryId);
+        model.addAttribute("selectedMinPrice", minPrice);
+        model.addAttribute("selectedMaxPrice", maxPrice);
+        model.addAttribute("selectedMinRating", minRating);
+        model.addAttribute("sortBy", sortBy);
+        model.addAttribute("sortDir", sortDir);
+
         return "page/user/product";
     }
 

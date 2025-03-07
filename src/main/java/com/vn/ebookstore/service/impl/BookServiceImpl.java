@@ -100,4 +100,48 @@ public class BookServiceImpl implements BookService {
     public List<Book> searchBooks(String query) {
         return bookRepository.findByTitleContainingIgnoreCase(query);
     }
+
+    @Override
+    public List<Book> getBestSellers() {
+        return bookRepository.findBestSellingBooks();
+    }
+
+    @Override
+    public List<Book> filterAndSortBooks(
+            Integer categoryId,
+            Integer subCategoryId,
+            Double minPrice,
+            Double maxPrice, 
+            String sortBy,
+            String sortDirection,
+            Float minRating) {
+        
+        List<Book> books = bookRepository.filterAndSortBooks(
+            categoryId, 
+            subCategoryId,
+            minPrice, 
+            maxPrice,
+            sortBy,
+            sortDirection,
+            minRating
+        );
+
+        // Nếu có yêu cầu lọc theo rating
+        if (minRating != null) {
+            List<Book> booksWithRating = bookRepository.findByAverageRatingGreaterThanEqual(minRating);
+            books.retainAll(booksWithRating); // Chỉ giữ lại các sách thỏa mãn cả hai điều kiện
+        }
+
+        return books;
+    }
+
+    @Override
+    public Double getLowestPrice() {
+        return bookRepository.findLowestPrice();
+    }
+
+    @Override
+    public Double getHighestPrice() {
+        return bookRepository.findHighestPrice();
+    }
 }

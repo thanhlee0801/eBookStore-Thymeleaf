@@ -152,140 +152,107 @@
         <!-- Top Bar -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h4 class="mb-0">Danh sách sản phẩm</h4>
+            
+            <!-- Phần sắp xếp -->
             <div class="d-flex gap-2 align-items-center">
-                <span class="text-muted">Sort by:</span>
-                <button class="sort-btn">
-                    Newest <i class="bi bi-chevron-down ms-2"></i>
-                </button>
+                <div class="btn-group">
+                    <a th:href="@{/user/products(categoryId=${selectedCategoryId},subCategoryId=${selectedSubCategoryId},
+                            minPrice=${selectedMinPrice},maxPrice=${selectedMaxPrice},minRating=${selectedMinRating},
+                            sortBy='newest',sortDir='desc')}"
+                       th:class="'btn btn-outline-primary ' + (${sortBy == 'newest'} ? 'active' : '')">
+                        Mới nhất
+                    </a>
+                    <a th:href="@{/user/products(categoryId=${selectedCategoryId},subCategoryId=${selectedSubCategoryId},
+                            minPrice=${selectedMinPrice},maxPrice=${selectedMaxPrice},minRating=${selectedMinRating},
+                            sortBy='price',sortDir=${sortDir == 'asc' ? 'desc' : 'asc'})}"
+                       th:class="'btn btn-outline-primary ' + (${sortBy == 'price'} ? 'active' : '')">
+                        Giá
+                        <i th:class="${sortBy == 'price' && sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}"></i>
+                    </a>
+                    <a th:href="@{/user/products(categoryId=${selectedCategoryId},subCategoryId=${selectedSubCategoryId},
+                            minPrice=${selectedMinPrice},maxPrice=${selectedMaxPrice},minRating=${selectedMinRating},
+                            sortBy='rating',sortDir='desc')}"
+                       th:class="'btn btn-outline-primary ' + (${sortBy == 'rating'} ? 'active' : '')">
+                        Đánh giá cao
+                    </a>
+                </div>
             </div>
         </div>
 
-        <div class="row g-4">
+        <div class="row">
             <!-- Filters Sidebar -->
             <div class="col-lg-3">
-                <div class="filter-sidebar p-4 shadow-sm">
-                    <div class="accordion" id="filterAccordion">
-                        <!-- Danh mục sản phẩm -->
-                        <div class="accordion-item">
-                            <h2 class="accordion-header" id="headingCategory">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#categoryCollapse" aria-expanded="false"
-                                    aria-controls="categoryCollapse">
-                                    Danh mục sản phẩm
-                                </button>
-                            </h2>
-                            <div id="categoryCollapse" class="accordion-collapse collapse"
-                                aria-labelledby="headingCategory" data-bs-parent="#filterAccordion">
-                                <div class="accordion-body">
+                <div class="filter-sidebar card">
+                    <div class="card-body">
+                        <h5 class="card-title">Bộ lọc</h5>
+                        <form th:action="@{/user/products}" method="get" id="filterForm">
+                            <!-- Danh mục -->
+                            <div class="mb-3">
+                                <label class="form-label">Danh mục</label>
+                                <select class="form-select" name="categoryId" onchange="this.form.submit()">
+                                    <option value="">Tất cả danh mục</option>
+                                    <option th:each="category : ${categories}"
+                                            th:value="${category.id}"
+                                            th:text="${category.name}"
+                                            th:selected="${category.id == selectedCategoryId}">
+                                    </option>
+                                </select>
+                            </div>
+
+                            <!-- Danh mục con -->
+                            <div class="mb-3" th:if="${selectedCategoryId != null}">
+                                <label class="form-label">Danh mục con</label>
+                                <select class="form-select" name="subCategoryId" onchange="this.form.submit()">
+                                    <option value="">Tất cả danh mục con</option>
                                     <th:block th:each="category : ${categories}">
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input" type="checkbox" th:id="${category.id}">
-                                            <label class="form-check-label" th:for="${category.id}"
-                                                th:text="${category.name}"></label>
-                                        </div>
-                                        <th:block th:each="subCategory : ${category.subCategories}">
-                                            <div class="form-check mb-2">
-                                                <input class="form-check-input" type="checkbox"
-                                                    th:id="${subCategory.id}">
-                                                <label class="form-check-label" th:for="${subCategory.id}"
-                                                    th:text="${subCategory.name}"></label>
-                                            </div>
+                                        <th:block th:if="${category.id == selectedCategoryId}">
+                                            <option th:each="subCategory : ${category.subCategories}"
+                                                    th:value="${subCategory.id}"
+                                                    th:text="${subCategory.name}"
+                                                    th:selected="${subCategory.id == selectedSubCategoryId}">
+                                            </option>
                                         </th:block>
                                     </th:block>
-                                </div>
+                                </select>
                             </div>
-                        </div>
 
-                        <!-- Khoảng giá -->
-                        <div class="accordion-item">
-                            <h2 class="accordion-header" id="headingPrice">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#priceCollapse" aria-expanded="false" aria-controls="priceCollapse">
-                                    Khoảng giá
-                                </button>
-                            </h2>
-                            <div id="priceCollapse" class="accordion-collapse collapse" aria-labelledby="headingPrice"
-                                data-bs-parent="#filterAccordion">
-                                <div class="accordion-body">
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input" type="checkbox" id="price1" value="under100">
-                                        <label class="form-check-label" for="price1">
-                                            Dưới 100,000 VNĐ
-                                        </label>
-                                    </div>
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input" type="checkbox" id="price2" value="100to500">
-                                        <label class="form-check-label" for="price2">
-                                            100,000 VNĐ - 500,000 VNĐ
-                                        </label>
-                                    </div>
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input" type="checkbox" id="price3" value="above500">
-                                        <label class="form-check-label" for="price3">
-                                            Trên 500,000 VNĐ
-                                        </label>
-                                    </div>
+                            <!-- Khoảng giá -->
+                            <div class="mb-3">
+                                <label class="form-label">Giá (VNĐ)</label>
+                                <div class="d-flex gap-2">
+                                    <input type="text" class="form-control" name="minPrice"
+                                           th:value="${#numbers.formatDecimal(selectedMinPrice != null ? selectedMinPrice : 0, 0, 'COMMA', 0, 'POINT')}"
+                                           placeholder="Từ"
+                                           pattern="[0-9,]*">
+                                    <input type="text" class="form-control" name="maxPrice"
+                                           th:value="${#numbers.formatDecimal(selectedMaxPrice != null ? selectedMaxPrice : highestPrice, 0, 'COMMA', 0, 'POINT')}"
+                                           placeholder="Đến"
+                                           pattern="[0-9,]*">
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Màu sắc -->
-                        <div class="accordion-item">
-                            <h2 class="accordion-header" id="headingColor">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#colorCollapse" aria-expanded="false" aria-controls="colorCollapse">
-                                    Màu sắc
-                                </button>
-                            </h2>
-                            <div id="colorCollapse" class="accordion-collapse collapse" aria-labelledby="headingColor"
-                                data-bs-parent="#filterAccordion">
-                                <div class="accordion-body">
-                                    <div class="d-flex gap-2">
-                                        <div class="color-option selected" style="background: #000000;"></div>
-                                        <div class="color-option" style="background: #dc2626;"></div>
-                                        <div class="color-option" style="background: #2563eb;"></div>
-                                        <div class="color-option" style="background: #16a34a;"></div>
-                                    </div>
-                                </div>
+                            <!-- Đánh giá tối thiểu -->
+                            <div class="mb-3">
+                                <label class="form-label">Đánh giá tối thiểu</label>
+                                <select class="form-select" name="minRating" onchange="this.form.submit()">
+                                    <option value="">Tất cả đánh giá</option>
+                                    <option value="4" th:selected="${selectedMinRating == 4}">4+ sao</option>
+                                    <option value="3" th:selected="${selectedMinRating == 3}">3+ sao</option>
+                                    <option value="2" th:selected="${selectedMinRating == 2}">2+ sao</option>
+                                    <option value="1" th:selected="${selectedMinRating == 1}">1+ sao</option>
+                                </select>
                             </div>
-                        </div>
 
-                        <!-- Đánh giá -->
-                        <div class="accordion-item">
-                            <h2 class="accordion-header" id="headingRating">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#ratingCollapse" aria-expanded="false"
-                                    aria-controls="ratingCollapse">
-                                    Đánh giá
-                                </button>
-                            </h2>
-                            <div id="ratingCollapse" class="accordion-collapse collapse" aria-labelledby="headingRating"
-                                data-bs-parent="#filterAccordion">
-                                <div class="accordion-body">
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input" type="radio" name="rating" id="rating4">
-                                        <label class="form-check-label" for="rating4">
-                                            <i class="bi bi-star-fill text-warning"></i> 4 & above
-                                        </label>
-                                    </div>
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input" type="radio" name="rating" id="rating3">
-                                        <label class="form-check-label" for="rating3">
-                                            <i class="bi bi-star-fill text-warning"></i> 3 & above
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                            <button type="submit" class="btn btn-primary w-100">Áp dụng</button>
+                            <a th:href="@{/user/products}" class="btn btn-outline-secondary w-100 mt-2">Đặt lại</a>
+                        </form>
                     </div>
-
-                    <button class="btn btn-outline-primary w-100 mt-3">Áp dụng bộ lọc</button>
                 </div>
             </div>
 
             <!-- Product Grid -->
             <div class="col-lg-9">
-                <div class="row row-cols-1 row-cols-md-4 g-4">
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
                     <th:block th:if="${books != null}" th:each="book : ${books}">
                         <div class="col">
                             <div class="product-card shadow-sm">
@@ -349,7 +316,10 @@
                                     </div>
                                     <!-- Giá và nút thêm vào giỏ hàng -->
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <span class="price" th:if="${book != null and book.price != null}" th:text="${#numbers.formatDecimal(book.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">100,000 VNĐ</span>
+                                        <span class="price" th:if="${book != null and book.price != null}" 
+                                              th:text="${#numbers.formatDecimal(book.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">
+                                            200,000 VNĐ
+                                        </span>
                                         <button sec:authorize="isAuthenticated()" th:if="${book != null}" class="btn cart-btn" th:onclick="'addToCart(' + ${book.id} + ', 1)'" title="Thêm vào giỏ hàng">
                                             <i class="fa-solid fa-cart-plus"></i>
                                         </button>
@@ -371,6 +341,48 @@
 
     <script th:src="@{/js/cart.js}"></script>
     <script th:src="@{/js/wishlist.js}"></script>
+    <script th:src="@{/js/search_book.js}"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+        integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+        crossorigin="anonymous"></script>
+    <!-- Thêm script xử lý format giá -->
+    <script>
+        function formatPrice(number) {
+            // Xóa tất cả dấu phẩy hiện có
+            number = number.replace(/,/g, '');
+            // Định dạng số với dấu phẩy sau mỗi 3 chữ số từ phải sang
+            return number.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+        function unformatPrice(formattedNumber) {
+            return formattedNumber.replace(/,/g, '');
+        }
+
+        document.querySelectorAll('input[name="minPrice"], input[name="maxPrice"]').forEach(input => {
+            input.addEventListener('input', function(e) {
+                // Chỉ giữ lại số
+                let value = this.value.replace(/\D/g, '');
+                // Format số với dấu phẩy
+                this.value = formatPrice(value);
+            });
+        });
+
+        document.getElementById('filterForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            let minPriceInput = this.querySelector('input[name="minPrice"]');
+            let maxPriceInput = this.querySelector('input[name="maxPrice"]');
+            
+            // Xóa dấu phẩy trước khi submit
+            minPriceInput.value = unformatPrice(minPriceInput.value);
+            maxPriceInput.value = unformatPrice(maxPriceInput.value);
+            
+            this.submit();
+        });
+    </script>
 </body>
 
 </html>

@@ -16,4 +16,5 @@ public interface BookService {
     List<Book> getPremiumBooks();
     void softDeleteBook(int id);
     List<Book> getBooksBySubCategoryId(Integer subCategoryId);
+    List<Book> searchBooks(String query);
 }

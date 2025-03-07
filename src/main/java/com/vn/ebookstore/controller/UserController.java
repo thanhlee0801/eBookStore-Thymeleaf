@@ -41,6 +41,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import com.vn.ebookstore.security.UserDetailsImpl;
 import com.vn.ebookstore.service.AddressService;
 import com.vn.ebookstore.service.OrderDetailService;
+import com.vn.ebookstore.service.PaymentDetailService;
 
 @Controller
 @RequestMapping("/user")
@@ -63,9 +64,12 @@ public class UserController {
     private ReviewService reviewService;
     @Autowired
     private AddressService addressService; // Thêm service quản lý địa chỉ
-
     @Autowired
     private OrderDetailService orderDetailService; // Thay đổi service
+
+    @Autowired
+    private PaymentDetailService paymentDetailService; // Add PaymentDetailService
+
 
     // ==================== Page Navigation Mappings ====================
     @GetMapping("/home")
@@ -765,14 +769,44 @@ public class UserController {
                     .body(Map.of("error", "Không có quyền hủy đơn hàng này"));
             }
 
-            if (!order.getStatus().equals("PENDING")) {
+            // Sửa điều kiện kiểm tra trạng thái đơn hàng
+            if (!("PENDING".equals(order.getStatus()) || "CONFIRMED".equals(order.getStatus()))) {
                 return ResponseEntity.badRequest()
-                    .body(Map.of("error", "Chỉ có thể hủy đơn hàng ở trạng thái chờ xử lý"));
+                    .body(Map.of("error", "Chỉ có thể hủy đơn hàng ở trạng thái chờ xử lý hoặc đã xác nhận"));
             }
 
             orderDetailService.cancelOrder(orderId);
             return ResponseEntity.ok()
                 .body(Map.of("message", "Hủy đơn hàng thành công"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                .body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @PostMapping("/order/{orderId}/pay")
+    @ResponseBody
+    public ResponseEntity<?> processPayment(@PathVariable Integer orderId, Principal principal) {
+        try {
+            User user = userService.getUserByEmail(principal.getName());
+            OrderDetail order = orderDetailService.getOrderById(orderId);
+            
+            if (order == null) {
+                return ResponseEntity.badRequest()
+                    .body(Map.of("error", "Không tìm thấy đơn hàng!"));
+            }
+            
+            if (order.getUser().getId() != user.getId()) {
+                return ResponseEntity.status(403)
+                    .body(Map.of("error", "Không có quyền thanh toán đơn hàng này"));
+            }
+
+            // Giả lập thanh toán thành công
+            PaymentDetail payment = order.getPayments().get(0);
+            payment = paymentDetailService.updatePaymentStatus(payment.getId(), "SUCCESS");
+            
+            return ResponseEntity.ok()
+                .body(Map.of("message", "Thanh toán thành công"));
         } catch (Exception e) {
             return ResponseEntity.badRequest()
                 .body(Map.of("error", e.getMessage()));

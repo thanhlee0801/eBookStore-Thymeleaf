@@ -95,4 +95,9 @@ public class BookServiceImpl implements BookService {
         }
         return bookRepository.findBySubCategoryIdAndDeletedAtIsNull(subCategoryId);
     }
+
+    @Override
+    public List<Book> searchBooks(String query) {
+        return bookRepository.findByTitleContainingIgnoreCase(query);
+    }
 }

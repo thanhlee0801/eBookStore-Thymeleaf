@@ -16,4 +16,6 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
     
     @Query("SELECT b FROM Book b WHERE b.deletedAt IS NULL ORDER BY b.price DESC")
     List<Book> findPremiumBooks();
+    
+    List<Book> findByTitleContainingIgnoreCase(String query); // Method tìm kiếm theo title
 }

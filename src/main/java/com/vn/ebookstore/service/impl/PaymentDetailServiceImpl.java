@@ -1,11 +1,15 @@
 package com.vn.ebookstore.service.impl;
 
 import com.vn.ebookstore.model.PaymentDetail;
+import com.vn.ebookstore.model.OrderDetail;
 import com.vn.ebookstore.repository.PaymentDetailRepository;
+import com.vn.ebookstore.repository.OrderDetailRepository;
 import com.vn.ebookstore.service.PaymentDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -14,32 +18,55 @@ public class PaymentDetailServiceImpl implements PaymentDetailService {
     @Autowired
     private PaymentDetailRepository paymentDetailRepository;
 
+    @Autowired
+    private OrderDetailRepository orderDetailRepository;
+
     @Override
-    public PaymentDetail createPaymentDetail(PaymentDetail paymentDetail) {
-        return paymentDetailRepository.save(paymentDetail);
+    @Transactional
+    public PaymentDetail createPayment(Integer orderId, String paymentMethod, Long amount) {
+        OrderDetail order = orderDetailRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        PaymentDetail payment = new PaymentDetail();
+        payment.setOrder(order);
+        payment.setAmount(amount);
+        payment.setProvider(paymentMethod);
+        payment.setStatus("PENDING");
+        payment.setCreatedAt(new Date());
+        
+        return paymentDetailRepository.save(payment);
     }
 
     @Override
-    public PaymentDetail updatePaymentDetail(int id, PaymentDetail paymentDetail) {
-        PaymentDetail existingPayment = paymentDetailRepository.findById(id).orElseThrow(() -> new RuntimeException("PaymentDetail not found"));
-        existingPayment.setAmount(paymentDetail.getAmount());
-        existingPayment.setProvider(paymentDetail.getProvider());
-        existingPayment.setStatus(paymentDetail.getStatus());
-        return paymentDetailRepository.save(existingPayment);
+    public PaymentDetail getPaymentById(Integer id) {
+        return paymentDetailRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Payment not found"));
     }
 
     @Override
-    public void deletePaymentDetail(int id) {
-        paymentDetailRepository.deleteById(id);
+    public List<PaymentDetail> getPaymentsByOrderId(Integer orderId) {
+        return paymentDetailRepository.findByOrderId(orderId);
     }
 
     @Override
-    public PaymentDetail getPaymentDetailById(int id) {
-        return paymentDetailRepository.findById(id).orElseThrow(() -> new RuntimeException("PaymentDetail not found"));
+    @Transactional
+    public PaymentDetail updatePaymentStatus(Integer paymentId, String status) {
+        PaymentDetail payment = getPaymentById(paymentId);
+        payment.setStatus(status);
+        payment.setUpdatedAt(new Date());
+        
+        // Nếu thanh toán thành công, cập nhật trạng thái đơn hàng
+        if ("SUCCESS".equals(status)) {
+            OrderDetail order = payment.getOrder();
+            order.setStatus("CONFIRMED");
+            orderDetailRepository.save(order);
+        }
+        
+        return paymentDetailRepository.save(payment);
     }
 
     @Override
-    public List<PaymentDetail> getAllPaymentDetails() {
-        return paymentDetailRepository.findAll();
+    public PaymentDetail save(PaymentDetail payment) {
+        return paymentDetailRepository.save(payment);
     }
 }

@@ -3,6 +3,7 @@ package com.vn.ebookstore.service.impl;
 import com.vn.ebookstore.model.*;
 import com.vn.ebookstore.repository.*;
 import com.vn.ebookstore.service.OrderDetailService;
+import com.vn.ebookstore.service.PaymentDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,12 @@ public class OrderDetailServiceImpl implements OrderDetailService {
     @Autowired
     private CartRepository cartRepository;
 
+    @Autowired
+    private PaymentDetailService paymentDetailService;
+
+    @Autowired
+    private AddressRepository addressRepository;
+
     @Override
     @Transactional
     public OrderDetail createOrder(Integer userId, Integer addressId, String paymentMethod, String note) {
@@ -34,11 +41,23 @@ public class OrderDetailServiceImpl implements OrderDetailService {
         Cart cart = cartRepository.findByUserIdAndUpdatedAtIsNull(userId)
                 .orElseThrow(() -> new RuntimeException("Cart not found"));
 
-        // Tạo đơn hàng mới
+        // Lấy thông tin địa chỉ giao hàng
+        Address shippingAddress = addressRepository.findById(addressId)
+                .orElseThrow(() -> new RuntimeException("Address not found"));
+                
+        // Format địa chỉ thành chuỗi
+        String formattedAddress = String.format("%s, %s, %s, %s",
+            shippingAddress.getAddressLine(),
+            shippingAddress.getWard(),
+            shippingAddress.getDistrict(),
+            shippingAddress.getCity());
+
+        // Tạo đơn hàng mới với địa chỉ
         OrderDetail orderDetail = new OrderDetail();
         orderDetail.setUser(user);
         orderDetail.setTotal(cart.getTotal());
         orderDetail.setStatus("PENDING");
+        orderDetail.setOrderAddress(formattedAddress); // Lưu địa chỉ giao hàng
         orderDetail.setCreatedAt(new Date());
         orderDetail = orderDetailRepository.save(orderDetail);
 
@@ -54,6 +73,9 @@ public class OrderDetailServiceImpl implements OrderDetailService {
                 orderItemRepository.save(orderItem);
             }
         }
+
+        // Tạo payment detail sau khi tạo order
+        paymentDetailService.createPayment(orderDetail.getId(), paymentMethod, orderDetail.getTotal());
 
         return orderDetail;
     }
@@ -73,8 +95,9 @@ public class OrderDetailServiceImpl implements OrderDetailService {
     @Transactional
     public void cancelOrder(Integer orderId) {
         OrderDetail order = getOrderById(orderId);
-        if (!"PENDING".equals(order.getStatus())) {
-            throw new RuntimeException("Chỉ có thể hủy đơn hàng ở trạng thái chờ xử lý");
+        // Cho phép hủy đơn khi status là PENDING hoặc CONFIRMED
+        if (!("PENDING".equals(order.getStatus()) || "CONFIRMED".equals(order.getStatus()))) {
+            throw new RuntimeException("Chỉ có thể hủy đơn hàng ở trạng thái chờ xử lý hoặc đã xác nhận");
         }
         order.setStatus("CANCELLED");
         orderDetailRepository.save(order);

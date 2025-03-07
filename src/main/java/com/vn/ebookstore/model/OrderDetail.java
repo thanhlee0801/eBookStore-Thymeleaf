@@ -23,8 +23,11 @@ public class OrderDetail {
     @OneToMany(mappedBy = "order")
     private List<OrderItem> orderItems;
 
-    @OneToOne(mappedBy = "order")
-    private PaymentDetail paymentDetail;
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    private List<PaymentDetail> payments;
+
+    @Column(name = "order_address")
+    private String orderAddress;
 
     public int getId() {
         return id;
@@ -82,11 +85,19 @@ public class OrderDetail {
         this.orderItems = orderItems;
     }
 
-    public PaymentDetail getPaymentDetail() {
-        return paymentDetail;
+    public List<PaymentDetail> getPayments() {
+        return payments;
     }
 
-    public void setPaymentDetail(PaymentDetail paymentDetail) {
-        this.paymentDetail = paymentDetail;
+    public void setPayments(List<PaymentDetail> payments) {
+        this.payments = payments;
+    }
+
+    public String getOrderAddress() {
+        return orderAddress;
+    }
+
+    public void setOrderAddress(String orderAddress) {
+        this.orderAddress = orderAddress;
     }
 }

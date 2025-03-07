@@ -8,31 +8,31 @@ import java.util.Date;
 public class PaymentDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    private long amount;
-    private String provider;
-    private String status;
-    @Column(updatable = false)
-    private Date createdAt;
-    private Date updatedAt;
+    private Integer id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "order_id")
     private OrderDetail order;
 
-    public int getId() {
+    private Long amount;
+    private String provider;  // COD, BANKING, etc.
+    private String status;    // PENDING, SUCCESS, FAILED
+    private Date createdAt;
+    private Date updatedAt;
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public long getAmount() {
+    public Long getAmount() {
         return amount;
     }
 
-    public void setAmount(long amount) {
+    public void setAmount(Long amount) {
         this.amount = amount;
     }
 

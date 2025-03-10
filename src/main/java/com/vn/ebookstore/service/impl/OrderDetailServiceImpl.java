@@ -3,7 +3,6 @@ package com.vn.ebookstore.service.impl;
 import com.vn.ebookstore.model.*;
 import com.vn.ebookstore.repository.*;
 import com.vn.ebookstore.service.OrderDetailService;
-import com.vn.ebookstore.service.PaymentDetailService;
 import com.vn.ebookstore.service.CouponService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,9 +27,6 @@ public class OrderDetailServiceImpl implements OrderDetailService {
 
     @Autowired
     private CartRepository cartRepository;
-
-    @Autowired
-    private PaymentDetailService paymentDetailService;
 
     @Autowired
     private AddressRepository addressRepository;

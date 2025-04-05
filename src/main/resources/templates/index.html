@@ -575,18 +575,16 @@
                                     <!-- Link for authenticated users -->
                                     <a th:if="${book != null}" sec:authorize="isAuthenticated()"
                                         th:href="@{'/user/book/' + ${book.id}}">
-                                        <img th:if="${book.cover != null}" th:src="${book.cover}" class="product-image w-100"
-                                            th:alt="${book.title}">
-                                        <img th:unless="${book.cover != null}" th:src="@{/image/default-book-cover.png}"
-                                            class="product-image w-100" th:alt="Default Cover">
+                                        <img th:src="${book != null and book.cover != null ? book.cover : defaultCoverUrl}" 
+                                             class="product-image w-100" 
+                                             th:alt="${book != null ? book.title : 'Default Cover'}">
                                     </a>
                                     <!-- Link for non-authenticated users -->
                                     <a th:if="${book != null}" sec:authorize="!isAuthenticated()"
                                         th:href="@{'/book/' + ${book.id}}">
-                                        <img th:if="${book.cover != null}" th:src="${book.cover}" class="product-image w-100"
-                                            th:alt="${book.title}">
-                                        <img th:unless="${book.cover != null}" th:src="@{/image/default-book-cover.png}"
-                                            class="product-image w-100" th:alt="Default Cover">
+                                        <img th:src="${book != null and book.cover != null ? book.cover : defaultCoverUrl}" 
+                                             class="product-image w-100" 
+                                             th:alt="${book != null ? book.title : 'Default Cover'}">
                                     </a>
 
                                     <button sec:authorize="isAuthenticated()" th:if="${book != null}" class="wishlist-btn"
@@ -676,18 +674,16 @@
                                     <!-- Link for authenticated users -->
                                     <a th:if="${book != null}" sec:authorize="isAuthenticated()"
                                         th:href="@{'/user/book/' + ${book.id}}">
-                                        <img th:if="${book.cover != null}" th:src="${book.cover}" class="product-image w-100"
-                                            th:alt="${book.title}">
-                                        <img th:unless="${book.cover != null}" th:src="@{/image/default-book-cover.png}"
-                                            class="product-image w-100" th:alt="Default Cover">
+                                        <img th:src="${book != null and book.cover != null ? book.cover : defaultCoverUrl}" 
+                                             class="product-image w-100" 
+                                             th:alt="${book != null ? book.title : 'Default Cover'}">
                                     </a>
                                     <!-- Link for non-authenticated users -->
                                     <a th:if="${book != null}" sec:authorize="!isAuthenticated()"
                                         th:href="@{'/book/' + ${book.id}}">
-                                        <img th:if="${book.cover != null}" th:src="${book.cover}" class="product-image w-100"
-                                            th:alt="${book.title}">
-                                        <img th:unless="${book.cover != null}" th:src="@{/image/default-book-cover.png}"
-                                            class="product-image w-100" th:alt="Default Cover">
+                                        <img th:src="${book != null and book.cover != null ? book.cover : defaultCoverUrl}" 
+                                             class="product-image w-100" 
+                                             th:alt="${book != null ? book.title : 'Default Cover'}">
                                     </a>
 
                                     <button sec:authorize="isAuthenticated()" th:if="${book != null}" class="wishlist-btn"
@@ -777,18 +773,16 @@
                                     <!-- Link for authenticated users -->
                                     <a th:if="${book != null}" sec:authorize="isAuthenticated()"
                                         th:href="@{'/user/book/' + ${book.id}}">
-                                        <img th:if="${book.cover != null}" th:src="${book.cover}" class="product-image w-100"
-                                            th:alt="${book.title}">
-                                        <img th:unless="${book.cover != null}" th:src="@{/image/default-book-cover.png}"
-                                            class="product-image w-100" th:alt="Default Cover">
+                                        <img th:src="${book != null and book.cover != null ? book.cover : defaultCoverUrl}" 
+                                             class="product-image w-100" 
+                                             th:alt="${book != null ? book.title : 'Default Cover'}">
                                     </a>
                                     <!-- Link for non-authenticated users -->
                                     <a th:if="${book != null}" sec:authorize="!isAuthenticated()"
                                         th:href="@{'/book/' + ${book.id}}">
-                                        <img th:if="${book.cover != null}" th:src="${book.cover}" class="product-image w-100"
-                                            th:alt="${book.title}">
-                                        <img th:unless="${book.cover != null}" th:src="@{/image/default-book-cover.png}"
-                                            class="product-image w-100" th:alt="Default Cover">
+                                        <img th:src="${book != null and book.cover != null ? book.cover : defaultCoverUrl}" 
+                                             class="product-image w-100" 
+                                             th:alt="${book != null ? book.title : 'Default Cover'}">
                                     </a>
 
                                     <button sec:authorize="isAuthenticated()" th:if="${book != null}" class="wishlist-btn"

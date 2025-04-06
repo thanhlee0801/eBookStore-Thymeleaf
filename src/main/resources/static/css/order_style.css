@@ -1,0 +1,178 @@
+/* Order Status Colors */
+:root {
+  --status-pending: #FEF3C7;
+  --status-pending-text: #92400E;
+  --status-confirmed: #DBEAFE;
+  --status-confirmed-text: #1E40AF;
+  --status-shipping: #E0E7FF;
+  --status-shipping-text: #3730A3;
+  --status-delivered: #D1FAE5;
+  --status-delivered-text: #065F46;
+  --status-cancelled: #FEE2E2;
+  --status-cancelled-text: #991B1B;
+}
+
+/* Order Timeline */
+.timeline {
+    position: relative;
+    padding: 20px 0;
+}
+
+.timeline-line {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #e0e0e0;
+    z-index: 1;
+}
+
+.timeline-item {
+    z-index: 2;
+    background: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+}
+
+.timeline-item.active {
+    background: var(--primary-color);
+    color: white;
+}
+
+/* Order Details */
+.order-card {
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.order-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Order Header */
+.order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.order-date {
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+/* Order Products */
+.order-product {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.product-image {
+    width: 80px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.product-details {
+    margin-left: 1rem;
+    flex: 1;
+}
+
+/* Product Images in Order */
+.order-product-img {
+    width: 60px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+/* Status Badges */
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.status-pending {
+    background-color: var(--status-pending);
+    color: var(--status-pending-text);
+}
+
+.status-confirmed {
+    background-color: var(--status-confirmed);
+    color: var(--status-confirmed-text);
+}
+
+.status-shipping {
+    background-color: var(--status-shipping);
+    color: var(--status-shipping-text);
+}
+
+.status-delivered {
+    background-color: var(--status-delivered);
+    color: var(--status-delivered-text);
+}
+
+.status-cancelled {
+    background-color: var(--status-cancelled);
+    color: var(--status-cancelled-text);
+}
+
+/* Order Actions */
+.order-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    padding: 1rem;
+}
+
+/* Timeline */
+.order-timeline {
+    display: flex;
+    justify-content: space-between;
+    margin: 2rem 0;
+    position: relative;
+}
+
+.timeline-item {
+    position: relative;
+    z-index: 1;
+}
+
+.timeline-line {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: #e5e7eb;
+}
+
+/* Payment Details */
+.payment-details {
+    background-color: #f9fafb;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+.total-amount {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--primary-color);
+}

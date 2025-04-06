@@ -6,11 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
+import org.springframework.ui.Model;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/books")
@@ -41,5 +44,22 @@ public class BookController {
             .collect(Collectors.toList());
             
         return ResponseEntity.ok(simplifiedResults);
+    }
+
+    @GetMapping("/book/{id}")
+    public String viewBookDetail(@PathVariable Integer id, Model model, Principal principal) {
+        Optional<Book> bookOptional = bookService.findById(id);
+        if (!bookOptional.isPresent()) {
+            return "error/404";
+        }
+        Book book = bookOptional.get();
+        
+        // Validate và format lại đường dẫn ảnh
+        if (book.getCover() != null && !book.getCover().startsWith("/image/")) {
+            book.setCover("/image/" + book.getCover());
+        }
+        
+        model.addAttribute("book", book);
+        return "bookDetail";
     }
 }

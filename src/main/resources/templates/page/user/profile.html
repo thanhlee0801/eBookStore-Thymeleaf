@@ -12,6 +12,13 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" th:href="@{/css/index_style.css}">
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" th:href="@{/css/profile_style.css}">
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+        integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+        crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -316,12 +323,7 @@
     <div th:replace="index :: footer"></div>
 
     <!-- Bootstrap Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
-        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
-        crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
-        integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
-        crossorigin="anonymous"></script>
+
 
     <script th:src="@{/js/cart.js}"></script>
     <script th:src="@{/js/wishlist.js}"></script>
@@ -366,6 +368,27 @@
                         }, false)
                     })
             })()
+
+            // Xóa event listener cũ
+            // Chỉ giữ lại một event listener cho form submit
+            document.querySelector('form[enctype="multipart/form-data"]').addEventListener('submit', function (e) {
+                // Đóng modal
+                bootstrap.Modal.getInstance(document.getElementById('editProfileModal')).hide();
+
+                // Đợi 2 giây rồi mới reload trang
+                setTimeout(function () {
+                    window.location.reload();
+                }, 2000);
+            });
+
+            // Toast handling
+            const toasts = document.querySelectorAll('.toast');
+            toasts.forEach(toast => {
+                const bsToast = new bootstrap.Toast(toast, {
+                    delay: 3000
+                });
+                bsToast.show();
+            });
         });
 
         // Thêm function để cập nhật avatar
@@ -401,23 +424,6 @@
                 }, 500);
             }, 0);
         }
-
-        // Thay đổi xử lý form submit
-        document.querySelector('form[enctype="multipart/form-data"]').addEventListener('submit', function (e) {
-            // Không cần preventDefault nữa
-            bootstrap.Modal.getInstance(document.getElementById('editProfileModal')).hide();
-        });
-
-        // Thêm xử lý toast alerts để tự đóng sau 3 giây
-        window.addEventListener('load', function () {
-            const toasts = document.querySelectorAll('.toast');
-            toasts.forEach(toast => {
-                const bsToast = new bootstrap.Toast(toast, {
-                    delay: 3000
-                });
-                bsToast.show();
-            });
-        });
     </script>
 </body>
 

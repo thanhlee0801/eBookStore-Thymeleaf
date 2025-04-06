@@ -1,0 +1,98 @@
+/* Review Card */
+.review-card {
+    background: white;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+}
+
+.review-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Book Cover */
+.book-cover {
+    width: 100px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+/* Rating Stars */
+.rating-stars {
+    color: #fbbf24;
+    margin-bottom: 0.5rem;
+}
+
+.rating-input {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.rating-star {
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.rating-star:hover,
+.rating-star.active {
+    color: #fbbf24;
+    transform: scale(1.1);
+}
+
+/* Review Content */
+.review-content {
+    line-height: 1.6;
+    color: var(--text-primary);
+}
+
+.review-date {
+    font-size: 0.875rem;
+    color: var(--text-light);
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 3rem 0;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    color: var(--text-light);
+    margin-bottom: 1rem;
+}
+
+/* Modal */
+.modal-body {
+    padding: 1.5rem;
+}
+
+.edit-form textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+/* Review Actions */
+.review-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-edit,
+.btn-delete {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
+.btn-edit:hover {
+    background-color: var(--primary-light);
+    color: var(--primary-dark);
+}
+
+.btn-delete:hover {
+    background-color: #fee2e2;
+    color: #dc2626;
+}

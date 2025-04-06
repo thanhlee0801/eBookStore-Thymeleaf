@@ -7,8 +7,6 @@ import com.vn.ebookstore.service.UserService;
 import com.vn.ebookstore.service.WishlistService;
 import com.vn.ebookstore.service.CartService;
 import com.vn.ebookstore.service.ReviewService;
-import com.vn.ebookstore.service.SubCategoryService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -71,10 +69,6 @@ public class UserController {
 
     @Autowired
     private PaymentDetailService paymentDetailService; // Add PaymentDetailService
-
-    @Autowired
-    private SubCategoryService subCategoryService; // Add SubCategoryService
-
 
     // ==================== Page Navigation Mappings ====================
     @GetMapping("/home") 
@@ -900,56 +894,5 @@ public class UserController {
             return ResponseEntity.badRequest()
                 .body(Map.of("error", e.getMessage()));
         }
-    }
-
-    @GetMapping("/category/{id}")
-    public String showCategoryBooks(@PathVariable Integer id, Model model, Principal principal) {
-        Category currentCategory = categoryService.getCategoryById(id);
-        if (currentCategory == null) {
-            return "redirect:/user/home";
-        }
-
-        List<Book> books = bookService.getBooksByCategory(id);
-        List<Category> categories = categoryService.getAllCategories();
-        
-        model.addAttribute("currentCategory", currentCategory);
-        model.addAttribute("categories", categories);
-        model.addAttribute("books", books);
-        model.addAttribute("isSubCategory", false);
-
-        User user = userService.getUserByEmail(principal.getName());
-        Cart cart = cartService.getCurrentCartByUser(user);
-        List<Wishlist> wishlists = wishlistService.getWishlistsByUser(user);
-        
-        model.addAttribute("cart", cart);
-        model.addAttribute("wishlists", wishlists != null ? wishlists : new ArrayList<>());
-
-        return "page/user/category_books";
-    }
-
-    @GetMapping("/subcategory/{id}")
-    public String showSubCategoryBooks(@PathVariable Integer id, Model model, Principal principal) {
-        SubCategory subCategory = subCategoryService.getSubCategoryById(id);
-        if (subCategory == null) {
-            return "redirect:/user/home";
-        }
-
-        List<Book> books = bookService.getBooksBySubCategoryId(id);
-        List<Category> categories = categoryService.getAllCategories();
-        
-        model.addAttribute("currentCategory", subCategory);
-        model.addAttribute("parentCategory", subCategory.getCategory());
-        model.addAttribute("categories", categories);
-        model.addAttribute("books", books);
-        model.addAttribute("isSubCategory", true);
-
-        User user = userService.getUserByEmail(principal.getName());
-        Cart cart = cartService.getCurrentCartByUser(user);
-        List<Wishlist> wishlists = wishlistService.getWishlistsByUser(user);
-        
-        model.addAttribute("cart", cart);
-        model.addAttribute("wishlists", wishlists != null ? wishlists : new ArrayList<>());
-
-        return "page/user/category_books";
     }
 }

@@ -100,8 +100,20 @@ public class AuthController {
 
             // Xử lý upload ảnh
             if (!avatar.isEmpty()) {
-                // Tạo thư mục nếu chưa tồn tại
                 String uploadDir = "src/main/resources/static/image/avatar";
+                
+                // Xử lý xóa avatar cũ nếu có
+                if (user.getAvatar() != null && !user.getAvatar().isEmpty()) {
+                    try {
+                        String oldAvatarPath = "src/main/resources/static" + user.getAvatar();
+                        Files.deleteIfExists(Paths.get(oldAvatarPath));
+                    } catch (IOException e) {
+                        // Log warning nhưng vẫn tiếp tục xử lý
+                        System.out.println("Warning: Could not delete old avatar: " + e.getMessage());
+                    }
+                }
+
+                // Tạo thư mục nếu chưa tồn tại
                 Path uploadPath = Paths.get(uploadDir);
                 if (!Files.exists(uploadPath)) {
                     Files.createDirectories(uploadPath);
@@ -112,11 +124,11 @@ public class AuthController {
                 String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
                 String filename = UUID.randomUUID().toString() + extension;
 
-                // Lưu file
+                // Lưu file mới
                 Path filePath = uploadPath.resolve(filename);
                 Files.copy(avatar.getInputStream(), filePath);
 
-                // Lưu đường dẫn vào database
+                // Cập nhật đường dẫn avatar mới
                 user.setAvatar("/image/avatar/" + filename);
             }
 

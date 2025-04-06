@@ -10,139 +10,13 @@
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" th:href="@{/css/index_style.css}">
-    <style>
-        .book-cover {
-            max-height: 500px;
-            object-fit: contain;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .book-title {
-            font-size: 2rem;
-            font-weight: 600;
-            color: #1a202c;
-        }
-
-        .book-author {
-            color: #4a5568;
-            font-size: 1.1rem;
-        }
-
-        .book-price {
-            font-size: 1.5rem;
-            color: #2563eb;
-            font-weight: 600;
-        }
-
-        .rating-stars {
-            color: #fbbf24;
-        }
-
-        .book-detail-card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
-        }
-
-        .book-detail-card:hover {
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .detail-label {
-            color: #64748b;
-            font-weight: 500;
-        }
-
-        .detail-value {
-            color: #1e293b;
-        }
-
-        .review-card {
-            border-left: 4px solid #2563eb;
-            background: #f8fafc;
-            border-radius: 0 8px 8px 0;
-        }
-
-        .review-author {
-            color: #1e293b;
-            font-weight: 500;
-        }
-
-        .review-date {
-            color: #64748b;
-            font-size: 0.875rem;
-        }
-
-        .quantity-input {
-            width: 80px;
-            text-align: center;
-        }
-
-        .btn-quantity {
-            width: 32px;
-            height: 32px;
-            padding: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .description-text {
-            font-size: 1.1rem;
-            line-height: 1.8;
-            color: #334155;
-        }
-
-        .category-badge {
-            background: #e5e7eb;
-            color: #4b5563;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.875rem;
-            text-decoration: none;
-        }
-
-        .category-badge:hover {
-            background: #d1d5db;
-            color: #1f2937;
-        }
-
-        .book-images {
-            width: 80px;
-            height: 120px;
-            object-fit: cover;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .book-images:hover {
-            transform: scale(1.05);
-        }
-
-        .active-image {
-            border: 2px solid #2563eb;
-        }
-
-        .rating-input {
-            font-size: 24px;
-            color: #fbbf24;
-            cursor: pointer;
-        }
-
-        .rating-star {
-            margin-right: 5px;
-            transition: all 0.2s;
-        }
-
-        .rating-star:hover,
-        .rating-star.active {
-            color: #f59e0b;
-            transform: scale(1.1);
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/product_detail_style.css}">
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+        integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+        crossorigin="anonymous"></script>
 </head>
 
 <body class="bg-light">
@@ -208,11 +82,11 @@
                          alt="Default Cover">
                     
                     <!-- Thư viện ảnh -->
-                    <div class="d-flex gap-2 overflow-auto py-2" th:if="${book != null and book.images != null and not #lists.isEmpty(book.images)}">
-                        <img th:each="image : ${book.images}" 
-                             th:src="${image.url}" 
+                    <div class="d-flex gap-2 overflow-auto py-2" th:if="${book != null and book.images != null}">
+                        <img th:each="bookImage : ${book.images}" 
+                             th:src="${bookImage.imagePath}" 
                              class="book-images"
-                             th:onclick="'changeMainImage(this, \'' + ${image.url} + '\')'">
+                             th:onclick="'changeMainImage(this, \'' + ${bookImage.imagePath} + '\')'">
                     </div>
                 </div>
             </div>
@@ -542,6 +416,7 @@
         }
 
         function setEditRating(rating) {
+            document.getElementById('editRatingInput').value = rating;
             const stars = document.querySelectorAll('.rating-star-edit');
             stars.forEach((star, index) => {
                 if (index < rating) {
@@ -620,11 +495,11 @@
                         <div class="mb-3">
                             <label class="form-label">Đánh giá:</label>
                             <div class="rating-input mb-2">
-                                <i class="far fa-star rating-star-edit" data-rating="1"></i>
-                                <i class="far fa-star rating-star-edit" data-rating="2"></i>
-                                <i class="far fa-star rating-star-edit" data-rating="3"></i>
-                                <i class="far fa-star rating-star-edit" data-rating="4"></i>
-                                <i class="far fa-star rating-star-edit" data-rating="5"></i>
+                                <i class="far fa-star rating-star-edit" data-rating="1" onclick="setEditRating(1)"></i>
+                                <i class="far fa-star rating-star-edit" data-rating="2" onclick="setEditRating(2)"></i>
+                                <i class="far fa-star rating-star-edit" data-rating="3" onclick="setEditRating(3)"></i>
+                                <i class="far fa-star rating-star-edit" data-rating="4" onclick="setEditRating(4)"></i>
+                                <i class="far fa-star rating-star-edit" data-rating="5" onclick="setEditRating(5)"></i>
                             </div>
                             <input type="hidden" id="editRatingInput" required>
                         </div>
@@ -645,12 +520,7 @@
     <script th:src="@{/js/wishlist.js}"></script>
     <script th:src="@{/js/search_book.js}"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
-        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
-        crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
-        integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
-        crossorigin="anonymous"></script>
+    
 </body>
 
 </html>

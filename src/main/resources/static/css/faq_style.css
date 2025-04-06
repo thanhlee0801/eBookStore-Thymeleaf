@@ -1,0 +1,110 @@
+/* FAQ Header */
+.faq-header {
+    text-align: center;
+    padding: 3rem 0;
+    background: linear-gradient(to right, var(--primary-light), var(--primary-color));
+    color: white;
+    margin-bottom: 2rem;
+}
+
+/* FAQ Categories */
+.faq-categories {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.category-btn {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--primary-color);
+    border-radius: 20px;
+    color: var(--primary-color);
+    background: white;
+    transition: all 0.3s ease;
+}
+
+.category-btn:hover,
+.category-btn.active {
+    background: var(--primary-color);
+    color: white;
+}
+
+/* FAQ Items */
+.accordion-item {
+    border: none;
+    margin-bottom: 1rem;
+    border-radius: 8px !important;
+    overflow: hidden;
+}
+
+.accordion-button {
+    background: white;
+    color: var(--text-primary);
+    padding: 1.25rem;
+    font-weight: 500;
+}
+
+.accordion-button:not(.collapsed) {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+}
+
+.accordion-button:focus {
+    box-shadow: none;
+    border-color: rgba(0,0,0,.125);
+}
+
+.accordion-body {
+    background: white;
+    padding: 1.25rem;
+    color: var(--text-light);
+}
+
+/* Search Box */
+.faq-search {
+    max-width: 600px;
+    margin: 0 auto 2rem;
+}
+
+.search-input {
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    padding-left: 2.5rem;
+    width: 100%;
+    transition: border-color 0.2s;
+}
+
+.search-input:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
+
+.search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+}
+
+/* Related Articles */
+.related-articles {
+    background: #f9fafb;
+    padding: 2rem;
+    border-radius: 8px;
+    margin-top: 2rem;
+}
+
+.article-link {
+    display: block;
+    padding: 0.75rem 0;
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.article-link:hover {
+    color: var(--primary-color);
+}

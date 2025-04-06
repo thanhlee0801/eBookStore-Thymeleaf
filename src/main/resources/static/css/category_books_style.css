@@ -1,0 +1,162 @@
+/* Product Card Styling */
+.product-card {
+    background: white;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.product-image {
+    height: 200px;
+    object-fit: cover;
+    border-radius: 12px 12px 0 0;
+}
+
+/* Discount Badge */
+.discount-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #dc2626;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.875rem;
+}
+
+/* Price and Wishlist */
+.price {
+    color: #2563eb;
+    font-weight: 600;
+}
+
+.wishlist-btn {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: white;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.wishlist-btn:hover {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+/* Category and Rating */
+.rating-stars {
+    color: #fbbf24;
+}
+
+.category-badge {
+    background: #e5e7eb;
+    color: #4b5563;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+}
+
+/* Category Header */
+.category-header {
+    background: linear-gradient(to right, var(--primary-light), var(--primary-color));
+    padding: 3rem 0;
+    margin-bottom: 2rem;
+    color: white;
+    text-align: center;
+}
+
+.category-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.category-description {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+/* Breadcrumb */
+.category-breadcrumb {
+    margin-bottom: 2rem;
+    padding: 0.5rem 0;
+}
+
+.breadcrumb-item a {
+    color: var(--text-light);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.breadcrumb-item a:hover {
+    color: var(--primary-color);
+}
+
+/* Filter Section */
+.filter-section {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.filter-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+/* Sort Controls */
+.sort-controls {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.sort-btn {
+    padding: 0.5rem 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    background: white;
+    color: var(--text-primary);
+    transition: all 0.2s;
+}
+
+.sort-btn:hover,
+.sort-btn.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+/* Empty State */
+.empty-category {
+    text-align: center;
+    padding: 4rem 0;
+}
+
+.empty-category i {
+    font-size: 4rem;
+    color: var(--text-light);
+    margin-bottom: 1rem;
+}
+
+.empty-category p {
+    color: var(--text-light);
+    margin-bottom: 1.5rem;
+}

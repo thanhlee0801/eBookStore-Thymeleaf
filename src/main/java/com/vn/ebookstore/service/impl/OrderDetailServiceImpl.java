@@ -5,6 +5,7 @@ import com.vn.ebookstore.repository.*;
 import com.vn.ebookstore.service.OrderDetailService;
 import com.vn.ebookstore.service.CouponService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -170,5 +171,28 @@ public class OrderDetailServiceImpl implements OrderDetailService {
     @Override
     public OrderDetail save(OrderDetail order) {
         return orderDetailRepository.save(order);
+    }
+
+    @Override
+    public long getTotalOrders() {
+        return orderDetailRepository.count();
+    }
+
+    @Override
+    public double getTotalRevenue() {
+        return orderDetailRepository.findAll().stream()
+                .filter(order -> "DELIVERED".equals(order.getStatus()))
+                .mapToDouble(order -> order.getSubTotal()) // Thay đổi từ getTotal() sang getSubTotal()
+                .sum();
+    }
+
+    @Override
+    public long countOrdersByStatus(String status) {
+        return orderDetailRepository.countByStatus(status);
+    }
+
+    @Override
+    public List<OrderDetail> getRecentOrders(PageRequest pageRequest) {
+        return orderDetailRepository.findTopNByOrderByCreatedAtDesc(pageRequest);
     }
 }

@@ -61,4 +61,6 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
            "GROUP BY b " +
            "HAVING AVG(r.rating) >= :minRating")
     List<Book> findByAverageRatingGreaterThanEqual(@Param("minRating") Float minRating);
+
+    long countByDeletedAtIsNull();
 }

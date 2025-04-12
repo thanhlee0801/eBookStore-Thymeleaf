@@ -21,4 +21,5 @@ public interface UserService {
     User save(User user);
     User getUserByEmail(String email);
     boolean existsByUsername(String username);
+    long getTotalUsers();
 }

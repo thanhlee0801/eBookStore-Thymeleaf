@@ -200,4 +200,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return userRepository.existsByUsername(username);
     }
 
+    @Override
+    public long getTotalUsers() {
+        return userRepository.countByDeletedAtIsNull();
+    }
+
 }

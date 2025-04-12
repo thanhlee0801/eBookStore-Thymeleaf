@@ -41,10 +41,12 @@ public class AuthController {
     public String login() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null && auth.isAuthenticated() && !auth.getName().equals("anonymousUser")) {
+            // Kiểm tra role và redirect tương ứng
             if (auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
-                return "redirect:/admin/home";
+                return "redirect:/admin/dashboard";
+            } else {
+                return "redirect:/user/home";
             }
-            return "redirect:/user/profile";
         }
         return "page/auth/login";
     }

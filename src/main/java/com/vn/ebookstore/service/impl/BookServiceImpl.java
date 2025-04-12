@@ -144,4 +144,9 @@ public class BookServiceImpl implements BookService {
     public Double getHighestPrice() {
         return bookRepository.findHighestPrice();
     }
+
+    @Override
+    public long getTotalBooks() {
+        return bookRepository.countByDeletedAtIsNull();
+    }
 }

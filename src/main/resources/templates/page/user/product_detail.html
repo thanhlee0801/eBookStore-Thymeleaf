@@ -196,7 +196,7 @@
                                 <p class="mb-2">
                                     <span class="detail-label">Ngày xuất bản:</span>
                                     <span class="detail-value" 
-                                          th:text="${#dates.format(book.bookDetail.publicationDate, 'dd/MM/yyyy')}">
+                                          th:text="${#temporals.format(book.bookDetail.publicationDate, 'dd/MM/yyyy')}">
                                         01/01/2024
                                     </span>
                                 </p>

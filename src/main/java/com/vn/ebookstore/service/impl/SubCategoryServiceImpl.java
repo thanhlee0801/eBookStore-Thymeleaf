@@ -14,6 +14,8 @@ public class SubCategoryServiceImpl implements SubCategoryService {
     @Autowired
     private SubCategoryRepository subCategoryRepository;
 
+    
+
     @Override
     public SubCategory createSubCategory(SubCategory subCategory) {
         return subCategoryRepository.save(subCategory);

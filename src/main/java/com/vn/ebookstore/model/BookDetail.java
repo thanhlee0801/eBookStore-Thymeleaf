@@ -1,6 +1,8 @@
 package com.vn.ebookstore.model;
 
 import jakarta.persistence.*;
+
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -13,7 +15,7 @@ public class BookDetail {
     private String summary;
     private String isbn;
     private String publisher;
-    private Date publicationDate;
+    private LocalDate publicationDate;
     private int pages;
     private String fileUrl;
     @Column(updatable = false)
@@ -21,7 +23,7 @@ public class BookDetail {
     private Date deletedAt;
 
     @OneToOne
-    @JoinColumn(name = "book_id")
+    @JoinColumn(name = "book_id",unique = true)
     private Book book;
 
     public int getId() {
@@ -64,11 +66,11 @@ public class BookDetail {
         this.publisher = publisher;
     }
 
-    public Date getPublicationDate() {
+    public LocalDate getPublicationDate() {
         return publicationDate;
     }
 
-    public void setPublicationDate(Date publicationDate) {
+    public void setPublicationDate(LocalDate publicationDate) {
         this.publicationDate = publicationDate;
     }
 

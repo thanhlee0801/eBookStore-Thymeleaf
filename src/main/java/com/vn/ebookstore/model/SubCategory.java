@@ -24,7 +24,7 @@ public class SubCategory {
     @JoinColumn(name = "parent_id")
     private Category category;
 
-    @OneToMany(mappedBy = "subCategory")
+    @OneToMany(mappedBy = "subCategory", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Book> books;
 
     public Integer getId() {

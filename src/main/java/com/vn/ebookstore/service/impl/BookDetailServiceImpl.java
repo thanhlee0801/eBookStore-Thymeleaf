@@ -33,6 +33,10 @@ public class BookDetailServiceImpl implements BookDetailService {
     }
 
     @Override
+    public BookDetail getBookDetailByBookId(int bookId) {
+        return bookDetailRepository.findByBookId(bookId);
+    }
+    @Override
     public void deleteBookDetail(int id) {
         bookDetailRepository.deleteById(id);
     }

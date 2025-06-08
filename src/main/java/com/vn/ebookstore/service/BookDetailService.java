@@ -9,4 +9,6 @@ public interface BookDetailService {
     void deleteBookDetail(int id);
     BookDetail getBookDetailById(int id);
     List<BookDetail> getAllBookDetails();
+    BookDetail getBookDetailByBookId(int bookId);
+
 }

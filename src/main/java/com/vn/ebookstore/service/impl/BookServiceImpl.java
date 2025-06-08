@@ -25,9 +25,19 @@ public class BookServiceImpl implements BookService {
     @Autowired
     private SubCategoryRepository subCategoryRepository;
 
+    public void save(Book book) {
+         bookRepository.save(book);
+    }
+
+
     @Override
     public Book createBook(Book book) {
-        return bookRepository.save(book);
+        // Nếu bookDetail tồn tại, cần thiết lập lại quan hệ 2 chiều
+        if (book.getBookDetail() != null) {
+        book.getBookDetail().setBook(book); // rất quan trọng
+        }
+
+        return bookRepository.save(book); // cascade sẽ lưu luôn bookDetail
     }
 
     @Override
@@ -58,7 +68,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<Book> getAllBooks() {
-        return bookRepository.findAll();
+        return bookRepository.findAllWithBookDetail();
     }
 
     @Override
@@ -68,6 +78,15 @@ public class BookServiceImpl implements BookService {
         if (category.getDeletedAt() != null) {
             throw new RuntimeException("Category has been deleted");
         }
+
+          List<Integer> subCategoryIds = category.getSubCategories()
+            .stream()
+            .filter(sub -> sub.getDeletedAt() == null)
+            .map(sub -> sub.getId())
+            .toList();
+
+        if (subCategoryIds.isEmpty()) return List.of(); // Không có sub nào
+
         return bookRepository.findBySubCategory_Category_IdAndDeletedAtIsNull(categoryId);
     }
 

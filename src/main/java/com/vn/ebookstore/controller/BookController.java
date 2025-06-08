@@ -62,4 +62,12 @@ public class BookController {
         model.addAttribute("book", book);
         return "bookDetail";
     }
+
+    
+    @GetMapping("/books")
+    public String showAllBooks(Model model) {
+        List<Book> books = bookService.getAllBooks(); // trả về danh sách sách không bị xóa
+        model.addAttribute("books", books);
+        return "books"; // Giao diện Thymeleaf
+    }
 }

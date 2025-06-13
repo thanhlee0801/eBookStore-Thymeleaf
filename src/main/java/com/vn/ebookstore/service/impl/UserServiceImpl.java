@@ -108,6 +108,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         existingUser.setBirthOfDate(user.getBirthOfDate());
         existingUser.setPhoneNumber(user.getPhoneNumber());
         
+        existingUser.setRoles(user.getRoles());
+        
+    if (user.getAddresses() != null && !user.getAddresses().isEmpty()) {
+        for (Address address : user.getAddresses()) {
+            address.setUser(existingUser); // cập nhật quan hệ 2 chiều
+        }
+    
+        existingUser.getAddresses().clear(); // xóa hết địa chỉ cũ (nếu muốn giữ thì cần merge)
+        existingUser.getAddresses().addAll(user.getAddresses());
+    }
+
         // Handle password separately - don't update if empty
         if (user.getPassword() != null && !user.getPassword().trim().isEmpty()) {
             existingUser.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -124,12 +135,28 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public void deleteUser(int id) {
         try {
-            User user = getUserById(id);
-            // Soft delete - set deletedAt instead of actually deleting
-            user.setDeletedAt(new Date());
-            userRepository.save(user);
+             User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User không tồn tại"));
+
+        // Kiểm tra và clear thủ công nếu cần
+        if (user.getAddresses() != null) {
+            user.getAddresses().clear();
+        }
+        if (user.getWishlist() != null) {
+            user.getWishlist().clear();
+        }
+        if (user.getCarts() != null) {
+            user.getCarts().clear();
+        }
+        if (user.getOrders() != null) {
+            user.getOrders().clear();
+        }
+        if (user.getReviews() != null) {
+            user.getReviews().clear();
+        }
+
+        userRepository.delete(user); // xóa hoàn toàn khỏi DB
         } catch (Exception e) {
-            logger.error("Lỗi khi xóa user: {}", e.getMessage());
+            logger.error("Lỗi khi xóa user: {}",id, e.getMessage(),e);
             throw new RuntimeException("Không thể xóa người dùng", e);
         }
     }

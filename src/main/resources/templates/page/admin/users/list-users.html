@@ -12,12 +12,12 @@
 <body>
     <div class="wrapper">
         <!-- Sidebar -->
-        <nav id="sidebar" th:replace="~{page/admin/fragments/sidebar :: sidebar}"></nav>
+        <!-- <nav id="sidebar" th:replace="~{page/admin/fragments/sidebar :: sidebar}"></nav> -->
 
         <!-- Page Content -->
         <div id="content">
             <!-- Topbar -->
-            <nav class="navbar navbar-expand-lg navbar-light bg-light" th:replace="~{page/admin/fragments/topbar :: topbar}"></nav>
+            <!-- <nav class="navbar navbar-expand-lg navbar-light bg-light" th:replace="~{page/admin/fragments/topbar :: topbar}"></nav> -->
 
             <!-- Users Content -->
             <div class="container-fluid p-4">
@@ -32,9 +32,8 @@
                             </ol>
                         </nav>
                     </div>
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">
-                        <i class="fas fa-plus me-2"></i>Thêm người dùng
-                    </button>
+                    <a th:href="@{/admin/users/create}">➕ Thêm người dùng mới</a>
+        
                 </div>
 
                 <!-- Stats Cards Row -->
@@ -104,7 +103,7 @@
                 <!-- Search & Filters Card -->
                 <div class="card mb-4">
                     <div class="card-body">
-                        <form th:action="@{/admin/users}" method="get" class="row g-3">
+                        <form th:action="@{/admin/users}" method="post" class="row g-3">
                             <div class="col-md-4">
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-search"></i></span>
@@ -180,19 +179,20 @@
                                         </td>
                                         <td th:text="${#dates.format(user.createdAt, 'dd/MM/yyyy')}"></td>
                                         <td>
-                                            <div class="btn-group">
-                                                <button class="btn btn-sm btn-info" title="Xem"
-                                                        th:onclick="'viewUser(' + ${user.id} + ')'">
+                                             <div class="btn-group">
+                                                <a class="btn btn-sm btn-info" title="Xem"
+                                                th:href="@{/admin/users/view/{id}(id=${user.id})}">
                                                     <i class="fas fa-eye"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-warning" title="Sửa"
-                                                        th:onclick="'editUser(' + ${user.id} + ')'">
+                                                </a>
+                                                <a class="btn btn-sm btn-warning" title="Sửa"
+                                                th:href="@{/admin/users/edit/{id}(id=${user.id})}">
                                                     <i class="fas fa-edit"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-danger" title="Xóa"
-                                                        th:onclick="'deleteUser(' + ${user.id} + ')'">
+                                                </a>
+                                                <a class="btn btn-sm btn-danger" title="Xóa"
+                                                th:href="@{/admin/users/delete/{id}(id=${user.id})}"
+                                                onclick="return confirm('Bạn có chắc chắn muốn xóa người dùng này?');">
                                                     <i class="fas fa-trash"></i>
-                                                </button>
+                                                </a>
                                             </div>
                                         </td>
                                     </tr>
@@ -224,6 +224,10 @@
                 </div>
             </div>
         </div>
+        <div th:if="${successMessage}" style="color: green; font-weight: bold; margin-bottom: 15px;">
+            <p th:text="${successMessage}"></p>
+        </div>
+
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

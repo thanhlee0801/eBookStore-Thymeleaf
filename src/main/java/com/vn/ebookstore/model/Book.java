@@ -21,11 +21,11 @@ public class Book {
     @Column(name = "deleted_at")
     private Date deletedAt;
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.MERGE})
     @JoinColumn(name = "sub_category_id")
     private SubCategory subCategory;
 
-    @OneToOne(mappedBy = "book", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private BookDetail bookDetail;
 
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)

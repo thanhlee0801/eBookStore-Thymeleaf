@@ -37,17 +37,20 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final AddressRepository addressRepository;
 
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private AddressRepository addressRepository;
+    public UserServiceImpl(UserRepository userRepository, 
+                         RoleRepository roleRepository,
+                         PasswordEncoder passwordEncoder,
+                         AddressRepository addressRepository) {
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.addressRepository = addressRepository;
+    }
 
     @Value("${app.upload.dir:${user.home}}")
     private String uploadDir;

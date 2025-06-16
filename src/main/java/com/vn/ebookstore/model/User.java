@@ -3,6 +3,7 @@ package com.vn.ebookstore.model;
 import jakarta.persistence.*;
 import java.util.Date;
 import java.util.List;
+import java.util.Collection;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.format.annotation.DateTimeFormat;

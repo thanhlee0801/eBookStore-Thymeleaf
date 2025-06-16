@@ -11,8 +11,6 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.GrantedAuthority;
@@ -51,9 +49,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         this.passwordEncoder = passwordEncoder;
         this.addressRepository = addressRepository;
     }
-
-    @Value("${app.upload.dir:${user.home}}")
-    private String uploadDir;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {

@@ -1,4 +1,4 @@
-package com.vn.ebookstore.controller;
+package com.vn.ebookstore.controller.admin;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,7 +25,6 @@ import com.vn.ebookstore.service.CategoryService;
 import com.vn.ebookstore.service.SubCategoryService;
 
 import org.springframework.ui.Model;
-
 
 
 @Controller

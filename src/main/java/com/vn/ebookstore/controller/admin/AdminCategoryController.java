@@ -1,4 +1,4 @@
-package com.vn.ebookstore.controller;
+package com.vn.ebookstore.controller.admin;
 
 import java.io.File;
 import java.io.IOException;

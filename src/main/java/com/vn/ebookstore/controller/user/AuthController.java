@@ -1,4 +1,4 @@
-package com.vn.ebookstore.controller;
+package com.vn.ebookstore.controller.user;
 
 import com.vn.ebookstore.model.User;
 import com.vn.ebookstore.model.Address;

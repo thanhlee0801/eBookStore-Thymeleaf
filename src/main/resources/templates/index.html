@@ -572,10 +572,9 @@
                         <div class="col">
                             <div class="product-card shadow-sm">
                                 <div class="position-relative">
-                                    <!-- Link for authenticated users -->
-                                    <a th:if="${book != null}" sec:authorize="isAuthenticated()"
-                                        th:href="@{'/user/book/' + ${book.id}}">
-                                        <img th:src="${book != null and book.cover != null ? book.cover : defaultCoverUrl}" 
+                                    <a th:if="${book != null}" sec:authorize="isAuthenticated()" 
+                                       th:href="@{'/user/book/' + ${book.id}}">
+                                        <img th:src="@{${book != null and book.cover != null ? '/image/cover/' + book.cover : '/image/cover/default.jpg'}}"
                                              class="product-image w-100" 
                                              th:alt="${book != null ? book.title : 'Default Cover'}">
                                     </a>

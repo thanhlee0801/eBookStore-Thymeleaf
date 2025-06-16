@@ -24,7 +24,7 @@ import jakarta.persistence.Table;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
     
     @Column(name = "avatar")
     private String avatar;
@@ -81,11 +81,11 @@ public class User {
     )
     private List<Role> roles;
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -215,5 +215,16 @@ public class User {
 
     public void setRoles(List<Role> roles) {
         this.roles = roles;
+    }
+    
+    public String getFullName() {
+        if (firstName != null && lastName != null) {
+            return firstName + " " + lastName;
+        } else if (firstName != null) {
+            return firstName;
+        } else if (lastName != null) {
+            return lastName;
+        }
+        return username; // Fallback to username if no name is set
     }
 }

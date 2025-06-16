@@ -171,7 +171,6 @@ public String saveBook(@ModelAttribute("book") Book book,
             }
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -232,8 +231,7 @@ public String updateBook(@ModelAttribute Book book,
         // Lưu vào DB
         bookService.save(existingBook);
         return "redirect:/admin/books?success=updated";
-    } catch (Exception e) {
-        e.printStackTrace();
+    } catch (IOException | IllegalStateException e) {
         return "redirect:/admin/books?error=update-failed";
     }
 }

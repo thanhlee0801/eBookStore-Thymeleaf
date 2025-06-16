@@ -2,9 +2,11 @@ package com.vn.ebookstore.controller.admin;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -12,19 +14,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.vn.ebookstore.model.Book;
 import com.vn.ebookstore.model.BookDetail;
-import com.vn.ebookstore.model.Category;
 import com.vn.ebookstore.model.SubCategory;
 import com.vn.ebookstore.service.BookDetailService;
 import com.vn.ebookstore.service.BookService;
 import com.vn.ebookstore.service.CategoryService;
 import com.vn.ebookstore.service.SubCategoryService;
-
-import org.springframework.ui.Model;
 
 
 @Controller
@@ -46,8 +46,17 @@ public class AdminBookController {
 
     @GetMapping
     public ModelAndView listBooks() {
-        ModelAndView mav = new ModelAndView("page/admin/books");
+        ModelAndView mav = new ModelAndView("page/admin/books/books");
         mav.addObject("books", bookService.getAllBooks());
+        
+        // Thêm đối tượng book mới cho form
+        Book newBook = new Book();
+        newBook.setBookDetail(new BookDetail());
+        mav.addObject("book", newBook);
+        
+        // Thêm danh sách subcategories cho dropdown
+        mav.addObject("subCategories", subCategoryService.getAllSubCategories());
+        
         return mav;
     }
 
@@ -130,89 +139,103 @@ public String saveBook(@ModelAttribute("book") Book book,
 }
 
     @GetMapping("/edit/{id}")
-    public String showEditForm(@PathVariable Integer id,Model model) {
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> getBookForEdit(@PathVariable Integer id) {
         try {
             Book book = bookService.getBookById(id);
-            model.addAttribute("book", book);
-            List<Category> categories = categoryService.getAllCategories();
-            model.addAttribute("categories", categories);
-            model.addAttribute("subCategories", subCategoryService.getAllSubCategories()); // PHẢI có dòng này
+            if (book != null) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("id", book.getId());
+                response.put("title", book.getTitle());
+                response.put("author", book.getAuthor());
+                response.put("price", book.getPrice());
+                response.put("cover", book.getCover());
+                
+                if (book.getSubCategory() != null) {
+                    response.put("subCategoryId", book.getSubCategory().getId());
+                }
+                
+                if (book.getBookDetail() != null) {
+                    BookDetail detail = book.getBookDetail();
+                    response.put("description", detail.getDescription());
+                    response.put("summary", detail.getSummary());
+                    response.put("isbn", detail.getIsbn());
+                    response.put("publisher", detail.getPublisher());
+                    response.put("publicationDate", detail.getPublicationDate() != null ? 
+                        detail.getPublicationDate().toString() : null);
+                    response.put("pages", detail.getPages());
+                    response.put("fileUrl", detail.getFileUrl());
+                }
+                
+                return ResponseEntity.ok(response);
+            }
+            return ResponseEntity.notFound().build();
         } catch (Exception e) {
-            return "error/404";
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
         }
-        return "page/admin/book-form";
-    }
-   @PostMapping("/update")
-public String updateBook(@ModelAttribute("book") Book book,
-                         @RequestParam("coverFile") MultipartFile coverFile,
-                         @RequestParam("pdfFile") MultipartFile pdfFile) throws IOException {
-
-    Book existingBook = bookService.getBookById(book.getId());
-    if (existingBook == null) {
-        return "redirect:/admin/books?error=notfound";
     }
 
-    // Cập nhật thông tin chính
-    existingBook.setTitle(book.getTitle());
-    existingBook.setAuthor(book.getAuthor());
-    existingBook.setPrice(book.getPrice());
+@PostMapping("/update")
+public String updateBook(@ModelAttribute Book book,
+                        @RequestParam(required = false) MultipartFile coverFile,
+                        @RequestParam(required = false) MultipartFile bookFile) throws IOException {
+    try {
+        // Lấy book hiện tại từ DB
+        Book existingBook = bookService.getBookById(book.getId());
+        if (existingBook == null) {
+            return "redirect:/admin/books?error=not-found";
+        }
 
-    // Xử lý ảnh bìa nếu có
-    if (!coverFile.isEmpty()) {
-        String coverFileName = coverFile.getOriginalFilename();
-        String coverUploadPath = new ClassPathResource("static/image/cover").getFile().getAbsolutePath();
-        File coverSaveFile = new File(coverUploadPath, coverFileName);
-        coverFile.transferTo(coverSaveFile);
-        existingBook.setCover(coverFileName);
+        // Cập nhật thông tin cơ bản
+        existingBook.setTitle(book.getTitle());
+        existingBook.setAuthor(book.getAuthor());
+        existingBook.setPrice(book.getPrice());
+
+        // Cập nhật BookDetail
+        BookDetail detail = existingBook.getBookDetail();
+        if (detail == null) {
+            detail = new BookDetail();
+            detail.setBook(existingBook);
+        }
+        detail.setDescription(book.getBookDetail().getDescription());
+        detail.setSummary(book.getBookDetail().getSummary());
+        detail.setIsbn(book.getBookDetail().getIsbn());
+        detail.setPublisher(book.getBookDetail().getPublisher());
+        detail.setPublicationDate(book.getBookDetail().getPublicationDate());
+        detail.setPages(book.getBookDetail().getPages());
+
+        // Xử lý upload ảnh mới nếu có
+        if (coverFile != null && !coverFile.isEmpty()) {
+            String coverFileName = coverFile.getOriginalFilename();
+            String coverUploadPath = new ClassPathResource("static/image/cover").getFile().getAbsolutePath();
+            File coverSaveFile = new File(coverUploadPath, coverFileName);
+            coverFile.transferTo(coverSaveFile);
+            existingBook.setCover(coverFileName);
+        }
+
+        // Xử lý upload PDF mới nếu có
+        if (bookFile != null && !bookFile.isEmpty()) {
+            String bookFileName = bookFile.getOriginalFilename();
+            String bookUploadPath = new ClassPathResource("static/image").getFile().getAbsolutePath();
+            File bookSaveFile = new File(bookUploadPath, bookFileName);
+            bookFile.transferTo(bookSaveFile);
+            detail.setFileUrl(bookFileName);
+        }
+
+        // Cập nhật SubCategory
+        if (book.getSubCategory() != null && book.getSubCategory().getId() != null) {
+            SubCategory subCategory = subCategoryService.getSubCategoryById(book.getSubCategory().getId());
+            existingBook.setSubCategory(subCategory);
+        }
+
+        // Lưu vào DB
+        bookService.save(existingBook);
+        return "redirect:/admin/books?success=updated";
+    } catch (Exception e) {
+        e.printStackTrace();
+        return "redirect:/admin/books?error=update-failed";
     }
-        // Xử lý subCategory
-    if (book.getSubCategory() == null || book.getSubCategory().getId() == null) {
-        existingBook.setSubCategory(null);
-    } else {
-        SubCategory subCategory = subCategoryService.getSubCategoryById(book.getSubCategory().getId());
-        existingBook.setSubCategory(subCategory);
-    }
-
-    // Load SubCategory đầy đủ từ DB
-    if (book.getSubCategory() != null && book.getSubCategory().getId() != null) {
-        SubCategory subCategory = subCategoryService.getSubCategoryById(book.getSubCategory().getId());
-        existingBook.setSubCategory(subCategory);
-    } else {
-        existingBook.setSubCategory(null);
-    }
-
-    // Cập nhật BookDetail
-    BookDetail existingDetail = existingBook.getBookDetail();
-    BookDetail formDetail = book.getBookDetail();
-
-    if (existingDetail == null) {
-        existingDetail = new BookDetail();
-    }
-
-    existingDetail.setDescription(formDetail.getDescription());
-    existingDetail.setSummary(formDetail.getSummary());
-    existingDetail.setIsbn(formDetail.getIsbn());
-    existingDetail.setPublisher(formDetail.getPublisher());
-    existingDetail.setPublicationDate(formDetail.getPublicationDate());
-    existingDetail.setPages(formDetail.getPages());
-
-    // Xử lý file PDF nếu có
-    if (!pdfFile.isEmpty()) {
-        String pdfFileName = pdfFile.getOriginalFilename();
-        String pdfUploadPath = new ClassPathResource("static/image").getFile().getAbsolutePath();
-        File pdfSaveFile = new File(pdfUploadPath, pdfFileName);
-        pdfFile.transferTo(pdfSaveFile);
-        existingDetail.setFileUrl(pdfFileName);
-    }
-
-    // Liên kết 2 chiều
-    existingDetail.setBook(existingBook);
-    existingBook.setBookDetail(existingDetail);
-
-    // Lưu book, Hibernate tự cascade lưu BookDetail
-    bookService.save(existingBook);
-
-    return "redirect:/admin/books?success=updated";
 }
 
     @GetMapping("/delete/{id}")
@@ -220,5 +243,4 @@ public String updateBook(@ModelAttribute("book") Book book,
         bookService.deleteBook(id);
         return "redirect:/admin/books";
     }
-   
 }

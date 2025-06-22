@@ -105,10 +105,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         existingUser.setEmail(user.getEmail());
         existingUser.setBirthOfDate(user.getBirthOfDate());
         existingUser.setPhoneNumber(user.getPhoneNumber());
+
+          //  Cập nhật avatar nếu có
+        if (user.getAvatar() != null && !user.getAvatar().trim().isEmpty()) {
+            existingUser.setAvatar(user.getAvatar());
+        }
         
         existingUser.setRoles(user.getRoles());
         
-    if (user.getAddresses() != null && !user.getAddresses().isEmpty()) {
+        if (user.getAddresses() != null && !user.getAddresses().isEmpty()) {
         for (Address address : user.getAddresses()) {
             address.setUser(existingUser); // cập nhật quan hệ 2 chiều
         }

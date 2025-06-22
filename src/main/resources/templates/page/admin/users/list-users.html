@@ -156,9 +156,14 @@
                                         <td th:text="${user.id}"></td>
                                         <td>
                                             <div class="d-flex align-items-center">
-                                                <img th:src="${user.avatar != null ? user.avatar : '/image/avatar/default-avatar.jpg'}" 
-                                                     class="rounded-circle me-2" width="40" height="40"
-                                                     alt="Avatar">
+                                                    <img th:if="${user.avatar != null}"
+                                                        th:src="@{'/image/avatar/' + ${user.avatar}}"
+                                                        class="rounded-circle me-2" width="40" height="40" alt="Avatar">
+                                                    <img th:if="${user.avatar == null}"
+                                                        th:src="@{/image/avatar/default-avatar.jpg}"
+                                                        class="rounded-circle me-2" width="40" height="40" alt="Avatar">
+
+
                                                 <div>
                                                     <div class="fw-bold" th:text="${user.firstName + ' ' + user.lastName}"></div>
                                                     <small class="text-muted" th:text="${user.username}"></small>
@@ -166,7 +171,7 @@
                                             </div>
                                         </td>
                                         <td th:text="${user.email}"></td>
-                                        <td th:text="${user.phoneNumber}"></td>
+                                        <td th:text="${user.phoneNumber}"></ltd>
                                         <td>
                                             <span th:each="role : ${user.roles}" 
                                                   th:text="${role.name}"

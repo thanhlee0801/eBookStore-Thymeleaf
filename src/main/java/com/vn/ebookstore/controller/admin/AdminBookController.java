@@ -95,16 +95,16 @@ public String saveBook(@ModelAttribute("book") Book book,
 
     // Xử lý subCategory: load từ DB nếu có, nếu không thì set null
     if (book.getSubCategory() == null || book.getSubCategory().getId() == null) {
+        SubCategory subCategory = subCategoryService.getSubCategoryById(book.getSubCategory().getId());
         book.setSubCategory(null);
     } else {
-        SubCategory subCategory = subCategoryService.getSubCategoryById(book.getSubCategory().getId());
-        book.setSubCategory(subCategory);
+        book.setSubCategory(null);
     }
 
     // Upload ảnh bìa
     if (!coverFile.isEmpty()) {
         String coverFileName = coverFile.getOriginalFilename();
-        String coverUploadPath = new ClassPathResource("static/image/cover").getFile().getAbsolutePath();
+        String coverUploadPath = "E:/suasang/eBookStore-Thymeleaf/uploads/book";
         File coverSaveFile = new File(coverUploadPath, coverFileName);
         coverFile.transferTo(coverSaveFile);
         book.setCover(coverFileName);
@@ -113,7 +113,7 @@ public String saveBook(@ModelAttribute("book") Book book,
     // Upload file PDF
     if (!bookFile.isEmpty()) {
         String bookFileName = bookFile.getOriginalFilename();
-        String bookUploadPath = new ClassPathResource("static/image").getFile().getAbsolutePath();
+        String bookUploadPath = "E:/suasang/eBookStore-Thymeleaf/uploads/pdf";
         File bookSaveFile = new File(bookUploadPath, bookFileName);
         bookFile.transferTo(bookSaveFile);
         detail.setFileUrl(bookFileName);

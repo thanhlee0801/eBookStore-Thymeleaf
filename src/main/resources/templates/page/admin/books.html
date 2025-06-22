@@ -53,7 +53,9 @@
         <td th:text="${book.author}">Tác giả</td>
         <td th:text="${book.price}">99.000</td>
         <td>
-            <img class="cover-image" th:src="@{/image/cover/{img}(img=${book.cover} ?: 'default.jpg')}" alt="Ảnh bìa" />
+            <img class="cover-image"
+            th:src="@{/image/book/{img}(img=${book.cover != null ? book.cover : 'default-book.jpg'})}"
+            alt="Ảnh bìa" />
         </td>
         <td th:text="${book.bookDetail != null ? book.bookDetail.description : ''}">Mô tả</td>
         <td th:text="${book.bookDetail != null ? book.bookDetail.summary : ''}">Tóm tắt</td>
@@ -62,10 +64,10 @@
         <td th:text="${book.bookDetail != null && book.bookDetail.publicationDate != null ? #temporals.format(book.bookDetail.publicationDate, 'dd/MM/yyyy') : ''}">Ngày xuất bản</td>
         <td th:text="${book.bookDetail != null ? book.bookDetail.pages : ''}">Số trang</td>
         <td>
-            <a th:if="${book.bookDetail != null && book.bookDetail.fileUrl != null}" 
-               th:href="@{/file/book/{file}(file=${book.bookDetail.fileUrl})}" 
-               target="_blank" class="file-link">
-               📄 Tải PDF
+             <a th:if="${book.bookDetail != null && book.bookDetail.fileUrl != null}" 
+                th:href="@{/file/book/{file}(file=${book.bookDetail.fileUrl})}" 
+                target="_blank" class="file-link">
+                📄 Tải PDF
             </a>
             <span th:if="${book.bookDetail == null || book.bookDetail.fileUrl == null}">Không có</span>
         </td>

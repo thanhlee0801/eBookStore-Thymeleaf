@@ -76,6 +76,13 @@
 
 <form th:action="@{'/admin/users/edit/' + ${user.id}}" enctype="multipart/form-data" th:object="${user}" method="post">
    
+    <div th:if="${user.avatar != null}">
+        <p>Ảnh hiện tại:</p>
+        <img th:src="@{'/image/avatar/' + ${user.avatar}}" alt="Avatar" style="max-width: 150px; border-radius: 8px; margin-bottom: 10px;" />
+    </div>
+    <label for="avatarFile">Chọn ảnh đại diện mới:</label>
+    <input type="file" name="avatarFile" id="avatarFile" accept="image/*" />
+
 
 
     <label for="firstName">First Name:</label>

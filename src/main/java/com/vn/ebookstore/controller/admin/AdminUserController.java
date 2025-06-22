@@ -1,5 +1,11 @@
 package com.vn.ebookstore.controller.admin;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.vn.ebookstore.model.Address;
 import com.vn.ebookstore.model.User;
@@ -78,15 +85,45 @@ public class AdminUserController {
     }
 
     @PostMapping("/create")
-    public String createUser(@ModelAttribute("user") User user) {
-         if (user.getAddresses() != null) {
-            for (Address address : user.getAddresses()) {
-                address.setUser(user);
-            }
-        }
+    public String createUser(@ModelAttribute("user") User user,
+                            @RequestParam("avatarFile") MultipartFile avatarFile) {
+    // 1. Lưu tên file vào thuộc tính user trước
+    if (!avatarFile.isEmpty()) {
+        String fileName = avatarFile.getOriginalFilename();
+        user.setAvatar(fileName);  //  Đảm bảo gán vào entity trước khi lưu DB
+    }
 
-        userService.registerNewUser(user);
-        return "redirect:/admin/users";
+    // 2. Gắn user cho từng địa chỉ (nếu có)
+    if (user.getAddresses() != null) {
+        for (Address address : user.getAddresses()) {
+            address.setUser(user);
+        }
+    }
+
+    // 3. Lưu vào DB trước để lấy ID (nếu cần)
+    User savedUser = userService.registerNewUser(user);
+
+    // 4. Lưu file vào resources/static/image/avatar
+    if (!avatarFile.isEmpty()) {
+        try {
+            Path uploadPath = Paths.get("E:/suasang/eBookStore-Thymeleaf/uploads/avatar");
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+
+            Path filePath = uploadPath.resolve(avatarFile.getOriginalFilename());
+            avatarFile.transferTo(filePath.toFile());
+
+            System.out.println("Avatar saved to: " + filePath.toAbsolutePath());
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    return "redirect:/admin/users";
+        
     }
 
 
@@ -108,7 +145,8 @@ public class AdminUserController {
     }
 
     @PostMapping("/edit/{id}")
-    public String updateUser(@PathVariable int id, @ModelAttribute("user") User updatedUser) {
+    public String updateUser(@PathVariable int id, @ModelAttribute("user") User updatedUser,
+                            @RequestParam("avatarFile") MultipartFile avatarFile) throws IOException {
         updatedUser.setId(id); // đảm bảo ID được giữ lại
 
         if (updatedUser.getAddresses() != null) {
@@ -116,6 +154,28 @@ public class AdminUserController {
                 address.setUser(updatedUser);
             }
         }
+
+          User existingUser = userService.getUserById(id);
+
+        if (avatarFile != null && !avatarFile.isEmpty()) {
+        String fileName = avatarFile.getOriginalFilename();
+        updatedUser.setAvatar(fileName);
+
+        Path uploadPath = Paths.get("E:/suasang/eBookStore-Thymeleaf/uploads/avatar");
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+
+        try (InputStream inputStream = avatarFile.getInputStream()) {
+            Path filePath = uploadPath.resolve(fileName);
+            Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+            System.out.println("Avatar saved to: " + filePath.toAbsolutePath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    } else {
+        updatedUser.setAvatar(existingUser.getAvatar());
+    }
 
         userService.updateUser(id, updatedUser);
 

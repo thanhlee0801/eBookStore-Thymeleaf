@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,9 +48,16 @@ public class AdminCategoryController {
     @PostMapping("/save")
    public String saveCategory(@ModelAttribute("category") Category category,
                                @RequestParam("backgroundImage") MultipartFile coverFile) throws IOException {
+        
         if (!coverFile.isEmpty()) {
             String fileName = coverFile.getOriginalFilename();
-            String uploadPath = new ClassPathResource("static/image/cover").getFile().getAbsolutePath();
+            String uploadPath = "E:/suasang/eBookStore-Thymeleaf/uploads/category";
+            
+            File dir = new File(uploadPath);
+             
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
             File saveFile = new File(uploadPath, fileName);
             coverFile.transferTo(saveFile);
             category.setImage(fileName);
@@ -89,6 +95,12 @@ public class AdminCategoryController {
        Category category = categoryService.getCategoryById(id);
     if (category == null) {
         redirectAttrs.addFlashAttribute("error", "Không tìm thấy danh mục.");
+        return "redirect:/admin/categories";
+    }
+
+     // Kiểm tra nếu còn sách thì không cho xóa
+    if (categoryService.hasBooksInCategory(id)) {
+        redirectAttrs.addFlashAttribute("error", "Không thể xóa vì danh mục vẫn còn sách.");
         return "redirect:/admin/categories";
     }
 

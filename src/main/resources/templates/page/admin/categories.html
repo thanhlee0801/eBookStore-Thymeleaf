@@ -18,8 +18,12 @@
         <td th:text="${cat.name}"></td>
         <td th:text="${cat.description}"></td>
         <td>
-            <img th:if="${cat.image != null}" th:src="@{'/image/cover/' + ${cat.image}}" 
-         alt="Ảnh bìa" width="100" style="object-fit: cover; border: 1px solid #ccc;">
+           <img th:if="${cat.image != null and !cat.image.isEmpty()}" 
+                 th:src="@{'/image/category/' + ${cat.image}}" 
+                 alt="Ảnh bìa" width="100" style="object-fit: cover; border: 1px solid #ccc;">
+            <img th:if="${cat.image == null or cat.image.isEmpty()}" 
+                 th:src="@{/image/category/default-category.jpg}" 
+                 alt="Ảnh mặc định" width="100" style="object-fit: cover; border: 1px solid #ccc;">
         </td>
         <td>
             <ul class="subcategory-list">

@@ -94,9 +94,9 @@ public String saveBook(@ModelAttribute("book") Book book,
     }
 
     // Xử lý subCategory: load từ DB nếu có, nếu không thì set null
-    if (book.getSubCategory() == null || book.getSubCategory().getId() == null) {
+    if (book.getSubCategory() != null || book.getSubCategory().getId() != null) {
         SubCategory subCategory = subCategoryService.getSubCategoryById(book.getSubCategory().getId());
-        book.setSubCategory(null);
+        book.setSubCategory(subCategory);
     } else {
         book.setSubCategory(null);
     }

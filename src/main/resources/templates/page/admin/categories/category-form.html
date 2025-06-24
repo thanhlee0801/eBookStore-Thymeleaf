@@ -111,6 +111,11 @@
     <label>Ảnh nền:</label>
     <input type="file" name="backgroundImage"/><br/>
 
+    <div th:if="${category.image != null}">
+        <p>Ảnh hiện tại:</p>
+        <img th:src="@{/image/category/{img}(img=${category.image})}" style="width: 300px;" alt="Ảnh danh mục"/>
+    </div>
+
     <label>Danh mục con:</label><br/>
     <div id="subCategoryContainer">
         <div th:each="subCat, iterStat : *{subCategories}">
@@ -125,9 +130,5 @@
     <a th:href="@{/admin/categories}">🔙 Quay lại</a>
 </form>
 
-<div th:if="${category.image != null}">
-    <p>Ảnh hiện tại:</p>
-    <img th:src="@{'/image/cover/' + *{image}}" style="width: 300px;"/>
-</div>
 </body>
 </html>

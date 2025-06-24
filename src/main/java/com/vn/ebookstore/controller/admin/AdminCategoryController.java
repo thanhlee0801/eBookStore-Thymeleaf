@@ -32,7 +32,7 @@ public class AdminCategoryController {
 
     @GetMapping
     public ModelAndView listCategories() {
-        ModelAndView mav = new ModelAndView("page/admin/categories");
+        ModelAndView mav = new ModelAndView("page/admin/categories/categories");
         mav.addObject("categories", categoryService.getAllCategories());
         return mav;
     }
@@ -42,37 +42,49 @@ public class AdminCategoryController {
         Category category = new Category();
         category.getSubCategories().add(new SubCategory()); // tạo sẵn 1 danh mục con
         model.addAttribute("category", category);
-        return "page/admin/category-form";
+        return "page/admin/categories/category-form";
     }
 
     @PostMapping("/save")
    public String saveCategory(@ModelAttribute("category") Category category,
                                @RequestParam("backgroundImage") MultipartFile coverFile) throws IOException {
         
-        if (!coverFile.isEmpty()) {
-            String fileName = coverFile.getOriginalFilename();
-            String uploadPath = "E:/suasang/eBookStore-Thymeleaf/uploads/category";
-            
-            File dir = new File(uploadPath);
-             
-            if (!dir.exists()) {
-                dir.mkdirs();
-            }
-            File saveFile = new File(uploadPath, fileName);
-            coverFile.transferTo(saveFile);
-            category.setImage(fileName);
+       
+    // Nếu là sửa (tức là category đã có id)
+    if (category.getId() != null) {
+        Category existing = categoryService.getCategoryById(category.getId());
+        if (existing != null && (coverFile == null || coverFile.isEmpty())) {
+            // Nếu không chọn ảnh mới -> giữ lại ảnh cũ
+            category.setImage(existing.getImage());
+        }
+    }
+
+    // Nếu người dùng có upload ảnh mới thì thay thế ảnh
+    if (coverFile != null && !coverFile.isEmpty()) {
+        String fileName = coverFile.getOriginalFilename();
+        String uploadPath = "E:/suasang/eBookStore-Thymeleaf/uploads/category";
+
+        File dir = new File(uploadPath);
+        if (!dir.exists()) {
+            dir.mkdirs();
         }
 
-        // Gắn lại quan hệ 2 chiều với SubCategory
-        List<SubCategory> subs = category.getSubCategories();
-        if (subs != null) {
-            for (SubCategory sub : subs) {
-                sub.setCategory(category);
-            }
-        }
+        File saveFile = new File(uploadPath, fileName);
+        coverFile.transferTo(saveFile);
 
-        categoryService.createCategory(category);
-        return "redirect:/admin/categories";
+        category.setImage(fileName); // Gán ảnh mới
+    }
+
+    // Gắn lại quan hệ 2 chiều với SubCategory
+    List<SubCategory> subs = category.getSubCategories();
+    if (subs != null) {
+        for (SubCategory sub : subs) {
+            sub.setCategory(category);
+        }
+    }
+
+    categoryService.createCategory(category);
+    return "redirect:/admin/categories";
     }
 
     @GetMapping("/edit/{id}")
@@ -87,7 +99,7 @@ public class AdminCategoryController {
             category.getSubCategories().add(new SubCategory());
         }
         model.addAttribute("category", category);
-        return "page/admin/category-form";
+        return "page/admin/categories/category-form";
     }
 
     @GetMapping("/delete/{id}")

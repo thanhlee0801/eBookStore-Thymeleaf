@@ -26,6 +26,9 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     @Transactional
     public Review saveReview(Review review) {
+        if (review.getRating() < 1 || review.getRating() > 5) {
+            throw new IllegalArgumentException("Rating must be between 1 and 5");
+        }
         Review savedReview = reviewRepository.save(review);
 
         // Refresh book object to update review calculations
@@ -69,7 +72,6 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewRepository.existsByUserIdAndBookId(userId, bookId);
     }
 
-    // Triển khai phương thức mới
     @Override
     public Page<Review> getAllReviews(Pageable pageable) {
         return reviewRepository.findAll(pageable);

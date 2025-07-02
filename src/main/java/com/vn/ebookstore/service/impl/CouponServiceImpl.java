@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Optional;
 
@@ -28,30 +29,30 @@ public class CouponServiceImpl implements CouponService {
 
     @Override
     @Transactional
-    public Double calculateDiscount(Coupon coupon, Double amount) {
+    public BigDecimal calculateDiscount(Coupon coupon, BigDecimal amount) {
         if (!isValidForUse(coupon, amount)) {
-            return 0.0;
+            return BigDecimal.ZERO;
         }
 
-        Double discount = 0.0;
+        BigDecimal discount = BigDecimal.ZERO;
         try {
             if (coupon.getDiscountType() == Coupon.DiscountType.PERCENTAGE) {
-                discount = amount * (coupon.getDiscountValue() / 100);
+                discount = amount.multiply(coupon.getDiscountValue().divide(new BigDecimal("100"), 2, BigDecimal.ROUND_HALF_UP));
                 if (coupon.getMaxDiscount() != null) {
-                    discount = Math.min(discount, coupon.getMaxDiscount());
+                    discount = discount.min(coupon.getMaxDiscount());
                 }
             } else {
-                discount = Math.min(coupon.getDiscountValue(), amount);
+                discount = coupon.getDiscountValue().min(amount);
             }
         } catch (Exception e) {
-            return 0.0;
+            return BigDecimal.ZERO;
         }
 
-        return Math.round(discount * 100.0) / 100.0; // Làm tròn đến 2 chữ số thập phân
+        return discount.setScale(2, BigDecimal.ROUND_HALF_UP);
     }
 
     @Override
-    public boolean isValidForUse(Coupon coupon, Double amount) {
+    public boolean isValidForUse(Coupon coupon, BigDecimal amount) {
         if (coupon == null || !coupon.getIsActive()) {
             return false;
         }
@@ -61,23 +62,22 @@ public class CouponServiceImpl implements CouponService {
                 now.after(coupon.getStartDate()) &&
                 now.before(coupon.getEndDate()) &&
                 (coupon.getUsageLimit() == null || coupon.getTimesUsed() < coupon.getUsageLimit()) &&
-                (coupon.getMinPurchase() == null || amount >= coupon.getMinPurchase());
+                (coupon.getMinPurchase() == null || amount.compareTo(coupon.getMinPurchase()) >= 0);
     }
 
+    @Override
     @Transactional
     public Coupon useCoupon(Coupon coupon) {
         if (coupon == null) {
             throw new IllegalArgumentException("Coupon cannot be null");
         }
 
-        // Validate if coupon can still be used
-        if (!isValidForUse(coupon, 0.0)) {
+        if (!isValidForUse(coupon, BigDecimal.ZERO)) {
             throw new RuntimeException("Coupon is no longer valid");
         }
 
         coupon.setTimesUsed(coupon.getTimesUsed() + 1);
 
-        // Check if usage limit is reached
         if (coupon.getUsageLimit() != null && coupon.getTimesUsed() >= coupon.getUsageLimit()) {
             coupon.setIsActive(false);
         }
@@ -85,7 +85,6 @@ public class CouponServiceImpl implements CouponService {
         return couponRepository.save(coupon);
     }
 
-    // Triển khai phương thức mới
     @Override
     public Page<Coupon> getAllCoupons(Pageable pageable) {
         return couponRepository.findAll(pageable);
@@ -118,12 +117,28 @@ public class CouponServiceImpl implements CouponService {
         if (now.after(coupon.getEndDate())) {
             return "expired";
         }
-        // Kiểm tra sắp hết hạn (giả định trong 7 ngày)
         long diffInMillies = Math.abs(coupon.getEndDate().getTime() - now.getTime());
         long diffInDays = diffInMillies / (24 * 60 * 60 * 1000);
         if (diffInDays <= 7) {
             return "soon_to_expire";
         }
         return "active";
+    }
+
+    @Override
+    @Transactional
+    public Coupon save(Coupon coupon) {
+        return couponRepository.save(coupon);
+    }
+
+    @Override
+    public Optional<Coupon> findById(Integer id) {
+        return couponRepository.findById(id);
+    }
+
+    @Override
+    @Transactional
+    public void deleteCoupon(Integer id) {
+        couponRepository.deleteById(id);
     }
 }

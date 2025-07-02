@@ -10,12 +10,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.List;
 
 @Controller
-@RequestMapping("/admin/discounts")
+@RequestMapping("/admin/coupons")
 public class AdminDiscountController {
 
     @Autowired
@@ -44,13 +42,13 @@ public class AdminDiscountController {
 
     @PostMapping("/save")
     public String saveCoupon(@ModelAttribute Coupon coupon) {
-        couponService.useCoupon(coupon);
+        couponService.save(coupon);
         return "redirect:/admin/discounts?success=created";
     }
 
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Integer id, Model model) {
-        Coupon coupon = couponService.findByCode(String.valueOf(id)).orElse(null);
+        Coupon coupon = couponService.findById(id).orElse(null);
         if (coupon == null) {
             return "redirect:/admin/discounts?error=not-found";
         }
@@ -61,18 +59,20 @@ public class AdminDiscountController {
 
     @PostMapping("/update")
     public String updateCoupon(@ModelAttribute Coupon coupon) {
-        Coupon existingCoupon = couponService.findByCode(coupon.getCode()).orElse(null);
+        Coupon existingCoupon = couponService.findById(coupon.getId()).orElse(null);
         if (existingCoupon == null) {
             return "redirect:/admin/discounts?error=not-found";
         }
-        coupon.setCreatedAt(existingCoupon.getCreatedAt());
-        couponService.useCoupon(coupon);
+        couponService.save(coupon);
         return "redirect:/admin/discounts?success=updated";
     }
 
     @GetMapping("/delete/{id}")
     public String deleteCoupon(@PathVariable Integer id) {
-        couponService.useCoupon(couponService.findByCode(String.valueOf(id)).orElse(null)); // Đảm bảo cập nhật
+        Coupon coupon = couponService.findById(id).orElse(null);
+        if (coupon != null) {
+            couponService.deleteCoupon(id);
+        }
         return "redirect:/admin/discounts?success=deleted";
     }
 }

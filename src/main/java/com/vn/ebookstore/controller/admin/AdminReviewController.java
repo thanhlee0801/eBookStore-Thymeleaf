@@ -15,7 +15,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
-import java.util.List;
 
 @Controller
 @RequestMapping("/admin/reviews")
@@ -50,18 +49,12 @@ public class AdminReviewController {
         if (review == null) {
             return "redirect:/admin/reviews?error=not-found";
         }
-        // Use relationships instead of fetching by ID
-        User user = review.getUser(); // Assuming Review has getUser()
-        Book book = review.getBook(); // Assuming Review has getBook()
-        if (user == null || book == null) {
-            // Fallback: fetch by ID if relationships are not loaded
-            user = userService.getUserById(review.getUserId());
-            book = bookService.getBookById(review.getBookId());
-        }
+        User user = review.getUser();
+        Book book = review.getBook();
         model.addAttribute("review", review);
         model.addAttribute("user", user);
         model.addAttribute("book", book);
-        return "page/admin/reviews/list-reviews";
+        return "page/admin/reviews/view-review"; // Sửa đường dẫn trả về
     }
 
     @GetMapping("/delete/{id}")

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Order Management</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/admin/admin_dashboard_style.css}">
+    <link rel="stylesheet" th:href="@{/css/admin/order_style.css}"> </head>
+<body>
+    <div th:replace="~{page/admin/fragments/header :: adminHeader}"></div>
+    <div th:replace="~{page/admin/fragments/sidebar :: adminSidebar}"></div>
+
+    <main class="content">
+        <div class="container-fluid p-0">
+            <h1 class="h3 mb-3">Order Management</h1>
+
+            <div th:if="${success}" class="alert alert-success" role="alert">
+                <span th:text="${success}"></span>
+            </div>
+            <div th:if="${error}" class="alert alert-danger" role="alert">
+                <span th:text="${error}"></span>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">All Orders</h5>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Customer</th>
+                                        <th>Total Amount</th>
+                                        <th>Status</th>
+                                        <th>Order Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="order : ${orders}">
+                                        <td th:text="${order.id}"></td>
+                                        <td th:text="${order.user.firstName + ' ' + order.user.lastName}"></td>
+                                        <td th:text="${#numbers.formatCurrency(order.total)}"></td>
+                                        <td th:text="${order.status}"></td>
+                                        <td th:text="${#dates.format(order.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+                                        <td>
+                                            <a th:href="@{/admin/orders/{id}(id=${order.id})}" class="btn btn-info btn-sm">View Details</a>
+                                            </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{page/admin/fragments/footer :: adminFooter}"></div>
+
+    <script th:src="@{/js/jquery-3.6.0.min.js}"></script>
+    <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/js/admin/order.js}"></script> </body>
+</html>

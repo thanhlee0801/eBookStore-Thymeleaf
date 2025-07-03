@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Order Details</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/admin/admin_dashboard_style.css}">
+    <link rel="stylesheet" th:href="@{/css/admin/order_style.css}">
+</head>
+<body>
+    <div th:replace="~{page/admin/fragments/header :: adminHeader}"></div>
+    <div th:replace="~{page/admin/fragments/sidebar :: adminSidebar}"></div>
+
+    <main class="content">
+        <div class="container-fluid p-0">
+            <h1 class="h3 mb-3">Order Details - #<span th:text="${order.id}"></span></h1>
+
+            <div th:if="${success}" class="alert alert-success" role="alert">
+                <span th:text="${success}"></span>
+            </div>
+            <div th:if="${error}" class="alert alert-danger" role="alert">
+                <span th:text="${error}"></span>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Order Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Customer:</strong> <span th:text="${order.user.firstName + ' ' + order.user.lastName}"></span></p>
+                            <p><strong>Email:</strong> <span th:text="${order.user.email}"></span></p>
+                            <p><strong>Phone:</strong> <span th:text="${order.user.phoneNumber}"></span></p>
+                            <p><strong>Order Address:</strong> <span th:text="${order.orderAddress}"></span></p>
+                            <p><strong>Order Date:</strong> <span th:text="${#dates.format(order.createdAt, 'dd/MM/yyyy HH:mm')}"></span></p>
+                            <p><strong>Last Updated:</strong> <span th:text="${#dates.format(order.updatedAt, 'dd/MM/yyyy HH:mm')}"></span></p>
+                            <p><strong>Sub Total:</strong> <span th:text="${#numbers.formatCurrency(order.subTotal)}"></span></p>
+                            <p><strong>Discount Amount:</strong> <span th:text="${#numbers.formatCurrency(order.discountAmount)}"></span></p>
+                            <p><strong>Total Amount:</strong> <span th:text="${#numbers.formatCurrency(order.total)}"></span></p>
+                            <p><strong>Current Status:</strong> <span th:text="${order.status}" class="badge bg-info"></span></p>
+
+                            <h6>Products in Order:</h6>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Quantity</th>
+                                        <th>Price per unit</th>
+                                        <th>Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="item : ${order.orderItems}">
+                                        <td th:text="${item.book.title}"></td>
+                                        <td th:text="${item.quantity}"></td>
+                                        <td th:text="${#numbers.formatCurrency(item.price)}"></td>
+                                        <td th:text="${#numbers.formatCurrency(item.quantity * item.price)}"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Update Order Status</h5>
+                        </div>
+                        <div class="card-body">
+                            <form th:action="@{/admin/orders/{id}/status(id=${order.id})}" method="post">
+                                <div class="mb-3">
+                                    <label for="statusSelect" class="form-label">New Status</label>
+                                    <select class="form-select" id="statusSelect" name="status" required>
+                                        <option value="pending" th:selected="${order.status == 'pending'}">Pending</option>
+                                        <option value="processing" th:selected="${order.status == 'processing'}">Processing</option>
+                                        <option value="shipped" th:selected="${order.status == 'shipped'}">Shipped</option>
+                                        <option value="delivered" th:selected="${order.status == 'delivered'}">Delivered</option>
+                                        <option value="cancelled" th:selected="${order.status == 'cancelled'}">Cancelled</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Update Status</button>
+                                <a th:href="@{/admin/orders}" class="btn btn-secondary">Back to List</a>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{page/admin/fragments/footer :: adminFooter}"></div>
+
+    <script th:src="@{/js/jquery-3.6.0.min.js}"></script>
+    <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/js/admin/order.js}"></script>
+</body>
+</html>

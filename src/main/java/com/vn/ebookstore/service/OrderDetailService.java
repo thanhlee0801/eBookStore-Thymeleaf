@@ -36,4 +36,3 @@ public interface OrderDetailService {
     long countOrdersByStatus(String status);
     List<OrderDetail> getRecentOrders(PageRequest pageRequest);
 }
-}
